@@ -3,19 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OnoAir</title>
-    <!-- Link to the external header CSS in the root folder -->
+    <title>Book a Flight</title>
+    <!-- Link to external CSS files -->
     <link rel="stylesheet" href="../header.css">
-</head>
-<body>
-
-    <!-- Header placeholder -->
-    <div id="header-placeholder"></div>
-
-    <!-- Load header.html content into the placeholder -->
+    <link rel="stylesheet" href="Book A Flight.css">
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Fetch header.html from the root folder
             fetch('../header.html')
                 .then(response => response.text())
                 .then(data => {
@@ -23,11 +16,62 @@
                 });
         });
     </script>
+</head>
+<body>
 
-    <!-- Page-specific content goes here -->
+    <!-- Header placeholder -->
+    <div id="header-placeholder"></div>
+
     <div class="container">
-        <h2>Welcome to OnoAir</h2>
-        <!-- Other content -->
+        <h1>Book a flight</h1>
+        
+        <div class="filter-section">
+            <p>Filter by:</p>
+            <div class="filter-group">
+                <label for="origin">Origin:</label>
+                <select id="origin" name="origin">
+                    <option value="">Select Origin</option>
+                    <!-- Add origin options -->
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="destination">Destination:</label>
+                <select id="destination" name="destination">
+                    <option value="">Select Destination</option>
+                    <!-- Add destination options -->
+                </select>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Flight No.</th>
+                    <th>Origin</th>
+                    <th>Destination</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>W61283</td>
+                    <td>Tel Aviv</td>
+                    <td>Krakow</td>
+                    <td><button class="book-button">Book</button></td>
+                </tr>
+                <tr>
+                    <td>LX8396</td>
+                    <td>Larnaca</td>
+                    <td>Zurich</td>
+                    <td><button class="book-button">Book</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Footer with Help Icon -->
+    <div id="footer">
+        <button id="help-button" onclick="window.location.href='Support.html'">?</button>
     </div>
 </body>
 </html>

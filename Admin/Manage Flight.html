@@ -65,7 +65,19 @@
             font-size: 24px;
             cursor: pointer;
         }
+        .return-flight-group {
+            display: none;
+        }
     </style>
+    <script>
+        function toggleReturnFlight() {
+            const returnFlightGroup = document.querySelectorAll('.return-flight-group');
+            const isReturnFlightChecked = document.getElementById('return-flight').checked;
+            returnFlightGroup.forEach(group => {
+                group.style.display = isReturnFlightChecked ? 'block' : 'none';
+            });
+        }
+    </script>
 </head>
 <body>
 
@@ -106,18 +118,23 @@
             </div>
 
             <div class="form-group">
-                <label for="return-date">Return date:</label>
-                <input type="date" id="arrival-date" name="arrival-date">
+                <input type="checkbox" id="return-flight" name="return-flight" onclick="toggleReturnFlight()">
+                <label for="return-flight">Return Flight</label>
             </div>
 
-            <div class="form-group">
+            <div class="form-group return-flight-group">
+                <label for="return-date">Return date:</label>
+                <input type="date" id="return-date" name="return-date">
+            </div>
+
+            <div class="form-group return-flight-group">
                 <label for="return-time">Return time:</label>
-                <input type="time" id="arrival-time" name="arrival-time">
+                <input type="time" id="return-time" name="return-time">
             </div>
 
             <div class="form-group">
                 <label for="no-of-seats">No. of seats:</label>
-                <input type="text" id="no-of-seats" name="no-of-seats">
+                <input type="number" id="no-of-seats" name="no-of-seats" min="1" max="300">
             </div>
 
             <button type="submit" class="save-button">Save</button>

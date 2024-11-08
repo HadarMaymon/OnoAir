@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OnoAir</title>
     <link rel="stylesheet" href="header.css"> <!-- Link to the header CSS file -->
+    <link rel="stylesheet" href="MainScreen.css"> <!-- Link to the main CSS file -->
 </head>
 <body>
 
@@ -22,10 +23,28 @@
         });
     </script>
 
-    <!-- Page-specific content goes here -->
+    <!-- Main content container with links -->
     <div class="container">
         <h2>Welcome to OnoAir</h2>
-        <!-- Other content -->
+        <p>Please select an option below:</p>
+
+        <div class="link-section">
+            <a href="Admin/Manage Flight.html">Admin - Manage Flights</a>
+        </div>
+        <div class="link-section">
+            <a href="Admin/Manage Destination.html">Admin - Manage Destinations</a>
+        </div>
+        <div class="link-section">
+            <a href="User/Book A Flight.html">User - Book a Flight</a>
+        </div>
+        <div class="link-section">
+            <a href="User/Manage Bookings.html">User - Manage Bookings</a>
+        </div>
+    </div>
+
+    <!-- Optional footer with help icon -->
+    <div class="footer">
+        <a href="Support.html"><img src="Images/help-icon.png" alt="Help"></a>
     </div>
 </body>
 </html>

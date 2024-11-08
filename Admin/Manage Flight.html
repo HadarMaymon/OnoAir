@@ -3,93 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OnoAir</title>
-    <!-- Link to the external header CSS -->
-    <link rel="stylesheet" href="../header.css">
-    <!-- Link to the external main CSS -->
-    <link rel="stylesheet" href="Manage Flight.css">
-    <script>
-        // Function to toggle the visibility of return date and time fields
-        function toggleReturnFlight() {
-            const returnFlightFields = document.querySelectorAll('.return-flight-group');
-            const isChecked = document.getElementById('return-flight').checked;
-            returnFlightFields.forEach(field => {
-                field.style.display = isChecked ? 'block' : 'none';
-            });
-        }
+    <title>OnoAir - Manage Flights</title>
+    <link rel="stylesheet" href="../header.css"> <!-- Link to the header CSS file from the root -->
+    <link rel="stylesheet" href="Manage Flight.css"> <!-- Link to the manage flights CSS file -->
+</head>
+<body>
 
+    <!-- Header placeholder -->
+    <div id="header-placeholder"></div>
+
+    <!-- Load header.html content into the placeholder -->
+    <script>
         document.addEventListener("DOMContentLoaded", function() {
-            fetch('../header.html') // Adjusted to fetch from the parent folder
+            fetch('../header.html') // Adjusted path to access header.html in the root directory
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('header-placeholder').innerHTML = data;
                 });
         });
     </script>
-</head>
-<body>
-    <!-- Fixed header placeholder -->
-    <div id="header-placeholder"></div>
 
-    <!-- Main content container with margin-top to avoid overlap with header -->
+    <!-- Main content for Manage Flights -->
     <div class="container">
-        <h2>New Flight</h2>
+        <h2>Manage Flights</h2>
         
-        <form>
-            <div class="form-group">
-                <label for="flight-no">Flight No.:</label>
-                <input type="text" id="flight-no" name="flight-no">
-            </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Flight No.</th>
+                    <th>Origin</th>
+                    <th>Destination</th>
+                    <th>...</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>W61283</td>
+                    <td>Tel Aviv</td>
+                    <td>Krakow</td>
+                    <td>...</td>
+                </tr>
+                <tr>
+                    <td>LX8396</td>
+                    <td>Larnaca</td>
+                    <td>Zurich</td>
+                    <td>...</td>
+                </tr>
+                <!-- Additional rows can be added here -->
+            </tbody>
+        </table>
 
-            <div class="form-group">
-                <label for="origin">Origin:</label>
-                <select id="origin" name="origin">
-                    <option value="">Select Origin</option>
-                    <!-- Add options for origins -->
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="destination">Destination:</label>
-                <select id="destination" name="destination">
-                    <option value="">Select Destination</option>
-                    <!-- Add options for destinations -->
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="boarding-date">Boarding date:</label>
-                <input type="date" id="boarding-date" name="boarding-date">
-            </div>
-
-            <div class="form-group">
-                <label for="boarding-time">Boarding time:</label>
-                <input type="time" id="boarding-time" name="boarding-time">
-            </div>
-
-            <div class="form-group">
-                <input type="checkbox" id="return-flight" name="return-flight" onclick="toggleReturnFlight()">
-                <label for="return-flight">Return Flight</label>
-            </div>
-
-            <div class="form-group return-flight-group" style="display: none;">
-                <label for="return-date">Return date:</label>
-                <input type="date" id="return-date" name="return-date">
-            </div>
-
-            <div class="form-group return-flight-group" style="display: none;">
-                <label for="return-time">Return time:</label>
-                <input type="time" id="return-time" name="return-time">
-            </div>
-
-            <div class="form-group">
-                <label for="no-of-seats">No. of seats:</label>
-                <input type="number" id="no-of-seats" name="no-of-seats" min="1" max="300">
-            </div>
-
-            <button type="submit" class="save-button">Save</button>
-        </form>
+        <button class="add-flight-button">Add Flight</button>
     </div>
-    
+
+    <!-- Footer with Help Icon -->
+    <div class="footer">
+        <a href="../Support.html"><img src="../Images/help-icon.png" alt="Help"></a> <!-- Ensure the icon path is correct -->
+    </div>
+
 </body>
 </html>

@@ -1,0 +1,96 @@
+/* Header styling */
+#header-placeholder {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px; /* Increased height to accommodate larger logo */
+    background: linear-gradient(135deg, #daf2fe, #0066CC);
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 0 50px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    box-sizing: border-box;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Flexbox for header content */
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+/* Logo Styling */
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-image {
+    height: 70px; /* Increased logo size for better visibility */
+    width: auto;
+    margin-right: 10px; /* Space between logo image and text */
+    transition: transform 0.3s ease;
+}
+
+.logo-image:hover {
+    transform: scale(1.05);
+}
+
+/* Styling for the "OnoAir" text next to the logo */
+.logo-text {
+    font-size: 26px; /* Adjusted size to match larger logo */
+    font-weight: bold;
+    color: #FFFFFF;
+    font-family: 'Poppins', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Navigation Styling */
+.navigation {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Navigation links styling */
+.navigation a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.navigation a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Button styling for "Log in" */
+.navigation .button {
+    background-color: #FFD700;
+    color: #003366;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.navigation .button:hover {
+    background-color: #FFC300;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.25);
+    transform: translateY(-3px);
+}

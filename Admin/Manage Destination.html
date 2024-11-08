@@ -3,9 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>OnoAir</title>
+    <link rel="stylesheet" href="../header.css"> <!-- Link to the header CSS file from the root -->
 </head>
 <body>
-    
+
+    <!-- Header placeholder -->
+    <div id="header-placeholder"></div>
+
+    <!-- Load header.html content into the placeholder -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('../header.html') // Adjusted path to access header.html in the root directory
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('header-placeholder').innerHTML = data;
+                });
+        });
+    </script>
+
+    <!-- Page-specific content goes here -->
+    <div class="container">
+        <h2>Welcome to OnoAir</h2>
+        <!-- Other content -->
+    </div>
 </body>
 </html>
+

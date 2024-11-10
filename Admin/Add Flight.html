@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OnoAir</title>
+    
+    <link rel="stylesheet" href="../header.css">
+    <link rel="stylesheet" href="Add Flight.css">
+    
+    <script>
+        function toggleReturnFlight() {
+            const returnFlightFields = document.querySelectorAll('.return-flight-group');
+            returnFlightFields.forEach(field => {
+                field.style.display = document.getElementById('return-flight').checked ? 'block' : 'none';
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('../header.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('header-placeholder').innerHTML = data;
+                });
+        });
+    </script>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <div class="container">
+        <h1>OnoAir</h1>
+        
+        <h2>New Flight</h2>
+        
+        <form>
+            <div class="form-group">
+                <label for="flight-no">Flight No.:</label>
+                <input type="text" id="flight-no" name="flight-no">
+            </div>
+
+            <div class="form-group">
+                <label for="origin">Origin:</label>
+                <select id="origin" name="origin">
+                    <option value="">Select Origin</option>
+                    <!-- Add origin options -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="destination">Destination:</label>
+                <select id="destination" name="destination">
+                    <option value="">Select Destination</option>
+                    <!-- Add destination options -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="boarding-date">Boarding Date:</label>
+                <input type="date" id="boarding-date" name="boarding-date">
+            </div>
+
+            <div class="form-group">
+                <label for="boarding-time">Boarding Time:</label>
+                <input type="time" id="boarding-time" name="boarding-time">
+            </div>
+
+            <div class="form-group">
+                <label for="arrival-date">Arrival Date:</label>
+                <input type="date" id="arrival-date" name="arrival-date">
+            </div>
+
+            <div class="form-group">
+                <label for="arrival-time">Arrival Time:</label>
+                <input type="time" id="arrival-time" name="arrival-time">
+            </div>
+
+            <div class="form-group">
+                <label for="no-of-seats">No. of Seats:</label>
+                <input type="number" id="no-of-seats" name="no-of-seats" min="1" max="300">
+            </div>
+
+            <button type="submit" class="save-button">Save</button>
+        </form>
+    </div>
+</body>
+</html>

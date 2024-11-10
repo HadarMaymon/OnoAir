@@ -7,108 +7,104 @@ body {
 
 /* Container styling */
 .container {
-    width: 400px;
-    margin: 120px auto; /* Starts content below the header */
+    width: 80%;
+    max-width: 900px;
+    margin: 120px auto;
     padding: 20px 30px;
     background-color: #ffffff;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    border: 1px solid #e0e0e0; /* Light border for definition */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
 }
 
-/* Form header styling */
+/* Header Styling */
 .container h2 {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: bold;
     color: #333333;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     font-family: 'Poppins', sans-serif;
 }
 
-/* Form group styling */
-.form-group {
-    margin-bottom: 20px;
-}
-
-/* Label styling */
-label {
+/* Sub-header Styling */
+.container h3 {
+    font-size: 22px;
     font-weight: bold;
     color: #333333;
-    display: block;
-    margin-bottom: 5px;
-    font-size: 14px;
+    margin-bottom: 15px;
+    font-family: 'Poppins', sans-serif;
 }
 
-/* Input, select, and textarea styling */
-input[type="text"],
-input[type="date"],
-input[type="time"],
-input[type="number"],
-select {
+/* Table styling */
+.destination-table {
     width: 100%;
-    padding: 10px;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.destination-table th,
+.destination-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.destination-table th {
+    background-color: #e9f5ff; /* Light blue header */
+    font-weight: bold;
+}
+
+.destination-table td a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+.destination-table td a:hover {
+    text-decoration: underline;
+}
+
+/* Add Destination Button */
+.add-button {
+    padding: 12px 20px;
     font-size: 16px;
-    border: 1px solid #cccccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-family: 'Roboto', sans-serif;
-    transition: border-color 0.3s ease;
-}
-
-input[type="text"]:focus,
-input[type="date"]:focus,
-input[type="time"]:focus,
-input[type="number"]:focus,
-select:focus {
-    border-color: #4A90E2; /* Blue border on focus */
-    outline: none;
-    box-shadow: 0 0 5px rgba(74, 144, 226, 0.2); /* Light blue glow on focus */
-}
-
-/* Checkbox styling */
-input[type="checkbox"] {
-    transform: scale(1.2);
-    margin-right: 5px;
-}
-
-/* Return Flight Group styling */
-.return-flight-group {
-    display: none;
-}
-
-/* Save button styling */
-.save-button {
-    width: 100%;
-    padding: 12px;
-    font-size: 18px;
     font-weight: bold;
     color: #ffffff;
-    background-color: #4A90E2; /* Consistent blue color */
+    background-color: #4A90E2;
     border: none;
     border-radius: 25px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    font-family: 'Roboto', sans-serif;
 }
 
-.save-button:hover {
-    background-color: #357ABD; /* Darker blue on hover */
-    transform: translateY(-2px); /* Slight lift on hover */
+.add-button:hover {
+    background-color: #357ABD;
+    transform: translateY(-2px);
 }
 
-/* Optional: Subtle animation for form entry */
-.container {
-    animation: fadeIn 0.5s ease-in-out;
+/* Footer styling */
+.footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px 20px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #f5f5f5;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.help-button {
+    background-color: #333333;
+    color: #ffffff;
+    font-size: 18px;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.help-button:hover {
+    background-color: #555555;
 }

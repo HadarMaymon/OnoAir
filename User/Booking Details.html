@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Details</title>
+    <link rel="stylesheet" href="../header.css">
+    <link rel="stylesheet" href="Booking Details.css">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('../header.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('header-placeholder').innerHTML = data;
+                });
+
+            // Retrieve the flight number from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const flightNumber = urlParams.get('flightNumber');
+
+            // Set the flight information based on flight number (example data)
+            const flightInfo = {
+                'W61283': {
+                    origin: 'Tel Aviv',
+                    boardingDate: '16/7/2025 20:00',
+                    destination: 'Krakow',
+                    landingDate: '17/7/2025 01:00'
+                },
+                'LX8396': {
+                    origin: 'Larnaca',
+                    boardingDate: '20/8/2025 18:30',
+                    destination: 'Zurich',
+                    landingDate: '20/8/2025 21:15'
+                }
+            };
+
+            const flight = flightInfo[flightNumber];
+            if (flight) {
+                document.getElementById('flight-details').innerText = 
+                    `Origin: ${flight.origin} Boarding: ${flight.boardingDate}\nDestination: ${flight.destination} Landing: ${flight.landingDate}`;
+            }
+        });
+    </script>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <div class="container">
+        <h1>Book a flight</h1>
+        
+        <!-- Flight Details Section -->
+        <div class="flight-info">
+            <p id="flight-details"></p>
+        </div>
+
+        <!-- Passenger Information Form -->
+        <div>
+            <p>No of passengers: <input type="number" id="num-passengers" min="1" max="10" value="1"></p>
+            <p>Passenger 1</p>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name"><br>
+            <label for="passport-id">Passport ID:</label>
+            <input type="text" id="passport-id" name="passport-id"><br>
+        </div>
+
+        <button class="save-button">Save</button>
+    </div>
+
+    <!-- Footer with Help Icon -->
+    <div id="footer">
+        <button id="help-button" onclick="window.location.href='Support.html'">?</button>
+    </div>
+</body>
+</html>

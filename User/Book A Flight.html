@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book a Flight</title>
-    <!-- Link to external CSS files -->
     <link rel="stylesheet" href="../header.css">
     <link rel="stylesheet" href="Book A Flight.css">
     <script>
@@ -15,6 +14,11 @@
                     document.getElementById('header-placeholder').innerHTML = data;
                 });
         });
+
+        // Function to handle the booking button click
+        function goToBookingDetails(flightNumber) {
+            window.location.href = `Booking Details.html?flightNumber=${flightNumber}`;
+        }
     </script>
 </head>
 <body>
@@ -75,61 +79,61 @@
                     <td>W61283</td>
                     <td>Tel Aviv</td>
                     <td>Krakow</td>
-                    <td><button class="book-button">Book</button></td>
+                    <td><button class="book-button" onclick="goToBookingDetails('W61283')">Book</button></td>
                 </tr>
                 <tr>
                     <td>LX8396</td>
                     <td>Larnaca</td>
                     <td>Zurich</td>
-                    <td><button class="book-button">Book</button></td>
+                    <td><button class="book-button" onclick="goToBookingDetails('LX8396')">Book</button></td>
                 </tr>
                 <tr>
                     <td>BA2547</td>
                     <td>San Diego</td>
                     <td>Madrid</td>
-                    <td><button class="book-button">Book</button></td>
+                    <td><button class="book-button" onclick="goToBookingDetails('BA2547')">Book</button></td>
                 </tr>
                 <tr>
                     <td>AF3201</td>
                     <td>Las Vegas</td>
                     <td>Dubai</td>
-                    <td><button class="book-button">Book</button></td>
+                    <td><button class="book-button" onclick="goToBookingDetails('AF3201')">Book</button></td>
                 </tr>
                 <tr>
                     <td>EK412</td>
                     <td>Detroit</td>
                     <td>Istanbul</td>
-                    <td><button class="book-button">Book</button></td>
+                    <td><button class="book-button" onclick="goToBookingDetails('EK412')">Book</button></td>
                 </tr>
                 <tr>
                     <td>LH2029</td>
                     <td>Denver</td>
                     <td>Vienna</td>
-                    <td><button class="book-button">Book</button></td>
+                    <td><button class="book-button" onclick="goToBookingDetails('LH2029')">Book</button></td>
                 </tr>
                 <tr>
                     <td>DL1085</td>
                     <td>Philadelphia</td>
                     <td>Bangkok</td>
-                    <td><button class="book-button">Book</button></td>
+                    <td><button class="book-button" onclick="goToBookingDetails('DL1085')">Book</button></td>
                 </tr>
                 <tr>
                     <td>AA1140</td>
                     <td>Phoenix</td>
                     <td>Stockholm</td>
-                    <td><button class="book-button">Book</button></td>
+                    <td><button class="book-button" onclick="goToBookingDetails('AA1140')">Book</button></td>
                 </tr>
                 <tr>
                     <td>UA329</td>
                     <td>Salt Lake City</td>
                     <td>Sao Paulo</td>
-                    <td><button class="book-button">Book</button></td>
+                    <td><button class="book-button" onclick="goToBookingDetails('UA329')">Book</button></td>
                 </tr>
                 <tr>
                     <td>AZ754</td>
                     <td>Minneapolis</td>
                     <td>Cape Town</td>
-                    <td><button class="book-button">Book</button></td>
+                    <td><button class="book-button" onclick="goToBookingDetails('AZ754')">Book</button></td>
                 </tr>
             </tbody>
         </table>

@@ -61,6 +61,7 @@ input[type="text"], input[type="number"] {
     border: none;
     border-radius: 25px;
     cursor: pointer;
+    margin-top: 20px; /* Added margin to move the button down */
 }
 
 .save-button:hover {

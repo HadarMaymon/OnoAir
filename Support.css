@@ -1,0 +1,217 @@
+/* General styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+/* Container styling */
+.container {
+    width: 90%;
+    max-width: 800px;
+    margin: 100px auto 40px; /* Adjusted for spacing from header */
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+}
+
+/* Main heading styling */
+.container h1 {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    color: #4A90E2;
+    margin-bottom: 30px;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Section headings */
+.container h2 {
+    font-size: 24px;
+    color: #4A90E2;
+    margin-bottom: 15px;
+    font-family: 'Poppins', sans-serif;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 5px;
+}
+
+/* FAQ styling */
+#faqs {
+    margin-bottom: 30px;
+}
+
+.faq-item h3 {
+    font-size: 18px;
+    color: #333333;
+    font-weight: bold;
+    margin: 10px 0 5px;
+}
+
+.faq-item p {
+    font-size: 16px;
+    color: #555555;
+    margin: 5px 0 10px;
+}
+
+.faq-item a {
+    color: #4A90E2;
+    text-decoration: none;
+}
+
+.faq-item a:hover {
+    text-decoration: underline;
+}
+
+/* Contact section styling */
+#contact-section ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+#contact-section ul li {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+#contact-section ul li a {
+    color: #4A90E2;
+    text-decoration: none;
+}
+
+#contact-section ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Form styling */
+#support-form form {
+    margin-top: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333333;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.submit-button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #4A90E2;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+    background-color: #357ABD;
+}
+
+/* Useful links styling */
+#useful-links ul {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+#useful-links ul li {
+    margin: 8px 0;
+}
+
+#useful-links ul li a {
+    font-size: 16px;
+    color: #4A90E2;
+    text-decoration: none;
+}
+
+#useful-links ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Search bar styling */
+.search-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+#search-input {
+    width: 70%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+#search-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #4A90E2;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background-color 0.3s ease;
+}
+
+#search-button:hover {
+    background-color: #357ABD;
+}
+
+/* Footer styling */
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #f5f5f5;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+    z-index: 100;
+}
+
+.help-button {
+    background-color: #333;
+    color: #fff;
+    font-size: 18px;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.help-button:hover {
+    background-color: #555;
+}

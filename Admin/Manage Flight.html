@@ -12,13 +12,21 @@
     <!-- Header placeholder -->
     <div id="header-placeholder"></div>
 
-    <!-- Load header.html content into the placeholder -->
+    <!-- Load header and footer dynamically -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            fetch('../header.html') // Adjusted path to access header.html in the root directory
+        document.addEventListener("DOMContentLoaded", function () {
+            // Load header
+            fetch('../header.html')
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('header-placeholder').innerHTML = data;
+                });
+
+            // Load footer
+            fetch('../footer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('footer-placeholder').innerHTML = data;
                 });
         });
     </script>
@@ -102,13 +110,10 @@
 
         <!-- Add Flight Button -->
         <button class="add-flight-button" onclick="navigateToAddFlight()">Add Flight</button>
-        
     </div>
 
-    <!-- Footer with Help Icon -->
-    <div class="footer">
-        <a href="../Support.html"><img src="../Images/help-icon.png" alt="Help"></a> <!-- Ensure the icon path is correct -->
-    </div>
+    <!-- Footer placeholder -->
+    <div id="footer-placeholder"></div>
 
     <!-- JavaScript for navigation -->
     <script>
@@ -116,6 +121,5 @@
             window.location.href = 'Add Flight.html'; 
         }
     </script>
-
 </body>
 </html>

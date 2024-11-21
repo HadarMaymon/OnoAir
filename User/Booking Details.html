@@ -15,6 +15,13 @@
                     document.getElementById('header-placeholder').innerHTML = data;
                 });
 
+            // Load the footer
+            fetch('../footer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('footer-placeholder').innerHTML = data;
+                });
+
             // Retrieve the flight details from URL
             const urlParams = new URLSearchParams(window.location.search);
             const flightNumber = urlParams.get('flightNumber');
@@ -135,8 +142,6 @@
                     <input type="text" id="name-${i}" name="name-${i}" placeholder="Enter name" required><br>
                     <label for="passport-id-${i}">Passport ID:</label>
                     <input type="text" id="passport-id-${i}" name="passport-id-${i}" placeholder="Enter Passport ID" required><br>
-
-                    </select><br>
                 `;
                 passengerFieldsContainer.appendChild(passengerDiv);
             }
@@ -165,9 +170,7 @@
         <button class="save-button">Save</button>
     </div>
 
-    <!-- Footer with Help Icon -->
-    <div id="footer">
-        <button id="help-button" onclick="window.location.href='Support.html'">?</button>
-    </div>
+    <!-- Footer placeholder -->
+    <div id="footer-placeholder"></div>
 </body>
 </html>

@@ -22,10 +22,17 @@
                 .then(data => {
                     document.getElementById('header-placeholder').innerHTML = data;
                 });
+
+            fetch('../footer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('footer-placeholder').innerHTML = data;
+                });
         });
     </script>
 </head>
 <body>
+    <!-- Header -->
     <div id="header-placeholder"></div>
 
     <div class="container">
@@ -83,5 +90,8 @@
             <button type="submit" class="save-button">Save</button>
         </form>
     </div>
+
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
 </body>
 </html>

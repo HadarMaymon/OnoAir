@@ -12,22 +12,33 @@
     <!-- Header placeholder -->
     <div id="header-placeholder"></div>
 
-    <!-- Load header.html content into the placeholder -->
+    <!-- Load header and footer content -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Fetch header.html from the root folder
+            // Load the header
             fetch('../header.html')
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('header-placeholder').innerHTML = data;
                 });
+
+            // Load the footer
+            fetch('../footer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('footer-placeholder').innerHTML = data;
+                });
         });
     </script>
 
-    <!-- Page-specific content goes here -->
+    <!-- Page-specific content -->
     <div class="container">
         <h2>Welcome to OnoAir</h2>
         <!-- Other content -->
     </div>
+
+    <!-- Footer placeholder -->
+    <div id="footer-placeholder"></div>
+
 </body>
 </html>

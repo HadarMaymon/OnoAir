@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OnoAir</title>
+    <title>OnoAir - Support</title>
     <link rel="stylesheet" href="header.css"> <!-- Link to the header CSS file -->
+    <link rel="stylesheet" href="support.css"> <!-- Link to the support CSS file -->
 </head>
 <body>
-
     <!-- Header placeholder -->
     <div id="header-placeholder"></div>
 
@@ -22,10 +22,91 @@
         });
     </script>
 
-    <!-- Page-specific content goes here -->
+    <!-- Main Content -->
     <div class="container">
-        <h2>Welcome to OnoAir</h2>
-        <!-- Other content -->
+        <h1>How can we help you?</h1>
+
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Search for help topics...">
+            <button id="search-button">Search</button>
+        </div>
+
+        <!-- FAQs Section -->
+        <section id="faqs">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-item">
+                <h3>How do I book a flight?</h3>
+                <p>To book a flight, visit our <a href="User/Book A Flight.html">Book a Flight</a> page and follow the steps.</p>
+            </div>
+            <div class="faq-item">
+                <h3>Can I change my booking?</h3>
+                <p>You can modify your booking from the <a href="User/Manage Bookings.html">Manage Bookings</a> page.</p>
+            </div>
+            <div class="faq-item">
+                <h3>How do I contact customer support?</h3>
+                <p>Reach us via the <a href="#contact-section">Contact Us</a> section below.</p>
+            </div>
+        </section>
+
+        <!-- Contact Us Section -->
+        <section id="contact-section">
+            <h2>Contact Us</h2>
+            <p>If you have questions or need assistance, please reach out:</p>
+            <ul>
+                <li><strong>Phone:</strong> +1-800-ONO-AIR (1-800-666-247)</li>
+                <li><strong>Email:</strong> <a href="mailto:support@onoair.com">support@onoair.com</a></li>
+                <li><strong>Live Chat:</strong> Available on the bottom-right corner of the page.</li>
+            </ul>
+        </section>
+
+        <!-- Support Ticket Form -->
+        <section id="support-form">
+            <h2>Submit a Support Request</h2>
+            <form action="/submit-support-ticket" method="POST">
+                <div class="form-group">
+                    <label for="name">Full Name:</label>
+                    <input type="text" id="name" name="name" placeholder="Your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address:</label>
+                    <input type="email" id="email" name="email" placeholder="Your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Subject:</label>
+                    <input type="text" id="subject" name="subject" placeholder="What is your issue about?" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message" placeholder="Describe your issue here..." rows="5" required></textarea>
+                </div>
+                <button type="submit" class="submit-button">Submit</button>
+            </form>
+        </section>
+
+        <!-- Useful Links -->
+        <section id="useful-links">
+            <h2>Useful Links</h2>
+            <ul>
+                <li><a href="Book A Flight.html">Book a Flight</a></li>
+                <li><a href="Manage Bookings.html">Manage Bookings</a></li>
+                <li><a href="Manage Destination.html">Flight Destinations</a></li>
+                <li><a href="Refund Policy.html">Refund Policy</a></li>
+            </ul>
+        </section>
     </div>
+
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+    <script>
+        // Load footer.html content into the placeholder
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('footer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('footer-placeholder').innerHTML = data;
+                });
+        });
+    </script>
 </body>
 </html>

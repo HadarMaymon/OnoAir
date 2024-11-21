@@ -42,9 +42,18 @@
         </div>
     </div>
 
-    <!-- Optional footer with help icon -->
-    <div class="footer">
-        <a href="Support.html"><img src="Images/help-icon.png" alt="Help"></a>
-    </div>
+    <!-- Footer placeholder -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Load footer.html content into the placeholder -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('footer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('footer-placeholder').innerHTML = data;
+                });
+        });
+    </script>
 </body>
 </html>

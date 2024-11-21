@@ -7,64 +7,162 @@
     <link rel="stylesheet" href="../header.css">
     <link rel="stylesheet" href="Booking Details.css">
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
+            // Load the header
             fetch('../header.html')
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('header-placeholder').innerHTML = data;
                 });
 
-            // Retrieve the flight number from URL
+            // Retrieve the flight details from URL
             const urlParams = new URLSearchParams(window.location.search);
             const flightNumber = urlParams.get('flightNumber');
+            const boarding = urlParams.get('boarding');
+            const landing = urlParams.get('landing');
+            const flightDate = urlParams.get('date'); // Optional: Pass flight date through URL if required
 
-            // Set the flight information based on flight number (example data)
+            // Flight information (use static data as fallback for flightNumber)
             const flightInfo = {
                 'W61283': {
                     origin: 'Tel Aviv',
-                    boardingDate: '16/7/2025 20:00',
                     destination: 'Krakow',
-                    landingDate: '17/7/2025 01:00'
+                    date: '16/7/2025',
+                    boardingTime: '20:00',
+                    landingTime: '01:00 (17/7/2025)'
                 },
                 'LX8396': {
                     origin: 'Larnaca',
-                    boardingDate: '20/8/2025 18:30',
                     destination: 'Zurich',
-                    landingDate: '20/8/2025 21:15'
+                    date: '20/8/2025',
+                    boardingTime: '18:30',
+                    landingTime: '21:15'
+                },
+                'BA2547': {
+                    origin: 'San Diego',
+                    destination: 'Madrid',
+                    date: '25/9/2025',
+                    boardingTime: '10:00',
+                    landingTime: '18:00'
+                },
+                'AF3201': {
+                    origin: 'Las Vegas',
+                    destination: 'Dubai',
+                    date: '12/10/2025',
+                    boardingTime: '14:00',
+                    landingTime: '02:00 (13/10/2025)'
+                },
+                'EK412': {
+                    origin: 'Detroit',
+                    destination: 'Istanbul',
+                    date: '5/11/2025',
+                    boardingTime: '06:00',
+                    landingTime: '16:00'
+                },
+                'LH2029': {
+                    origin: 'Denver',
+                    destination: 'Vienna',
+                    date: '3/12/2025',
+                    boardingTime: '08:00',
+                    landingTime: '16:30'
+                },
+                'DL1085': {
+                    origin: 'Philadelphia',
+                    destination: 'Bangkok',
+                    date: '15/1/2026',
+                    boardingTime: '12:00',
+                    landingTime: '04:00 (16/1/2026)'
+                },
+                'AA1140': {
+                    origin: 'Phoenix',
+                    destination: 'Stockholm',
+                    date: '23/2/2026',
+                    boardingTime: '09:00',
+                    landingTime: '18:30'
+                },
+                'UA329': {
+                    origin: 'Salt Lake City',
+                    destination: 'Sao Paulo',
+                    date: '1/3/2026',
+                    boardingTime: '15:00',
+                    landingTime: '03:30 (2/3/2026)'
+                },
+                'AZ754': {
+                    origin: 'Minneapolis',
+                    destination: 'Cape Town',
+                    date: '9/4/2026',
+                    boardingTime: '11:30',
+                    landingTime: '08:00 (10/4/2026)'
                 }
             };
 
+            // Get flight details
             const flight = flightInfo[flightNumber];
+
+            // Populate flight details
             if (flight) {
-                document.getElementById('flight-details').innerText = 
-                    `Origin: ${flight.origin} Boarding: ${flight.boardingDate}\nDestination: ${flight.destination} Landing: ${flight.landingDate}`;
+                document.getElementById('flight-details').innerHTML = `
+                    <strong>Flight No:</strong> ${flightNumber}<br>
+                    <strong>Origin:</strong> ${flight.origin}<br>
+                    <strong>Destination:</strong> ${flight.destination}<br>
+                    <strong>Flight Date:</strong> ${flightDate || flight.date}<br>
+                    <strong>Boarding Time:</strong> ${boarding || flight.boardingTime}<br>
+                    <strong>Landing Time:</strong> ${landing || flight.landingTime}
+                `;
+            } else {
+                document.getElementById('flight-details').innerText = "Flight details not found.";
             }
+
+            // Initialize passenger fields
+            updatePassengerFields();
         });
+
+        // Function to dynamically generate passenger fields
+        function updatePassengerFields() {
+            const numPassengers = parseInt(document.getElementById('num-passengers').value, 10);
+            const passengerFieldsContainer = document.getElementById('passenger-fields');
+
+            // Clear existing fields
+            passengerFieldsContainer.innerHTML = '';
+
+            // Add fields for each passenger
+            for (let i = 1; i <= numPassengers; i++) {
+                const passengerDiv = document.createElement('div');
+                passengerDiv.className = 'passenger';
+                passengerDiv.innerHTML = `
+                    <h3>Passenger ${i}</h3>
+                    <label for="name-${i}">Full Name:</label>
+                    <input type="text" id="name-${i}" name="name-${i}" placeholder="Enter name" required><br>
+                    <label for="passport-id-${i}">Passport ID:</label>
+                    <input type="text" id="passport-id-${i}" name="passport-id-${i}" placeholder="Enter Passport ID" required><br>
+
+                    </select><br>
+                `;
+                passengerFieldsContainer.appendChild(passengerDiv);
+            }
+        }
     </script>
 </head>
 <body>
+    <!-- Header placeholder -->
     <div id="header-placeholder"></div>
 
     <div class="container">
-        <h1>Book a flight</h1>
+        <h1>Booking Details</h1>
         
         <!-- Flight Details Section -->
         <div class="flight-info">
             <p id="flight-details"></p>
         </div>
 
-        <!-- Passenger Information Form -->
+        <!-- Passenger Information Section -->
         <div>
-            <p>No of passengers: <input type="number" id="num-passengers" min="1" max="10" value="1"></p>
-            <p>Passenger 1</p>
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name"><br>
-            <label for="passport-id">Passport ID:</label>
-            <input type="text" id="passport-id" name="passport-id"><br>
+            <p><strong>No of passengers:</strong></p>
+            <input type="number" id="num-passengers" min="1" max="10" value="1" onchange="updatePassengerFields()">
+            <div id="passenger-fields"></div>
         </div>
 
         <button class="save-button">Save</button>
-        
     </div>
 
     <!-- Footer with Help Icon -->

@@ -3,9 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OnoAir</title>
-    <!-- Link to the external header CSS in the root folder -->
+    <title>OnoAir - My Bookings</title>
+    <!-- Link to the external header CSS -->
     <link rel="stylesheet" href="../header.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .booking {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .booking img {
+            width: 100px;
+            height: 100px;
+            background-color: #ccc;
+            border-radius: 8px;
+            margin-right: 20px;
+        }
+
+        .booking-details {
+            flex-grow: 1;
+        }
+
+        .booking-details p {
+            margin: 5px 0;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 20px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #f5f5f5;
+            border-top: 1px solid #ddd;
+        }
+
+        .help-button {
+            background-color: #333;
+            color: #fff;
+            font-size: 18px;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+        }
+
+        .help-button:hover {
+            background-color: #555;
+        }
+    </style>
 </head>
 <body>
 
@@ -24,10 +100,39 @@
         });
     </script>
 
-    <!-- Page-specific content goes here -->
+    <!-- Page-specific content -->
     <div class="container">
-        <h2>Welcome to OnoAir</h2>
-        <!-- Other content -->
+        <h2>My Bookings</h2>
+
+        <!-- Booking Item 1 -->
+        <div class="booking">
+            <img src="../Images/destination-placeholder.jpg" alt="Destination Image">
+            <div class="booking-details">
+                <p><strong>Origin:</strong> Tel Aviv</p>
+                <p><strong>Boarding:</strong> 16/7/2025 20:00</p>
+                <p><strong>Destination:</strong> Krakow</p>
+                <p><strong>Landing:</strong> 17/7/2025 01:00</p>
+                <p><strong>No. of passengers:</strong> 5</p>
+            </div>
+        </div>
+
+        <!-- Booking Item 2 -->
+        <div class="booking">
+            <img src="../Images/destination-placeholder.jpg" alt="Destination Image">
+            <div class="booking-details">
+                <p><strong>Origin:</strong> Krakow</p>
+                <p><strong>Boarding:</strong> 20/5/2024 20:00</p>
+                <p><strong>Destination:</strong> Larnaca</p>
+                <p><strong>Landing:</strong> 21/5/2024 02:00</p>
+                <p><strong>No. of passengers:</strong> 6</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer with Help Icon -->
+    <div class="footer">
+        <button class="help-button" onclick="window.location.href='Support.html'">?</button>
     </div>
 </body>
 </html>

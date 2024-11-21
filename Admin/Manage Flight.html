@@ -33,7 +33,7 @@
                     <th>Flight No.</th>
                     <th>Origin</th>
                     <th>Destination</th>
-                    <th>...</th>
+                    <th>Duration</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,25 +41,81 @@
                     <td>W61283</td>
                     <td>Tel Aviv</td>
                     <td>Krakow</td>
-                    <td>...</td>
+                    <td>3h 30m</td>
                 </tr>
                 <tr>
                     <td>LX8396</td>
                     <td>Larnaca</td>
                     <td>Zurich</td>
-                    <td>...</td>
+                    <td>3h 50m</td>
                 </tr>
-                <!-- Additional rows can be added here -->
+                <tr>
+                    <td>BA123</td>
+                    <td>London</td>
+                    <td>New York</td>
+                    <td>7h 45m</td>
+                </tr>
+                <tr>
+                    <td>AF456</td>
+                    <td>Paris</td>
+                    <td>Dubai</td>
+                    <td>6h 30m</td>
+                </tr>
+                <tr>
+                    <td>EK202</td>
+                    <td>Dubai</td>
+                    <td>Sydney</td>
+                    <td>13h 50m</td>
+                </tr>
+                <tr>
+                    <td>NH789</td>
+                    <td>Tokyo</td>
+                    <td>Los Angeles</td>
+                    <td>10h 30m</td>
+                </tr>
+                <tr>
+                    <td>DL350</td>
+                    <td>Atlanta</td>
+                    <td>Toronto</td>
+                    <td>2h 20m</td>
+                </tr>
+                <tr>
+                    <td>QF402</td>
+                    <td>Sydney</td>
+                    <td>Auckland</td>
+                    <td>3h 5m</td>
+                </tr>
+                <tr>
+                    <td>LH890</td>
+                    <td>Berlin</td>
+                    <td>Rome</td>
+                    <td>2h 10m</td>
+                </tr>
+                <tr>
+                    <td>UA256</td>
+                    <td>San Francisco</td>
+                    <td>Chicago</td>
+                    <td>4h 5m</td>
+                </tr>
             </tbody>
         </table>
 
-        <button class="add-flight-button">Add Flight</button>
+        <!-- Add Flight Button -->
+        <button class="add-flight-button" onclick="navigateToAddFlight()">Add Flight</button>
+        
     </div>
 
     <!-- Footer with Help Icon -->
     <div class="footer">
         <a href="../Support.html"><img src="../Images/help-icon.png" alt="Help"></a> <!-- Ensure the icon path is correct -->
     </div>
+
+    <!-- JavaScript for navigation -->
+    <script>
+        function navigateToAddFlight() {
+            window.location.href = 'Add Flight.html'; 
+        }
+    </script>
 
 </body>
 </html>

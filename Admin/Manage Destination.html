@@ -4,23 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OnoAir - Manage Flight Destinations</title>
-    <link rel="stylesheet" href="../header.css"> <!-- Link to common header CSS -->
-    <link rel="stylesheet" href="Manage Destination.css"> <!-- Link to specific page CSS -->
+    <link rel="stylesheet" href="../header.css">
+    <link rel="stylesheet" href="Manage Destination.css">
 </head>
 <body>
-    <!-- Header -->
     <div id="header-placeholder"></div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Load header.html content
             fetch('../header.html')
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('header-placeholder').innerHTML = data;
                 });
-
-            // Load footer.html content
             fetch('../footer.html')
                 .then(response => response.text())
                 .then(data => {
@@ -29,13 +25,12 @@
         });
     </script>
 
-    <!-- Manage Destinations Section -->
     <div class="container">
         <h2>Manage Flight Destinations</h2>
         <h3>Manage Destinations</h3>
 
         <!-- Destination Table -->
-        <table class="destination-table">
+        <table class="destination-table" id="destination-table">
             <tr>
                 <th>Departure</th>
                 <th>Arrival</th>
@@ -43,87 +38,59 @@
                 <th>Arrival Time</th>
                 <th>Airport Website</th>
             </tr>
-            <tr>
-                <td>Tel Aviv (Ben Gurion Airport)</td>
-                <td>Krakow (John Paul II Airport)</td>
-                <td>06:00 AM</td>
-                <td>09:30 AM</td>
-                <td><a href="https://www.krakowairport.pl/">https://www.krakowairport.pl/</a></td>
-            </tr>
-            <tr>
-                <td>New York (JFK)</td>
-                <td>London (Heathrow Airport)</td>
-                <td>08:00 PM</td>
-                <td>08:00 AM (Next Day)</td>
-                <td><a href="https://www.heathrow.com/">https://www.heathrow.com/</a></td>
-            </tr>
-            <tr>
-                <td>Dubai (Dubai International)</td>
-                <td>Paris (Charles de Gaulle)</td>
-                <td>02:00 PM</td>
-                <td>06:50 PM</td>
-                <td><a href="https://www.parisaeroport.fr/en">https://www.parisaeroport.fr/en</a></td>
-            </tr>
-            <tr>
-                <td>Tokyo (Haneda Airport)</td>
-                <td>Sydney (Kingsford Smith)</td>
-                <td>10:00 PM</td>
-                <td>09:00 AM (Next Day)</td>
-                <td><a href="https://www.sydneyairport.com.au/">https://www.sydneyairport.com.au/</a></td>
-            </tr>
-            <tr>
-                <td>Berlin (Brandenburg)</td>
-                <td>Rome (Leonardo da Vinci)</td>
-                <td>07:30 AM</td>
-                <td>09:20 AM</td>
-                <td><a href="https://www.adr.it/web/aeroporti-di-roma-en/">https://www.adr.it/web/aeroporti-di-roma-en/</a></td>
-            </tr>
-            <tr>
-                <td>Singapore (Changi)</td>
-                <td>Dubai (Dubai International)</td>
-                <td>11:00 AM</td>
-                <td>03:00 PM</td>
-                <td><a href="https://www.dubaiairports.ae/">https://www.dubaiairports.ae/</a></td>
-            </tr>
-            <tr>
-                <td>Tel Aviv (Ben Gurion)</td>
-                <td>New York (JFK)</td>
-                <td>01:00 AM</td>
-                <td>07:00 AM</td>
-                <td><a href="https://www.jfkairport.com/">https://www.jfkairport.com/</a></td>
-            </tr>
-            <tr>
-                <td>Paris (Charles de Gaulle)</td>
-                <td>Berlin (Brandenburg)</td>
-                <td>06:15 PM</td>
-                <td>07:55 PM</td>
-                <td><a href="https://ber.berlin-airport.de/en.html">https://ber.berlin-airport.de/en.html</a></td>
-            </tr>
-            <tr>
-                <td>Sydney (Kingsford Smith)</td>
-                <td>Singapore (Changi)</td>
-                <td>03:30 PM</td>
-                <td>08:45 PM</td>
-                <td><a href="https://www.changiairport.com/">https://www.changiairport.com/</a></td>
-            </tr>
-            <tr>
-                <td>Rome (Leonardo da Vinci)</td>
-                <td>Tokyo (Haneda)</td>
-                <td>08:00 AM</td>
-                <td>03:00 AM (Next Day)</td>
-                <td><a href="https://tokyo-haneda.com/en/">https://tokyo-haneda.com/en/</a></td>
-            </tr>
-            <tr>
-                <td colspan="5" align="center">
-                    <button class="add-button">Add Destination</button>
-                </td>
-            </tr>
+            <!-- Rows will be dynamically added here -->
         </table>
+        <button class="add-button" onclick="addDestination()">Add Destination</button>
     </div>
 
-<!-- Footer -->
-<div class="footer">
-    <button class="help-button" onclick="window.location.href='/Support.html'">?</button>
-</div>
+    <div class="footer">
+        <button class="help-button" onclick="window.location.href='/Support.html'">?</button>
+    </div>
+
+    <!-- Add JavaScript -->
+    <script type="module">
+        import DestinationManager from './Destination Data.js';
+
+        const destinationManager = new DestinationManager();
+
+        // Function to render the destination table
+        function renderDestinations() {
+            const table = document.getElementById('destination-table');
+
+            // Clear previous rows (except headers)
+            const rows = table.querySelectorAll('tr:not(:first-child)');
+            rows.forEach(row => row.remove());
+
+            // Add new rows
+            destinationManager.getDestinations().forEach(destination => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${destination.departure}</td>
+                    <td>${destination.arrival}</td>
+                    <td>${destination.departureTime}</td>
+                    <td>${destination.arrivalTime}</td>
+                    <td><a href="${destination.airportWebsite}" target="_blank">${destination.airportWebsite}</a></td>
+                `;
+                table.appendChild(row);
+            });
+        }
+
+        // Example function to add a new destination
+        function addDestination() {
+            const newDestination = {
+                departure: "Example City",
+                arrival: "Example Arrival",
+                departureTime: "12:00 PM",
+                arrivalTime: "02:00 PM",
+                airportWebsite: "https://example.com"
+            };
+            destinationManager.addDestination(newDestination);
+            renderDestinations();
+        }
+
+        // Initial rendering of destinations
+        document.addEventListener("DOMContentLoaded", renderDestinations);
+    </script>
 </body>
 </html>

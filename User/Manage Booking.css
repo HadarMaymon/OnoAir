@@ -23,68 +23,47 @@
     z-index: 100;
 }
 
-/* Heading */
-.container h1 {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333333;
+h2 {
     text-align: center;
+    color: #333;
+}
+
+.booking {
+    display: flex;
+    align-items: center;
     margin-bottom: 20px;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
 }
 
-/* Flight info styling */
-.flight-info {
-    background-color: #f1f9ff;
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 4px;
-    margin-bottom: 20px;
+.booking img {
+    width: 100px;
+    height: 100px;
+    background-color: #ccc;
+    border-radius: 8px;
+    margin-right: 20px;
 }
 
-/* Form styling */
-label {
-    display: block;
-    margin-top: 10px;
-    font-weight: bold;
+.booking-details {
+    flex-grow: 1;
 }
 
-input[type="text"], input[type="number"] {
-    width: calc(100% - 20px);
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-/* Save button */
-.save-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    font-size: 18px;
-    color: white;
-    background-color: #4A90E2;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    margin-top: 20px; /* Added margin to move the button down */
-}
-
-.save-button:hover {
-    background-color: #357ABD;
+.booking-details p {
+    margin: 5px 0;
 }
 
 .footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
     position: fixed;
     bottom: 0;
     width: 100%;
     background-color: #f5f5f5;
     border-top: 1px solid #ddd;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px 0;
-    z-index: 100;
 }
 
 .help-button {

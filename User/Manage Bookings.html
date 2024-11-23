@@ -4,90 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OnoAir - My Bookings</title>
-    <!-- Link to the external header CSS -->
-    <link rel="stylesheet" href="../header.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 1000px;
-            margin: 20px auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            text-align: center;
-            color: #333;
-        }
-
-        .booking {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            padding: 15px;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-        }
-
-        .booking img {
-            width: 100px;
-            height: 100px;
-            background-color: #ccc;
-            border-radius: 8px;
-            margin-right: 20px;
-        }
-
-        .booking-details {
-            flex-grow: 1;
-        }
-
-        .booking-details p {
-            margin: 5px 0;
-        }
-
-        .footer {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px 20px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background-color: #f5f5f5;
-            border-top: 1px solid #ddd;
-        }
-
-        .help-button {
-            background-color: #333;
-            color: #fff;
-            font-size: 18px;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-        }
-
-        .help-button:hover {
-            background-color: #555;
-        }
-    </style>
+    <link rel="stylesheet" href="../header.css"> 
+    <link rel="stylesheet" href="./Manage Booking.css"> 
 </head>
 <body>
-    <!-- Header placeholder -->
     <div id="header-placeholder"></div>
 
-    <!-- Load header.html content -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             fetch('../header.html')
@@ -98,126 +20,43 @@
         });
     </script>
 
-    <!-- Page content -->
     <div class="container">
         <h2>My Bookings</h2>
-
-        <!-- Booking Items -->
-        <div class="booking">
-            <img src="../Images/krakow.jpg" alt="Krakow">
-            <div class="booking-details">
-                <p><strong>Origin:</strong> Tel Aviv</p>
-                <p><strong>Boarding:</strong> 16/7/2025 20:00</p>
-                <p><strong>Destination:</strong> Krakow</p>
-                <p><strong>Landing:</strong> 17/7/2025 01:00</p>
-                <p><strong>No. of passengers:</strong> 5</p>
-            </div>
-        </div>
-
-        <div class="booking">
-            <img src="../Images/larnaca.jpeg" alt="Larnaca">
-            <div class="booking-details">
-                <p><strong>Origin:</strong> Krakow</p>
-                <p><strong>Boarding:</strong> 20/5/2024 20:00</p>
-                <p><strong>Destination:</strong> Larnaca</p>
-                <p><strong>Landing:</strong> 21/5/2024 02:00</p>
-                <p><strong>No. of passengers:</strong> 6</p>
-            </div>
-        </div>
-
-        <div class="booking">
-            <img src="../Images/madrid.jpeg" alt="Madrid">
-            <div class="booking-details">
-                <p><strong>Origin:</strong> San Diego</p>
-                <p><strong>Boarding:</strong> 25/9/2025 10:00</p>
-                <p><strong>Destination:</strong> Madrid</p>
-                <p><strong>Landing:</strong> 25/9/2025 18:00</p>
-                <p><strong>No. of passengers:</strong> 4</p>
-            </div>
-        </div>
-
-        <div class="booking">
-            <img src="../Images/dubai.jpeg" alt="Dubai">
-            <div class="booking-details">
-                <p><strong>Origin:</strong> Las Vegas</p>
-                <p><strong>Boarding:</strong> 12/10/2025 14:00</p>
-                <p><strong>Destination:</strong> Dubai</p>
-                <p><strong>Landing:</strong> 13/10/2025 02:00</p>
-                <p><strong>No. of passengers:</strong> 2</p>
-            </div>
-        </div>
-
-        <div class="booking">
-            <img src="../images/istanbul.jpeg" alt="Istanbul">
-            <div class="booking-details">
-                <p><strong>Origin:</strong> Detroit</p>
-                <p><strong>Boarding:</strong> 5/11/2025 06:00</p>
-                <p><strong>Destination:</strong> Istanbul</p>
-                <p><strong>Landing:</strong> 5/11/2025 16:00</p>
-                <p><strong>No. of passengers:</strong> 3</p>
-            </div>
-        </div>
-
-        <div class="booking">
-            <img src="../Images/vienna.jpeg" alt="Vienna">
-            <div class="booking-details">
-                <p><strong>Origin:</strong> Denver</p>
-                <p><strong>Boarding:</strong> 3/12/2025 08:00</p>
-                <p><strong>Destination:</strong> Vienna</p>
-                <p><strong>Landing:</strong> 3/12/2025 16:30</p>
-                <p><strong>No. of passengers:</strong> 1</p>
-            </div>
-        </div>
-
-        <div class="booking">
-            <img src="../Images/bangkok.jpeg" alt="Bangkok">
-            <div class="booking-details">
-                <p><strong>Origin:</strong> Philadelphia</p>
-                <p><strong>Boarding:</strong> 15/1/2026 12:00</p>
-                <p><strong>Destination:</strong> Bangkok</p>
-                <p><strong>Landing:</strong> 16/1/2026 04:00</p>
-                <p><strong>No. of passengers:</strong> 7</p>
-            </div>
-        </div>
-
-        <div class="booking">
-            <img src="../Images/stockholm.jpeg" alt="Stockholm">
-            <div class="booking-details">
-                <p><strong>Origin:</strong> Phoenix</p>
-                <p><strong>Boarding:</strong> 23/2/2026 09:00</p>
-                <p><strong>Destination:</strong> Stockholm</p>
-                <p><strong>Landing:</strong> 23/2/2026 18:30</p>
-                <p><strong>No. of passengers:</strong> 2</p>
-            </div>
-        </div>
-
-        <div class="booking">
-            <img src="../Images/sao paulo.jpeg" alt="Sao Paulo">
-            <div class="booking-details">
-                <p><strong>Origin:</strong> Salt Lake City</p>
-                <p><strong>Boarding:</strong> 1/3/2026 15:00</p>
-                <p><strong>Destination:</strong> Sao Paulo</p>
-                <p><strong>Landing:</strong> 2/3/2026 03:30</p>
-                <p><strong>No. of passengers:</strong> 8</p>
-            </div>
-        </div>
-
-        <div class="booking">
-            <img src="../Images/cape town.jpeg" alt="Cape Town">
-            <div class="booking-details">
-                <p><strong>Origin:</strong> Minneapolis</p>
-                <p><strong>Boarding:</strong> 9/4/2026 11:30</p>
-                <p><strong>Destination:</strong> Cape Town</p>
-                <p><strong>Landing:</strong> 10/4/2026 08:00</p>
-                <p><strong>No. of passengers:</strong> 3</p>
-            </div>
-        </div>
-
+        <div id="bookings-container"></div>
     </div>
 
-<!-- Footer -->
-<div class="footer">
-    <button class="help-button" onclick="window.location.href='/Support.html'">?</button>
-</div>
+    <div class="footer">
+        <button class="help-button" onclick="window.location.href='/Support.html'">?</button>
+    </div>
+
+    <script type="module">
+        import BookingData from './My Booking Data.js';
+
+        const bookingData = new BookingData();
+
+        function renderBookings() {
+            const bookingsContainer = document.getElementById('bookings-container');
+
+            bookingData.getBookings().forEach(booking => {
+                const bookingElement = document.createElement('div');
+                bookingElement.classList.add('booking');
+
+                bookingElement.innerHTML = `
+                    <img src="${booking.image}" alt="${booking.alt}">
+                    <div class="booking-details">
+                        <p><strong>Origin:</strong> ${booking.origin}</p>
+                        <p><strong>Boarding:</strong> ${booking.boarding}</p>
+                        <p><strong>Destination:</strong> ${booking.destination}</p>
+                        <p><strong>Landing:</strong> ${booking.landing}</p>
+                        <p><strong>No. of passengers:</strong> ${booking.passengers}</p>
+                    </div>
+                `;
+
+                bookingsContainer.appendChild(bookingElement);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", renderBookings);
+    </script>
 </body>
 </html>

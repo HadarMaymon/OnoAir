@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OnoAir</title>
-    <link rel="stylesheet" href="header.css"> <!-- Link to the header CSS file -->
-    <link rel="stylesheet" href="MainScreen.css"> <!-- Link to the main CSS file -->
+    <link rel="stylesheet" href="header.css"> 
+    <link rel="stylesheet" href="MainScreen.css"> 
 </head>
 <body>
 
@@ -42,11 +42,10 @@
         </div>
     </div>
 
-    <!-- Footer placeholder -->
+    <!-- Footer -->
     <div id="footer-placeholder"></div>
-
-    <!-- Load footer.html content into the placeholder -->
     <script>
+        // Load footer.html content into the placeholder
         document.addEventListener("DOMContentLoaded", function () {
             fetch('footer.html')
                 .then(response => response.text())
@@ -55,5 +54,6 @@
                 });
         });
     </script>
+
 </body>
 </html>

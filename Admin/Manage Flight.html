@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OnoAir - Manage Flights</title>
-    <link rel="stylesheet" href="../header.css"> <!-- Link to the header CSS file from the root -->
-    <link rel="stylesheet" href="Manage Flight.css"> <!-- Link to the manage flights CSS file -->
+    <link rel="stylesheet" href="../header.css">
+    <link rel="stylesheet" href="Manage Flight.css">
 </head>
 <body>
 
@@ -15,14 +15,12 @@
     <!-- Load header and footer dynamically -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Load header
             fetch('../header.html')
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('header-placeholder').innerHTML = data;
                 });
 
-            // Load footer
             fetch('../footer.html')
                 .then(response => response.text())
                 .then(data => {
@@ -31,97 +29,57 @@
         });
     </script>
 
-    <!-- Main content for Manage Flights -->
+    <!-- Main content -->
     <div class="container">
         <h2>Manage Flights</h2>
-        
         <table>
             <thead>
                 <tr>
                     <th>Flight No.</th>
                     <th>Origin</th>
                     <th>Destination</th>
-                    <th>Duration</th>
+                    <th>Boarding</th>
+                    <th>Landing</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td>W61283</td>
-                    <td>Tel Aviv</td>
-                    <td>Krakow</td>
-                    <td>3h 30m</td>
-                </tr>
-                <tr>
-                    <td>LX8396</td>
-                    <td>Larnaca</td>
-                    <td>Zurich</td>
-                    <td>3h 50m</td>
-                </tr>
-                <tr>
-                    <td>BA123</td>
-                    <td>London</td>
-                    <td>New York</td>
-                    <td>7h 45m</td>
-                </tr>
-                <tr>
-                    <td>AF456</td>
-                    <td>Paris</td>
-                    <td>Dubai</td>
-                    <td>6h 30m</td>
-                </tr>
-                <tr>
-                    <td>EK202</td>
-                    <td>Dubai</td>
-                    <td>Sydney</td>
-                    <td>13h 50m</td>
-                </tr>
-                <tr>
-                    <td>NH789</td>
-                    <td>Tokyo</td>
-                    <td>Los Angeles</td>
-                    <td>10h 30m</td>
-                </tr>
-                <tr>
-                    <td>DL350</td>
-                    <td>Atlanta</td>
-                    <td>Toronto</td>
-                    <td>2h 20m</td>
-                </tr>
-                <tr>
-                    <td>QF402</td>
-                    <td>Sydney</td>
-                    <td>Auckland</td>
-                    <td>3h 5m</td>
-                </tr>
-                <tr>
-                    <td>LH890</td>
-                    <td>Berlin</td>
-                    <td>Rome</td>
-                    <td>2h 10m</td>
-                </tr>
-                <tr>
-                    <td>UA256</td>
-                    <td>San Francisco</td>
-                    <td>Chicago</td>
-                    <td>4h 5m</td>
-                </tr>
+            <tbody id="flights-container">
+                <!-- Dynamic rows will load here -->
             </tbody>
         </table>
-
-        <!-- Add Flight Button -->
         <button class="add-flight-button" onclick="navigateToAddFlight()">Add Flight</button>
     </div>
 
-<!-- Footer -->
-<div class="footer">
-    <button class="help-button" onclick="window.location.href='/Support.html'">?</button>
-</div>
+    <!-- Footer -->
+    <div class="footer">
+        <button class="help-button" onclick="window.location.href='/Support.html'">?</button>
+    </div>
 
-    <!-- JavaScript for navigation -->
-    <script>
-        function navigateToAddFlight() {
-            window.location.href = 'Add Flight.html'; 
+    <!-- JavaScript -->
+    <script type="module">
+        import { getFlightData } from './Manage Flight.js';
+
+        function loadFlights() {
+            const flights = getFlightData();
+            const flightsContainer = document.getElementById('flights-container');
+
+            flights.forEach(flight => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${flight.flightNumber}</td>
+                    <td>${flight.origin}</td>
+                    <td>${flight.destination}</td>
+                    <td>${flight.boarding}</td>
+                    <td>${flight.landing}</td>
+                `;
+                flightsContainer.appendChild(row);
+            });
         }
+
+        function navigateToAddFlight() {
+            window.location.href = 'Add Flight.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', loadFlights);
     </script>
 </body>
 </html>

@@ -6,7 +6,9 @@
     <title>Booking Details</title>
     <link rel="stylesheet" href="../header.css">
     <link rel="stylesheet" href="Booking Details.css">
-    <script>
+    <script type="module">
+        import FlightDetails from './Book A Flight.js';
+
         document.addEventListener("DOMContentLoaded", function () {
             // Load the header
             fetch('../header.html')
@@ -22,99 +24,22 @@
                     document.getElementById('footer-placeholder').innerHTML = data;
                 });
 
-            // Retrieve the flight details from URL
+            // Retrieve flight details from the class and URL
             const urlParams = new URLSearchParams(window.location.search);
             const flightNumber = urlParams.get('flightNumber');
-            const boarding = urlParams.get('boarding');
-            const landing = urlParams.get('landing');
-            const flightDate = urlParams.get('date'); // Optional: Pass flight date through URL if required
 
-            // Flight information (use static data as fallback for flightNumber)
-            const flightInfo = {
-                'W61283': {
-                    origin: 'Tel Aviv',
-                    destination: 'Krakow',
-                    date: '16/7/2025',
-                    boardingTime: '20:00',
-                    landingTime: '01:00 (17/7/2025)'
-                },
-                'LX8396': {
-                    origin: 'Larnaca',
-                    destination: 'Zurich',
-                    date: '20/8/2025',
-                    boardingTime: '18:30',
-                    landingTime: '21:15'
-                },
-                'BA2547': {
-                    origin: 'San Diego',
-                    destination: 'Madrid',
-                    date: '25/9/2025',
-                    boardingTime: '10:00',
-                    landingTime: '18:00'
-                },
-                'AF3201': {
-                    origin: 'Las Vegas',
-                    destination: 'Dubai',
-                    date: '12/10/2025',
-                    boardingTime: '14:00',
-                    landingTime: '02:00 (13/10/2025)'
-                },
-                'EK412': {
-                    origin: 'Detroit',
-                    destination: 'Istanbul',
-                    date: '5/11/2025',
-                    boardingTime: '06:00',
-                    landingTime: '16:00'
-                },
-                'LH2029': {
-                    origin: 'Denver',
-                    destination: 'Vienna',
-                    date: '3/12/2025',
-                    boardingTime: '08:00',
-                    landingTime: '16:30'
-                },
-                'DL1085': {
-                    origin: 'Philadelphia',
-                    destination: 'Bangkok',
-                    date: '15/1/2026',
-                    boardingTime: '12:00',
-                    landingTime: '04:00 (16/1/2026)'
-                },
-                'AA1140': {
-                    origin: 'Phoenix',
-                    destination: 'Stockholm',
-                    date: '23/2/2026',
-                    boardingTime: '09:00',
-                    landingTime: '18:30'
-                },
-                'UA329': {
-                    origin: 'Salt Lake City',
-                    destination: 'Sao Paulo',
-                    date: '1/3/2026',
-                    boardingTime: '15:00',
-                    landingTime: '03:30 (2/3/2026)'
-                },
-                'AZ754': {
-                    origin: 'Minneapolis',
-                    destination: 'Cape Town',
-                    date: '9/4/2026',
-                    boardingTime: '11:30',
-                    landingTime: '08:00 (10/4/2026)'
-                }
-            };
-
-            // Get flight details
-            const flight = flightInfo[flightNumber];
+            const flightDetails = new FlightDetails();
+            const flights = flightDetails.getFlights();
+            const flight = flights.find(flight => flight.flightNumber === flightNumber);
 
             // Populate flight details
             if (flight) {
                 document.getElementById('flight-details').innerHTML = `
-                    <strong>Flight No:</strong> ${flightNumber}<br>
+                    <strong>Flight No:</strong> ${flight.flightNumber}<br>
                     <strong>Origin:</strong> ${flight.origin}<br>
                     <strong>Destination:</strong> ${flight.destination}<br>
-                    <strong>Flight Date:</strong> ${flightDate || flight.date}<br>
-                    <strong>Boarding Time:</strong> ${boarding || flight.boardingTime}<br>
-                    <strong>Landing Time:</strong> ${landing || flight.landingTime}
+                    <strong>Boarding Time:</strong> ${flight.boarding}<br>
+                    <strong>Landing Time:</strong> ${flight.landing}
                 `;
             } else {
                 document.getElementById('flight-details').innerText = "Flight details not found.";
@@ -170,9 +95,9 @@
         <button class="save-button">Save</button>
     </div>
 
-<!-- Footer -->
-<div class="footer">
-    <button class="help-button" onclick="window.location.href='/Support.html'">?</button>
-</div>
+    <!-- Footer -->
+    <div class="footer">
+        <button class="help-button" onclick="window.location.href='/Support.html'">?</button>
+    </div>
 </body>
 </html>

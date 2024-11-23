@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../header.css">
     <link rel="stylesheet" href="Book A Flight.css">
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             // Load the header
             fetch('../header.html')
                 .then(response => response.text())
@@ -22,11 +22,6 @@
                     document.getElementById('footer-placeholder').innerHTML = data;
                 });
         });
-
-        // Function to handle the booking button click
-        function goToBookingDetails(flightNumber, boarding, landing) {
-            window.location.href = `Booking Details.html?flightNumber=${flightNumber}&boarding=${encodeURIComponent(boarding)}&landing=${encodeURIComponent(landing)}`;
-        }
     </script>
 </head>
 <body>
@@ -48,95 +43,52 @@
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td>W61283</td>
-                    <td>Tel Aviv</td>
-                    <td>Krakow</td>
-                    <td>16/7/2025 20:00</td>
-                    <td>17/7/2025 01:00</td>
-                    <td><button class="book-button" onclick="goToBookingDetails('W61283', '16/7/2025 20:00', '17/7/2025 01:00')">Book</button></td>
-                </tr>
-                <tr>
-                    <td>LX8396</td>
-                    <td>Larnaca</td>
-                    <td>Zurich</td>
-                    <td>20/8/2025 18:30</td>
-                    <td>20/8/2025 21:15</td>
-                    <td><button class="book-button" onclick="goToBookingDetails('LX8396', '20/8/2025 18:30', '20/8/2025 21:15')">Book</button></td>
-                </tr>
-                <tr>
-                    <td>BA2547</td>
-                    <td>San Diego</td>
-                    <td>Madrid</td>
-                    <td>25/9/2025 10:00</td>
-                    <td>25/9/2025 18:00</td>
-                    <td><button class="book-button" onclick="goToBookingDetails('BA2547', '25/9/2025 10:00', '25/9/2025 18:00')">Book</button></td>
-                </tr>
-                <tr>
-                    <td>AF3201</td>
-                    <td>Las Vegas</td>
-                    <td>Dubai</td>
-                    <td>12/10/2025 14:00</td>
-                    <td>13/10/2025 02:00</td>
-                    <td><button class="book-button" onclick="goToBookingDetails('AF3201', '12/10/2025 14:00', '13/10/2025 02:00')">Book</button></td>
-                </tr>
-                <tr>
-                    <td>EK412</td>
-                    <td>Detroit</td>
-                    <td>Istanbul</td>
-                    <td>5/11/2025 06:00</td>
-                    <td>5/11/2025 16:00</td>
-                    <td><button class="book-button" onclick="goToBookingDetails('EK412', '5/11/2025 06:00', '5/11/2025 16:00')">Book</button></td>
-                </tr>
-                <tr>
-                    <td>LH2029</td>
-                    <td>Denver</td>
-                    <td>Vienna</td>
-                    <td>3/12/2025 08:00</td>
-                    <td>3/12/2025 16:30</td>
-                    <td><button class="book-button" onclick="goToBookingDetails('LH2029', '3/12/2025 08:00', '3/12/2025 16:30')">Book</button></td>
-                </tr>
-                <tr>
-                    <td>DL1085</td>
-                    <td>Philadelphia</td>
-                    <td>Bangkok</td>
-                    <td>15/1/2026 12:00</td>
-                    <td>16/1/2026 04:00</td>
-                    <td><button class="book-button" onclick="goToBookingDetails('DL1085', '15/1/2026 12:00', '16/1/2026 04:00')">Book</button></td>
-                </tr>
-                <tr>
-                    <td>AA1140</td>
-                    <td>Phoenix</td>
-                    <td>Stockholm</td>
-                    <td>23/2/2026 09:00</td>
-                    <td>23/2/2026 18:30</td>
-                    <td><button class="book-button" onclick="goToBookingDetails('AA1140', '23/2/2026 09:00', '23/2/2026 18:30')">Book</button></td>
-                </tr>
-                <tr>
-                    <td>UA329</td>
-                    <td>Salt Lake City</td>
-                    <td>Sao Paulo</td>
-                    <td>1/3/2026 15:00</td>
-                    <td>2/3/2026 03:30</td>
-                    <td><button class="book-button" onclick="goToBookingDetails('UA329', '1/3/2026 15:00', '2/3/2026 03:30')">Book</button></td>
-                </tr>
-                <tr>
-                    <td>AZ754</td>
-                    <td>Minneapolis</td>
-                    <td>Cape Town</td>
-                    <td>9/4/2026 11:30</td>
-                    <td>10/4/2026 08:00</td>
-                    <td><button class="book-button" onclick="goToBookingDetails('AZ754', '9/4/2026 11:30', '10/4/2026 08:00')">Book</button></td>
-                </tr>
+            <tbody id="flights-container">
+                <!-- Dynamic rows will load here -->
             </tbody>
         </table>
     </div>
 
-<!-- Footer -->
-<div class="footer">
-    <button class="help-button" onclick="window.location.href='/Support.html'">?</button>
-</div>
+    <!-- Footer -->
+    <div class="footer">
+        <button class="help-button" onclick="window.location.href='/Support.html'">?</button>
+    </div>
 
+    <!-- JavaScript -->
+    <script type="module">
+        import FlightDetails from './Book A Flight.js';
+
+        function renderFlights() {
+            const flightDetails = new FlightDetails(); // Instantiate the class
+            const flights = flightDetails.getFlights(); // Get flights array
+            const flightsContainer = document.getElementById('flights-container');
+
+            // Loop through flights and create table rows dynamically
+            flights.forEach(flight => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${flight.flightNumber}</td>
+                    <td>${flight.origin}</td>
+                    <td>${flight.destination}</td>
+                    <td>${flight.boarding}</td>
+                    <td>${flight.landing}</td>
+                    <td>
+                        <button class="book-button" onclick="goToBookingDetails('${flight.flightNumber}', '${flight.boarding}', '${flight.landing}')">
+                            Book
+                        </button>
+                    </td>
+                `;
+                flightsContainer.appendChild(row);
+            });
+        }
+
+        // Redirect function for booking details
+        function goToBookingDetails(flightNumber, boarding, landing) {
+            window.location.href = `./User/Booking Details.html?flightNumber=${flightNumber}&boarding=${encodeURIComponent(boarding)}&landing=${encodeURIComponent(landing)}`;
+        }
+
+        // Load flights on page load
+        document.addEventListener('DOMContentLoaded', renderFlights);
+    </script>
 </body>
 </html>

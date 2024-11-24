@@ -1,4 +1,4 @@
-class DestinationData {
+export default class DestinationManager {
     constructor() {
         this.destinations = [
             {
@@ -82,5 +82,3 @@ class DestinationData {
         this.destinations.push(destination);
     }
 }
-
-export default DestinationData;

@@ -40,7 +40,7 @@
             </tr>
             <!-- Rows will be dynamically added here -->
         </table>
-        <button class="add-button" onclick="addDestination()">Add Destination</button>
+        <button class="add-button" onclick="window.location.href='./Add Flight.html'">Add Destination</button>
     </div>
 
     <div class="footer">
@@ -76,20 +76,6 @@
             });
         }
 
-        // Example function to add a new destination
-        function addDestination() {
-            const newDestination = {
-                departure: "Example City",
-                arrival: "Example Arrival",
-                departureTime: "12:00 PM",
-                arrivalTime: "02:00 PM",
-                airportWebsite: "https://example.com"
-            };
-            destinationManager.addDestination(newDestination);
-            renderDestinations();
-        }
-
-        // Initial rendering of destinations
         document.addEventListener("DOMContentLoaded", renderDestinations);
     </script>
 </body>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Destination</title>
+    <link rel="stylesheet" href="../header.css">
+    <link rel="stylesheet" href="Add Destination.css">
+    <script type="module" src="Add Destination.js"></script>
+</head>
+<body>
+    <!-- Header placeholder -->
+    <div id="header-placeholder"></div>
+
+    <!-- Main container -->
+    <div class="container">
+        <main>
+            <h2>New Destination</h2>
+            <form id="destination-form">
+                <label for="destination-code">Destination Code:</label>
+                <input type="text" id="destination-code" placeholder="Enter destination code" required><br>
+
+                <label for="destination-name">Destination Name:</label>
+                <input type="text" id="destination-name" placeholder="Enter destination name" required><br>
+
+                <label for="airport-name">Airport Name:</label>
+                <input type="text" id="airport-name" placeholder="Enter airport name" required><br>
+
+                <label for="airport-url">Airport URL:</label>
+                <input type="url" id="airport-url" placeholder="Enter airport URL" required><br>
+
+                <label for="image-url">Image URL:</label>
+                <input type="url" id="image-url" placeholder="Enter image URL" required><br>
+
+                <button type="submit">Save</button>
+            </form>
+        </main>
+    </div>
+
+    <div class="footer">
+        <button class="help-button" onclick="window.location.href='/Support.html'">?</button>
+    </div>
+
+</body>
+</html>

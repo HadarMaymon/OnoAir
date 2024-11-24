@@ -7,6 +7,7 @@ class FlightDetails {
                 destination: "Krakow",
                 boarding: "16/7/2025 20:00",
                 landing: "17/7/2025 01:00",
+                availableSeats: 120, // Added availableSeats
             },
             {
                 flightNumber: "LX8396",
@@ -14,6 +15,7 @@ class FlightDetails {
                 destination: "Zurich",
                 boarding: "20/8/2025 18:30",
                 landing: "20/8/2025 21:15",
+                availableSeats: 85,
             },
             {
                 flightNumber: "BA2547",
@@ -21,6 +23,7 @@ class FlightDetails {
                 destination: "Madrid",
                 boarding: "25/9/2025 10:00",
                 landing: "25/9/2025 18:00",
+                availableSeats: 150,
             },
             {
                 flightNumber: "AF3201",
@@ -28,6 +31,7 @@ class FlightDetails {
                 destination: "Dubai",
                 boarding: "12/10/2025 14:00",
                 landing: "13/10/2025 02:00",
+                availableSeats: 200,
             },
             {
                 flightNumber: "EK412",
@@ -35,6 +39,7 @@ class FlightDetails {
                 destination: "Istanbul",
                 boarding: "5/11/2025 06:00",
                 landing: "5/11/2025 16:00",
+                availableSeats: 75,
             },
             {
                 flightNumber: "LH2029",
@@ -42,6 +47,7 @@ class FlightDetails {
                 destination: "Vienna",
                 boarding: "3/12/2025 08:00",
                 landing: "3/12/2025 16:30",
+                availableSeats: 60,
             },
             {
                 flightNumber: "DL1085",
@@ -49,6 +55,7 @@ class FlightDetails {
                 destination: "Bangkok",
                 boarding: "15/1/2026 12:00",
                 landing: "16/1/2026 04:00",
+                availableSeats: 90,
             },
             {
                 flightNumber: "AA1140",
@@ -56,6 +63,7 @@ class FlightDetails {
                 destination: "Stockholm",
                 boarding: "23/2/2026 09:00",
                 landing: "23/2/2026 18:30",
+                availableSeats: 45,
             },
             {
                 flightNumber: "UA329",
@@ -63,6 +71,7 @@ class FlightDetails {
                 destination: "Sao Paulo",
                 boarding: "1/3/2026 15:00",
                 landing: "2/3/2026 03:30",
+                availableSeats: 110,
             },
             {
                 flightNumber: "AZ754",
@@ -70,6 +79,7 @@ class FlightDetails {
                 destination: "Cape Town",
                 boarding: "9/4/2026 11:30",
                 landing: "10/4/2026 08:00",
+                availableSeats: 50,
             },
         ];
     }

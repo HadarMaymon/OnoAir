@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="./Manage Booking.css"> 
 </head>
 <body>
+    <!-- Header -->
     <div id="header-placeholder"></div>
-
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             fetch('../header.html')
@@ -20,17 +20,20 @@
         });
     </script>
 
+    <!-- Main Container -->
     <div class="container">
         <h2>My Bookings</h2>
         <div id="bookings-container"></div>
     </div>
 
+    <!-- Footer -->
     <div class="footer">
         <button class="help-button" onclick="window.location.href='/Support.html'">?</button>
     </div>
 
+    <!-- JavaScript for fetching and rendering bookings -->
     <script type="module">
-        import BookingData from './My Booking Data.js';
+        import BookingData from './Manage Booking.js';
 
         const bookingData = new BookingData();
 

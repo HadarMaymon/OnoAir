@@ -1,3 +1,7 @@
+html {
+    overflow: hidden;
+}
+
 .container {
     font-family: Arial, Helvetica, sans-serif;
     width: 90%;
@@ -8,6 +12,8 @@
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding-bottom: 60px; /* Added bottom padding for footer clearance */
+    max-height: 500px;
+    overflow: auto;
 }
 
 .footer {
@@ -53,17 +59,18 @@ h2 {
 .booking-details p {
     margin: 5px 0;
 }
-
+/* Footer styling */
 .footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px 20px;
     position: fixed;
     bottom: 0;
     width: 100%;
     background-color: #f5f5f5;
     border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+    z-index: 100;
 }
 
 .help-button {

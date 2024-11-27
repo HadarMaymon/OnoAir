@@ -1,3 +1,7 @@
+html {
+    overflow: hidden;
+}
+
 .container {
     font-family: Arial, Helvetica, sans-serif;
     width: 90%;
@@ -8,6 +12,8 @@
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding-bottom: 60px; /* Added bottom padding for footer clearance */
+    max-height: 500px;
+    overflow: auto;
 }
 
 .footer {

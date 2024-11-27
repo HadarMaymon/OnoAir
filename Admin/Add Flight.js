@@ -29,8 +29,9 @@ function populateAirportOptions() {
 }
 
 function validateForm(event) {
-    event.preventDefault(); // Prevent form submission
+    event.preventDefault(); // Prevent default form submission behavior
 
+    // Retrieve form values
     const flightNo = document.getElementById('flight-no').value.trim();
     const origin = document.getElementById('origin').value;
     const destination = document.getElementById('destination').value;
@@ -40,50 +41,53 @@ function validateForm(event) {
     const arrivalTime = document.getElementById('arrival-time').value;
     const noOfSeats = document.getElementById('no-of-seats').value;
 
-    // Validation checks
+    // Validation logic
     if (!flightNo) {
-        alert("Please enter the flight number.");
+        alert("Error: Please enter the flight number.");
         return;
     }
 
     if (!origin || !destination) {
-        alert("Please select both origin and destination.");
+        alert("Error: Please select both origin and destination.");
         return;
     }
 
     if (origin === destination) {
-        alert("Origin and destination cannot be the same.");
+        alert("Error: Origin and destination cannot be the same.");
         return;
     }
 
     if (!boardingDate || !boardingTime) {
-        alert("Please select the boarding date and time.");
+        alert("Error: Please select the boarding date and time.");
         return;
     }
 
     if (!arrivalDate || !arrivalTime) {
-        alert("Please select the arrival date and time.");
+        alert("Error: Please select the arrival date and time.");
         return;
     }
 
-    if (new Date(`${boardingDate}T${boardingTime}`) >= new Date(`${arrivalDate}T${arrivalTime}`)) {
-        alert("Arrival date and time must be after boarding date and time.");
+    const boardingDateTime = new Date(`${boardingDate}T${boardingTime}`);
+    const arrivalDateTime = new Date(`${arrivalDate}T${arrivalTime}`);
+
+    if (boardingDateTime >= arrivalDateTime) {
+        alert("Error: Arrival date and time must be after boarding date and time.");
         return;
     }
 
     if (!noOfSeats || noOfSeats < 1 || noOfSeats > 300) {
-        alert("Please enter a valid number of seats (1-300).");
+        alert("Error: Please enter a valid number of seats (1-300).");
         return;
     }
 
-    // Success alert
+    // Show success message
     alert("Flight added successfully!");
 
-    // Reset form fields
-    document.getElementById('add-flight-form').reset();
+    // Redirect to Manage Flight page
+    window.location.href = "Manage Flight.html";
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     // Load header and footer
     fetch('../header.html')
         .then(response => response.text())
@@ -100,6 +104,6 @@ document.addEventListener("DOMContentLoaded", function() {
     // Populate airport options
     populateAirportOptions();
 
-    // Add form validation
+    // Attach form submission event listener
     document.getElementById('add-flight-form').addEventListener('submit', validateForm);
 });

@@ -54,5 +54,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Show success message
         alert("Destination added successfully!");
+
+        // Redirect to Manage Destination page
+        window.location.href = "Manage Destination.html";
     });
 });

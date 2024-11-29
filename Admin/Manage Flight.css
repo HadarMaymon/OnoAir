@@ -20,7 +20,7 @@ body {
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    max-height: 500px;
+    max-height: 460px;
     overflow: auto;
 }
 
@@ -107,3 +107,4 @@ tr:nth-child(even) td {
 .help-button:hover {
     background-color: #555;
 }
+

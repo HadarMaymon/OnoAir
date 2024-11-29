@@ -20,7 +20,7 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Soft shadow for depth */
     border: 1px solid #ddd; /* Light border */
-    max-height: 500px;
+    max-height: 460px;
     overflow: auto;
 }
 

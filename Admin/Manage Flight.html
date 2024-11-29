@@ -8,78 +8,32 @@
     <link rel="stylesheet" href="Manage Flight.css">
 </head>
 <body>
-
-    <!-- Header placeholder -->
     <div id="header-placeholder"></div>
 
-    <!-- Load header and footer dynamically -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            fetch('../header.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('header-placeholder').innerHTML = data;
-                });
-
-            fetch('../footer.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('footer-placeholder').innerHTML = data;
-                });
-        });
-    </script>
-
-    <!-- Main content -->
     <div class="container">
         <h2>Manage Flights</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Flight No.</th>
-                    <th>Origin</th>
-                    <th>Destination</th>
-                    <th>Boarding</th>
-                    <th>Landing</th>
-                </tr>
-            </thead>
-            <tbody id="flights-container">
-                <!-- Dynamic rows will load here -->
-            </tbody>
-        </table>
+        <div class="scrollable-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Flight No.</th>
+                        <th>Origin</th>
+                        <th>Destination</th>
+                        <th>Boarding</th>
+                        <th>Landing</th>
+                        <th>Available Seats</th>
+                    </tr>
+                </thead>
+                <tbody id="flights-container"></tbody>
+            </table>
+        </div>
         <button class="add-flight-button" onclick="window.location.href='./Add Flight.html'">Add Flight</button>
     </div>
 
-    <!-- Footer -->
-    <div class="footer">
+    <div id="footer-placeholder" class="footer">
         <button class="help-button" onclick="window.location.href='/Support.html'">?</button>
     </div>
 
-    <!-- JavaScript -->
-    <script type="module">
-        import { getFlightData } from './Manage Flight.js';
-
-        function loadFlights() {
-            const flights = getFlightData();
-            const flightsContainer = document.getElementById('flights-container');
-
-            flights.forEach(flight => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${flight.flightNumber}</td>
-                    <td>${flight.origin}</td>
-                    <td>${flight.destination}</td>
-                    <td>${flight.boarding}</td>
-                    <td>${flight.landing}</td>
-                `;
-                flightsContainer.appendChild(row);
-            });
-        }
-
-        function navigateToAddFlight() {
-            window.location.href = 'Add Flight.html';
-        }
-
-        document.addEventListener('DOMContentLoaded', loadFlights);
-    </script>
+    <script type="module" src="./Manage Flight.js"></script>
 </body>
 </html>

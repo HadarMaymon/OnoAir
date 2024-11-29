@@ -1,4 +1,4 @@
-import FlightDetails from './Flight Data.js';
+import FlightDetails from '../Flight Data.js';
 
 function renderFlights() {
     const flightDetails = new FlightDetails(); // Instantiate the class

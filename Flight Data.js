@@ -7,7 +7,7 @@ class FlightDetails {
                 destination: "Krakow",
                 boarding: "16/7/2025 20:00",
                 landing: "17/7/2025 01:00",
-                availableSeats: 120, // Added availableSeats
+                availableSeats: 120, 
             },
             {
                 flightNumber: "LX8396",

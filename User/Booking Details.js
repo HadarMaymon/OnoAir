@@ -1,4 +1,4 @@
-import FlightDetails from './Flight Data.js';
+import FlightDetails from '../Flight Data.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     // Ensure header and footer are loaded

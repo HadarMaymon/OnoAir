@@ -91,6 +91,8 @@ function handleSave() {
     successMessageContainer.innerHTML = '';
     document.querySelectorAll(".error-message-inline").forEach((error) => error.remove());
 
+    const idMap = new Map(); // To store IDs and their associated names
+
     for (let i = 1; i <= numPassengers; i++) {
         const name = document.getElementById(`name-${i}`);
         const passportId = document.getElementById(`passport-id-${i}`);
@@ -115,10 +117,25 @@ function handleSave() {
             errorMessages.push(`Passenger ${i}: ID must be exactly 9 numeric digits.`);
         }
 
+        // Check for duplicate IDs with different names
         if (isValid) {
+            const currentId = passportId.value.trim();
+            const currentName = name.value.trim();
+
+            if (idMap.has(currentId)) {
+                const existingName = idMap.get(currentId);
+                if (existingName !== currentName) {
+                    isValid = false;
+                    passportId.style.border = "2px solid red";
+                    errorMessages.push(`Passenger ${i}: The ID ${currentId} is already used for another passenger with a different name (${existingName}).`);
+                }
+            } else {
+                idMap.set(currentId, currentName);
+            }
+
             passengerDetails.push({
-                name: name.value.trim(),
-                passportId: passportId.value.trim(),
+                name: currentName,
+                passportId: currentId,
             });
         }
     }

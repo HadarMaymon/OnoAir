@@ -3,10 +3,8 @@ import { FlightData } from '../Flight Data.js';
 document.addEventListener("DOMContentLoaded", () => {
     renderFlights();
 
-    // Add event listener for the search button
     document.getElementById('searchButton').addEventListener('click', filterFlights);
 
-    // Add event listener for the "Enter" key in the search input
     document.getElementById('searchInput').addEventListener('keyup', (event) => {
         if (event.key === "Enter") {
             filterFlights();

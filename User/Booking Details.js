@@ -43,18 +43,14 @@ function getFlightDetails(flightNumber) {
 
 function displayFlightDetails(flight) {
     const details = `
-        <div><strong>Flight No:</strong> ${flight.flightNumber}</div>
-        <div><strong>Origin:</strong> ${flight.origin}</div>
-        <div><strong>Destination:</strong> ${flight.destination}</div>
-        <div><strong>Boarding:</strong> ${flight.boarding}</div>
-        <div><strong>Landing:</strong> ${flight.landing}</div>
-        <div><strong>Available Seats:</strong> ${flight.availableSeats}</div>
+        <strong>Flight No:</strong> ${flight.flightNumber} |
+        <strong>Origin:</strong> ${flight.origin} |
+        <strong>Destination:</strong> ${flight.destination} |
+        <strong>Boarding:</strong> ${flight.boarding} |
+        <strong>Landing:</strong> ${flight.landing} |
+        <strong>Available Seats:</strong> ${flight.availableSeats}
     `;
-    const flightDetailsContainer = document.getElementById('flight-details');
-    flightDetailsContainer.innerHTML = details;
-    flightDetailsContainer.style.display = "grid";
-    flightDetailsContainer.style.gridTemplateColumns = "1fr 1fr"; // Two-column layout
-    flightDetailsContainer.style.gap = "10px"; // Space between items
+    document.getElementById('flight-details').innerHTML = details;
 
     const numPassengersInput = document.getElementById('num-passengers');
     numPassengersInput.max = flight.availableSeats;

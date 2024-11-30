@@ -4,21 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OnoAir - My Bookings</title>
-    <link rel="stylesheet" href="../header.css"> 
-    <link rel="stylesheet" href="./Manage Booking.css"> 
+    <link rel="stylesheet" href="../header.css">
+    <link rel="stylesheet" href="./Manage Bookings.css">
+    <script type="module" src="./Manage Bookings.js"></script>
 </head>
 <body>
     <!-- Header -->
     <div id="header-placeholder"></div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            fetch('../header.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('header-placeholder').innerHTML = data;
-                });
-        });
-    </script>
 
     <!-- Main Container -->
     <div class="container">
@@ -31,35 +23,5 @@
         <button class="help-button" onclick="window.location.href='/Support.html'">?</button>
     </div>
 
-    <!-- JavaScript for fetching and rendering bookings -->
-    <script type="module">
-        import BookingData from './Manage Booking.js';
-
-        const bookingData = new BookingData();
-
-        function renderBookings() {
-            const bookingsContainer = document.getElementById('bookings-container');
-
-            bookingData.getBookings().forEach(booking => {
-                const bookingElement = document.createElement('div');
-                bookingElement.classList.add('booking');
-
-                bookingElement.innerHTML = `
-                    <img src="${booking.image}" alt="${booking.alt}">
-                    <div class="booking-details">
-                        <p><strong>Origin:</strong> ${booking.origin}</p>
-                        <p><strong>Boarding:</strong> ${booking.boarding}</p>
-                        <p><strong>Destination:</strong> ${booking.destination}</p>
-                        <p><strong>Landing:</strong> ${booking.landing}</p>
-                        <p><strong>No. of passengers:</strong> ${booking.passengers}</p>
-                    </div>
-                `;
-
-                bookingsContainer.appendChild(bookingElement);
-            });
-        }
-
-        document.addEventListener("DOMContentLoaded", renderBookings);
-    </script>
 </body>
 </html>

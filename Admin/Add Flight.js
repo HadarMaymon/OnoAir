@@ -64,6 +64,8 @@ function populateAirportOptions() {
     });
 }
 
+document.getElementById('add-flight-form').addEventListener('submit', validateAndAddFlight);
+
 function validateAndAddFlight(event) {
     event.preventDefault(); // Prevent form submission
 
@@ -75,10 +77,14 @@ function validateAndAddFlight(event) {
     const boardingTime = document.getElementById('boarding-time').value;
     const arrivalDate = document.getElementById('arrival-date').value;
     const arrivalTime = document.getElementById('arrival-time').value;
-    const noOfSeats = parseInt(document.getElementById('no-of-seats').value, 10);
+    const noOfSeats = document.getElementById('no-of-seats').value;
 
     const messageContainer = document.getElementById('message-container');
     messageContainer.innerHTML = ''; // Clear any previous messages
+
+    // Reset input styles
+    const inputs = document.querySelectorAll('#add-flight-form input, #add-flight-form select');
+    inputs.forEach(input => input.classList.remove('error-border'));
 
     // Validation
     let isValid = true;
@@ -86,26 +92,34 @@ function validateAndAddFlight(event) {
 
     if (!flightNo) {
         isValid = false;
+        document.getElementById('flight-no').classList.add('error-border');
         messages.push("Flight number is required.");
     }
 
     if (!origin || !destination) {
         isValid = false;
+        if (!origin) document.getElementById('origin').classList.add('error-border');
+        if (!destination) document.getElementById('destination').classList.add('error-border');
         messages.push("Both origin and destination must be selected.");
     }
 
     if (origin === destination) {
         isValid = false;
+        document.getElementById('destination').classList.add('error-border');
         messages.push("Origin and destination cannot be the same.");
     }
 
     if (!boardingDate || !boardingTime) {
         isValid = false;
+        if (!boardingDate) document.getElementById('boarding-date').classList.add('error-border');
+        if (!boardingTime) document.getElementById('boarding-time').classList.add('error-border');
         messages.push("Boarding date and time must be selected.");
     }
 
     if (!arrivalDate || !arrivalTime) {
         isValid = false;
+        if (!arrivalDate) document.getElementById('arrival-date').classList.add('error-border');
+        if (!arrivalTime) document.getElementById('arrival-time').classList.add('error-border');
         messages.push("Arrival date and time must be selected.");
     }
 
@@ -114,30 +128,34 @@ function validateAndAddFlight(event) {
 
     if (boardingDateTime >= arrivalDateTime) {
         isValid = false;
+        document.getElementById('arrival-date').classList.add('error-border');
+        document.getElementById('arrival-time').classList.add('error-border');
         messages.push("Arrival date and time must be after boarding date and time.");
     }
 
     if (boardingDateTime < new Date()) {
         isValid = false;
+        document.getElementById('boarding-date').classList.add('error-border');
+        document.getElementById('boarding-time').classList.add('error-border');
         messages.push("Boarding date and time cannot be in the past.");
     }
 
     if (!noOfSeats || noOfSeats < 1 || noOfSeats > 300) {
         isValid = false;
+        document.getElementById('no-of-seats').classList.add('error-border');
         messages.push("Number of seats must be between 1 and 300.");
     }
 
     if (!isValid) {
-        messages.forEach(message => {
-            const errorMessage = document.createElement('p');
-            errorMessage.className = 'error-message';
-            errorMessage.textContent = message;
-            messageContainer.appendChild(errorMessage);
-        });
-        const summaryMessage = document.createElement('p');
-        summaryMessage.className = 'summary-message';
-        summaryMessage.textContent = "Please correct the errors above to proceed.";
-        messageContainer.appendChild(summaryMessage);
+        const errorBox = document.createElement('div');
+        errorBox.classList.add('error-box');
+        errorBox.innerHTML = `
+            <p class="error-summary">Please correct the errors above to proceed:</p>
+            <ul>
+                ${messages.map(msg => `<li>${msg}</li>`).join('')}
+            </ul>
+        `;
+        messageContainer.appendChild(errorBox);
         return;
     }
 

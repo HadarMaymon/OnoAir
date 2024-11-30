@@ -11,17 +11,6 @@
     <!-- Header placeholder -->
     <div id="header-placeholder"></div>
 
-    <!-- Load header.html content into the placeholder -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            fetch('header.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('header-placeholder').innerHTML = data;
-                });
-        });
-    </script>
-
     <!-- Main Content -->
     <div class="container">
         <h1>How can we help you?</h1>
@@ -87,24 +76,16 @@
         <section id="useful-links">
             <h2>Useful Links</h2>
             <ul>
-                <li><a href="Book A Flight.html">Book a Flight</a></li>
-                <li><a href="Manage Bookings.html">Manage Bookings</a></li>
-                <li><a href="Manage Destination.html">Flight Destinations</a></li>
+                <li><a href="User/Book A Flight.html">Book a Flight</a></li>
+                <li><a href="User/Manage Bookings.html">My Bookings</a></li>
             </ul>
         </section>
     </div>
 
     <!-- Footer -->
     <div id="footer-placeholder"></div>
-    <script>
-        // Load footer.html content into the placeholder
-        document.addEventListener("DOMContentLoaded", function () {
-            fetch('footer.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('footer-placeholder').innerHTML = data;
-                });
-        });
-    </script>
+
+    <!-- JavaScript -->
+    <script src="Support.js"></script>
 </body>
 </html>

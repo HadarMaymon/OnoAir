@@ -6,36 +6,40 @@ html {
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    background-color: #f5f5f5;
+    background-color: #f9f9f9;
     text-align: center;
 }
 
 /* Container styling */
 .container {
-    width: 400px;
-    margin: 120px auto; /* Starts content below the header */
-    padding: 20px 30px;
+    width: 500px;
+    margin: 80px auto;
+    padding: 30px 40px;
     background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    border: 1px solid #e0e0e0; /* Light border for definition */
-    max-height: 1000px;
-    overflow: auto;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
 }
 
-/* Form header styling */
-.container h2 {
-    font-size: 24px;
+/* Header section */
+.container h1 {
+    font-size: 28px;
     font-weight: bold;
     color: #333333;
-    text-align: center;
-    margin-bottom: 20px;
-    font-family: 'Poppins', sans-serif;
+    margin-bottom: 15px;
+}
+
+.container h2 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #555555;
+    margin-bottom: 25px;
 }
 
 /* Form group styling */
 .form-group {
     margin-bottom: 20px;
+    text-align: left;
 }
 
 /* Label styling */
@@ -43,72 +47,64 @@ label {
     font-weight: bold;
     color: #333333;
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     font-size: 14px;
 }
 
 /* Input, select, and textarea styling */
 input[type="text"],
+input[type="number"],
 input[type="date"],
 input[type="time"],
-input[type="number"],
 select {
     width: 100%;
     padding: 10px;
-    font-size: 16px;
+    font-size: 14px;
     border: 1px solid #cccccc;
-    border-radius: 4px;
+    border-radius: 6px;
     box-sizing: border-box;
-    font-family: 'Roboto', sans-serif;
+    font-family: Arial, sans-serif;
     transition: border-color 0.3s ease;
+    background-color: #ffffff;
 }
 
 input[type="text"]:focus,
+input[type="number"]:focus,
 input[type="date"]:focus,
 input[type="time"]:focus,
-input[type="number"]:focus,
 select:focus {
-    border-color: #4A90E2; /* Blue border on focus */
+    border-color: #4A90E2;
     outline: none;
-    box-shadow: 0 0 5px rgba(74, 144, 226, 0.2); /* Light blue glow on focus */
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
 }
 
-/* Checkbox styling */
-input[type="checkbox"] {
-    transform: scale(1.2);
-    margin-right: 5px;
-}
-
-/* Return Flight Group styling */
-.return-flight-group {
-    display: none;
-}
 
 /* Save button styling */
 .save-button {
     width: 100%;
     padding: 12px;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     color: #ffffff;
-    background-color: #4A90E2; /* Consistent blue color */
+    background-color: #4A90E2;
     border: none;
-    border-radius: 25px;
+    border-radius: 30px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    font-family: 'Roboto', sans-serif;
+    font-family: Arial, sans-serif;
 }
 
 .save-button:hover {
-    background-color: #357ABD; /* Darker blue on hover */
-    transform: translateY(-2px); /* Slight lift on hover */
+    background-color: #357ABD;
+    transform: translateY(-2px);
 }
 
+/* General styles for error and success messages */
 .message-container {
-    margin-top: 10px; /* Slight margin from the save button */
+    margin-top: 15px;
     text-align: left;
     background-color: #f9f9f9;
-    padding: 10px 15px;
+    padding: 15px 20px;
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -117,33 +113,64 @@ input[type="checkbox"] {
     margin-right: auto;
 }
 
+/* Error message box */
 .error-message {
     color: red;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    margin-top: 5px;
     font-weight: bold;
-    margin: 5px 0;
 }
 
-.summary-message {
-    color: #333;
-    font-weight: bold;
-    margin-top: 10px;
-}
-
+/* Success message box */
 .success-message {
-    color: green;
+    color: #1a73e8; /* Matches the desired blue color */
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
     font-weight: bold;
     margin-bottom: 10px;
 }
 
+/* Styling for flight details in success messages */
 .flight-details-container {
     background-color: #f1f9ff;
     border: 1px solid #ccc;
-    padding: 10px;
+    padding: 15px;
     border-radius: 8px;
+    text-align: left;
+    font-size: 14px;
+    color: #333333;
+    line-height: 1.5;
 }
 
+/* Error border for invalid inputs */
+.error-border {
+    border-color: red !important;
+    background-color: #ffe5e5;
+}
 
-/* Optional: Subtle animation for form entry */
+/* Error summary box */
+.error-summary {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: red;
+    text-align: left;
+}
+
+/* Error list styling */
+.error-box ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.error-box li {
+    margin: 5px 0;
+    color: red;
+    font-size: 14px;
+}
+
+/* Animation for form entry */
 .container {
     animation: fadeIn 0.5s ease-in-out;
 }
@@ -159,6 +186,7 @@ input[type="checkbox"] {
     }
 }
 
+/* Footer styling */
 .footer {
     position: fixed;
     bottom: 0;
@@ -169,7 +197,6 @@ input[type="checkbox"] {
     justify-content: center;
     align-items: center;
     padding: 10px 0;
-    z-index: 100;
 }
 
 .help-button {

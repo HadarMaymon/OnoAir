@@ -1,3 +1,4 @@
+
 const airports = [
     "Tel Aviv (Ben Gurion Airport)",
     "New York (JFK Airport)",

@@ -8,14 +8,12 @@
     <link rel="stylesheet" href="Book A Flight.css">
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Load the header
             fetch('../header.html')
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('header-placeholder').innerHTML = data;
                 });
 
-            // Load the footer
             fetch('../footer.html')
                 .then(response => response.text())
                 .then(data => {
@@ -31,31 +29,38 @@
 
     <div class="container">
         <h1>Book A Flight</h1>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th>Flight No.</th>
-                    <th>Origin</th>
-                    <th>Destination</th>
-                    <th>Boarding Time</th>
-                    <th>Landing Time</th>
-                    <th>Available Seats</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="flights-container">
-                <!-- Dynamic rows will load here -->
-            </tbody>
-        </table>
+
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search Origin or Destination...">
+            <button id="searchButton">Search</button>
+        </div>
+
+        <div class="scrollable-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Flight No.</th>
+                        <th>Origin</th>
+                        <th>Destination</th>
+                        <th>Boarding Time</th>
+                        <th>Landing Time</th>
+                        <th>Available Seats</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="flights-container">
+                    <!-- Dynamic rows will load here -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Footer -->
-    <div class="footer">
+    <div id="footer-placeholder" class="footer">
         <button class="help-button" onclick="window.location.href='/Support.html'">?</button>
     </div>
 
-    <!-- JavaScript -->
     <script type="module" src="./Book A Flight.js"></script>
 </body>
 </html>

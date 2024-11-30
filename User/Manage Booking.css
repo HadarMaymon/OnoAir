@@ -12,7 +12,7 @@ html {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding-bottom: 60px; /* Added bottom padding for footer clearance */
-    max-height: 460px;
+    max-height: 800px;
     overflow: auto;
 }
 

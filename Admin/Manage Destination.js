@@ -1,84 +1,79 @@
-export default class DestinationManager {
-    constructor() {
-        this.destinations = [
-            {
-                departure: "Tel Aviv (Ben Gurion Airport)",
-                arrival: "Krakow (John Paul II Airport)",
-                departureTime: "16/7/2025 20:00",
-                arrivalTime: "17/7/2025 01:00",
-                airportWebsite: "https://www.krakowairport.pl/"
-            },
-            {
-                departure: "Larnaca (Larnaca International Airport)",
-                arrival: "Zurich (Zurich Airport)",
-                departureTime: "20/8/2025 18:30",
-                arrivalTime: "20/8/2025 21:15",
-                airportWebsite: "https://www.zurich-airport.com/"
-            },
-            {
-                departure: "San Diego (San Diego International Airport)",
-                arrival: "Madrid (Madrid-Barajas Airport)",
-                departureTime: "25/9/2025 10:00",
-                arrivalTime: "25/9/2025 18:00",
-                airportWebsite: "https://www.aena.es/en/madrid-barajas.html"
-            },
-            {
-                departure: "Las Vegas (Harry Reid International Airport)",
-                arrival: "Dubai (Dubai International Airport)",
-                departureTime: "12/10/2025 14:00",
-                arrivalTime: "13/10/2025 02:00",
-                airportWebsite: "https://www.dubaiairports.ae/"
-            },
-            {
-                departure: "Detroit (Detroit Metropolitan Airport)",
-                arrival: "Istanbul (Istanbul Airport)",
-                departureTime: "5/11/2025 06:00",
-                arrivalTime: "5/11/2025 16:00",
-                airportWebsite: "https://www.istairport.com/en/"
-            },
-            {
-                departure: "Denver (Denver International Airport)",
-                arrival: "Vienna (Vienna International Airport)",
-                departureTime: "3/12/2025 08:00",
-                arrivalTime: "3/12/2025 16:30",
-                airportWebsite: "https://www.viennaairport.com/en/"
-            },
-            {
-                departure: "Philadelphia (Philadelphia International Airport)",
-                arrival: "Bangkok (Suvarnabhumi Airport)",
-                departureTime: "15/1/2026 12:00",
-                arrivalTime: "16/1/2026 04:00",
-                airportWebsite: "https://www.bangkokairportonline.com/"
-            },
-            {
-                departure: "Phoenix (Phoenix Sky Harbor International Airport)",
-                arrival: "Stockholm (Arlanda Airport)",
-                departureTime: "23/2/2026 09:00",
-                arrivalTime: "23/2/2026 18:30",
-                airportWebsite: "https://www.swedavia.com/arlanda/"
-            },
-            {
-                departure: "Salt Lake City (Salt Lake City International Airport)",
-                arrival: "Sao Paulo (Guarulhos International Airport)",
-                departureTime: "1/3/2026 15:00",
-                arrivalTime: "2/3/2026 03:30",
-                airportWebsite: "https://www.gru.com.br/en"
-            },
-            {
-                departure: "Minneapolis (Minneapolis-Saint Paul International Airport)",
-                arrival: "Cape Town (Cape Town International Airport)",
-                departureTime: "9/4/2026 11:30",
-                arrivalTime: "10/4/2026 08:00",
-                airportWebsite: "https://www.airports.co.za/"
-            }
-        ];
-    }
+import { DestinationManager } from '/Destination Data.js';
 
-    getDestinations() {
-        return this.destinations;
-    }
+document.addEventListener("DOMContentLoaded", () => {
+    loadHeader();
+    loadFooter();
+    renderDestinations();
 
-    addDestination(destination) {
-        this.destinations.push(destination);
-    }
+    // Add event listener for the search button
+    document.getElementById('searchButton').addEventListener('click', filterDestinations);
+
+    // Add event listener for the "Enter" key in the search input
+    document.getElementById('searchInput').addEventListener('keyup', (event) => {
+        if (event.key === "Enter") {
+            filterDestinations();
+        }
+    });
+});
+
+// Load the header dynamically
+function loadHeader() {
+    fetch('../header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('header-placeholder').innerHTML = data;
+        })
+        .catch(error => {
+            console.error("Error loading header:", error);
+        });
+}
+
+// Load the footer dynamically
+function loadFooter() {
+    fetch('../footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer-placeholder').innerHTML = data;
+        })
+        .catch(error => {
+            console.error("Error loading footer:", error);
+        });
+}
+
+// Render the destination table
+function renderDestinations() {
+    const destinationManager = new DestinationManager();
+    const destinations = destinationManager.getDestinations();
+    const tableBody = document.getElementById('destination-table');
+
+    tableBody.innerHTML = '';
+
+    destinations.forEach(destination => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${destination.departure}</td>
+            <td>${destination.arrival}</td>
+            <td>${destination.departureTime}</td>
+            <td>${destination.arrivalTime}</td>
+            <td><a href="${destination.airportWebsite}" target="_blank">${destination.airportWebsite}</a></td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+// Filter destinations by search input
+function filterDestinations() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const rows = document.querySelectorAll('#destination-table tr');
+
+    rows.forEach(row => {
+        const departure = row.cells[0].textContent.toLowerCase();
+        const arrival = row.cells[1].textContent.toLowerCase();
+
+        if (departure.includes(query) || arrival.includes(query)) {
+            row.style.display = ''; // Show matching rows
+        } else {
+            row.style.display = 'none'; // Hide non-matching rows
+        }
+    });
 }

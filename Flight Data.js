@@ -1,86 +1,18 @@
-class FlightDetails {
+import { Flight } from './Flight.js';
+
+export class FlightData {
     constructor() {
         this.flights = [
-            {
-                flightNumber: "W61283",
-                origin: "Tel Aviv",
-                destination: "Krakow",
-                boarding: "16/7/2025 20:00",
-                landing: "17/7/2025 01:00",
-                availableSeats: 120, 
-            },
-            {
-                flightNumber: "LX8396",
-                origin: "Larnaca",
-                destination: "Zurich",
-                boarding: "20/8/2025 18:30",
-                landing: "20/8/2025 21:15",
-                availableSeats: 85,
-            },
-            {
-                flightNumber: "BA2547",
-                origin: "San Diego",
-                destination: "Madrid",
-                boarding: "25/9/2025 10:00",
-                landing: "25/9/2025 18:00",
-                availableSeats: 150,
-            },
-            {
-                flightNumber: "AF3201",
-                origin: "Las Vegas",
-                destination: "Dubai",
-                boarding: "12/10/2025 14:00",
-                landing: "13/10/2025 02:00",
-                availableSeats: 200,
-            },
-            {
-                flightNumber: "EK412",
-                origin: "Detroit",
-                destination: "Istanbul",
-                boarding: "5/11/2025 06:00",
-                landing: "5/11/2025 16:00",
-                availableSeats: 75,
-            },
-            {
-                flightNumber: "LH2029",
-                origin: "Denver",
-                destination: "Vienna",
-                boarding: "3/12/2025 08:00",
-                landing: "3/12/2025 16:30",
-                availableSeats: 60,
-            },
-            {
-                flightNumber: "DL1085",
-                origin: "Philadelphia",
-                destination: "Bangkok",
-                boarding: "15/1/2026 12:00",
-                landing: "16/1/2026 04:00",
-                availableSeats: 90,
-            },
-            {
-                flightNumber: "AA1140",
-                origin: "Phoenix",
-                destination: "Stockholm",
-                boarding: "23/2/2026 09:00",
-                landing: "23/2/2026 18:30",
-                availableSeats: 45,
-            },
-            {
-                flightNumber: "UA329",
-                origin: "Salt Lake City",
-                destination: "Sao Paulo",
-                boarding: "1/3/2026 15:00",
-                landing: "2/3/2026 03:30",
-                availableSeats: 110,
-            },
-            {
-                flightNumber: "AZ754",
-                origin: "Minneapolis",
-                destination: "Cape Town",
-                boarding: "9/4/2026 11:30",
-                landing: "10/4/2026 08:00",
-                availableSeats: 50,
-            },
+            new Flight("W61283", "Tel Aviv", "Krakow", "16/7/2025 20:00", "17/7/2025 01:00", 120),
+            new Flight("LX8396", "Larnaca", "Zurich", "20/8/2025 18:30", "20/8/2025 21:15", 85),
+            new Flight("BA2547", "San Diego", "Madrid", "25/9/2025 10:00", "25/9/2025 18:00", 150),
+            new Flight("AF3201", "Las Vegas", "Dubai", "12/10/2025 14:00", "13/10/2025 02:00", 200),
+            new Flight("EK412", "Detroit", "Istanbul", "5/11/2025 06:00", "5/11/2025 16:00", 75),
+            new Flight("LH2029", "Denver", "Vienna", "3/12/2025 08:00", "3/12/2025 16:30", 60),
+            new Flight("DL1085", "Philadelphia", "Bangkok", "15/1/2026 12:00", "16/1/2026 04:00", 90),
+            new Flight("AA1140", "Phoenix", "Stockholm", "23/2/2026 09:00", "23/2/2026 18:30", 45),
+            new Flight("UA329", "Salt Lake City", "Sao Paulo", "1/3/2026 15:00", "2/3/2026 03:30", 110),
+            new Flight("AZ754", "Minneapolis", "Cape Town", "9/4/2026 11:30", "10/4/2026 08:00", 50),
         ];
     }
 
@@ -88,5 +20,3 @@ class FlightDetails {
         return this.flights;
     }
 }
-
-export default FlightDetails;

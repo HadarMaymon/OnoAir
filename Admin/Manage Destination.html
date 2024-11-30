@@ -8,75 +8,45 @@
     <link rel="stylesheet" href="Manage Destination.css">
 </head>
 <body>
+    <!-- Header -->
     <div id="header-placeholder"></div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            fetch('../header.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('header-placeholder').innerHTML = data;
-                });
-            fetch('../footer.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('footer-placeholder').innerHTML = data;
-                });
-        });
-    </script>
-
+    <!-- Main Content -->
     <div class="container">
         <h2>Manage Flight Destinations</h2>
-        <h3>Manage Destinations</h3>
+
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search Departure or Arrival...">
+            <button id="searchButton">Search</button>
+        </div>
 
         <!-- Destination Table -->
-        <table class="destination-table" id="destination-table">
-            <tr>
-                <th>Departure</th>
-                <th>Arrival</th>
-                <th>Departure Time</th>
-                <th>Arrival Time</th>
-                <th>Airport Website</th>
-            </tr>
-            <!-- Rows will be dynamically added here -->
-        </table>
+        <div class="scrollable-table">
+            <table class="destination-table">
+                <thead>
+                    <tr>
+                        <th>Departure</th>
+                        <th>Arrival</th>
+                        <th>Departure Time</th>
+                        <th>Arrival Time</th>
+                        <th>Airport Website</th>
+                    </tr>
+                </thead>
+                <tbody id="destination-table">
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add Destination Button -->
         <button class="add-button" onclick="window.location.href='./Add Destination.html'">Add Destination</button>
     </div>
 
-    <div class="footer">
+    <!-- Footer -->
+    <div id="footer-placeholder" class="footer">
         <button class="help-button" onclick="window.location.href='/Support.html'">?</button>
     </div>
 
-    <!-- Add JavaScript -->
-    <script type="module">
-        import DestinationManager from './Manage Destination.js';
-
-        const destinationManager = new DestinationManager();
-
-        // Function to render the destination table
-        function renderDestinations() {
-            const table = document.getElementById('destination-table');
-
-            // Clear previous rows (except headers)
-            const rows = table.querySelectorAll('tr:not(:first-child)');
-            rows.forEach(row => row.remove());
-
-            // Add new rows
-            destinationManager.getDestinations().forEach(destination => {
-                const row = document.createElement('tr');
-
-                row.innerHTML = `
-                    <td>${destination.departure}</td>
-                    <td>${destination.arrival}</td>
-                    <td>${destination.departureTime}</td>
-                    <td>${destination.arrivalTime}</td>
-                    <td><a href="${destination.airportWebsite}" target="_blank">${destination.airportWebsite}</a></td>
-                `;
-                table.appendChild(row);
-            });
-        }
-
-        document.addEventListener("DOMContentLoaded", renderDestinations);
-    </script>
+    <script type="module" src="./Manage Destination.js"></script>
 </body>
 </html>

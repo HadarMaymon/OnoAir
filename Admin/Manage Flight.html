@@ -4,14 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OnoAir - Manage Flights</title>
-    <link rel="stylesheet" href="../header.css">
+    <link rel="stylesheet" href="/header.css">
     <link rel="stylesheet" href="Manage Flight.css">
 </head>
 <body>
+    <!-- Header -->
     <div id="header-placeholder"></div>
 
+    <!-- Main Content -->
     <div class="container">
         <h2>Manage Flights</h2>
+
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search Origin or Destination...">
+            <button id="searchButton">Search</button>
+        </div>
+
+        <!-- Scrollable Table -->
         <div class="scrollable-table">
             <table>
                 <thead>
@@ -24,16 +34,22 @@
                         <th>Available Seats</th>
                     </tr>
                 </thead>
-                <tbody id="flights-container"></tbody>
+                <tbody id="flights-container">
+                    <!-- Flight rows will be dynamically inserted here -->
+                </tbody>
             </table>
         </div>
+
+        <!-- Add Flight Button -->
         <button class="add-flight-button" onclick="window.location.href='./Add Flight.html'">Add Flight</button>
     </div>
 
+    <!-- Footer -->
     <div id="footer-placeholder" class="footer">
         <button class="help-button" onclick="window.location.href='/Support.html'">?</button>
     </div>
 
+    <!-- Load JavaScript -->
     <script type="module" src="./Manage Flight.js"></script>
 </body>
 </html>

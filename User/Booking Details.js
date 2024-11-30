@@ -1,32 +1,22 @@
-import FlightDetails from '../Flight Data.js';
+import { FlightData } from '../Flight Data.js';
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Ensure header and footer are loaded
     loadHeader();
     loadFooter();
 
-    // Retrieve flight info from the URL
     const flightNumber = getFlightNumberFromURL();
     const flight = getFlightDetails(flightNumber);
 
-    // If flight is found, display its details and initialize passenger input
     if (flight) {
         displayFlightDetails(flight);
-        setupPassengerInput(flight.availableSeats);
+        updatePassengerFields(flight.availableSeats);
     } else {
-        showError("Flight details not found.");
+        document.getElementById('flight-details').textContent = "Flight details not found.";
     }
 
-    // Attach event listener to Save button
-    const saveButton = document.querySelector('.save-button');
-    if (saveButton) {
-        saveButton.addEventListener('click', validateBookingInputs);
-    } else {
-        console.error("Save button not found. Ensure the button has the 'save-button' class.");
-    }
+    document.querySelector('.save-button').addEventListener('click', validateInputs);
 });
 
-// Load header dynamically
 function loadHeader() {
     fetch('../header.html')
         .then(response => response.text())
@@ -34,7 +24,6 @@ function loadHeader() {
         .catch(err => console.error("Header load failed:", err));
 }
 
-// Load footer dynamically
 function loadFooter() {
     fetch('../footer.html')
         .then(response => response.text())
@@ -42,97 +31,85 @@ function loadFooter() {
         .catch(err => console.error("Footer load failed:", err));
 }
 
-// Extract flight number from URL
 function getFlightNumberFromURL() {
     const params = new URLSearchParams(window.location.search);
     return params.get('flightNumber');
 }
 
-// Retrieve flight details based on flight number
 function getFlightDetails(flightNumber) {
-    const flightDetails = new FlightDetails();
-    return flightDetails.getFlights().find(flight => flight.flightNumber === flightNumber);
+    const flightData = new FlightData();
+    return flightData.getFlights().find(flight => flight.flightNumber === flightNumber);
 }
 
-// Display flight information in the DOM
 function displayFlightDetails(flight) {
-    const flightInfo = `
-        <strong>Flight No:</strong> ${flight.flightNumber}<br>
-        <strong>Origin:</strong> ${flight.origin}<br>
-        <strong>Destination:</strong> ${flight.destination}<br>
-        <strong>Boarding Time:</strong> ${flight.boarding}<br>
-        <strong>Landing Time:</strong> ${flight.landing}<br>
-        <strong>Available Seats:</strong> ${flight.availableSeats}
+    const details = `
+        <div><strong>Flight No:</strong> ${flight.flightNumber}</div>
+        <div><strong>Origin:</strong> ${flight.origin}</div>
+        <div><strong>Destination:</strong> ${flight.destination}</div>
+        <div><strong>Boarding:</strong> ${flight.boarding}</div>
+        <div><strong>Landing:</strong> ${flight.landing}</div>
+        <div><strong>Available Seats:</strong> ${flight.availableSeats}</div>
     `;
-    document.getElementById('flight-details').innerHTML = flightInfo;
+    const flightDetailsContainer = document.getElementById('flight-details');
+    flightDetailsContainer.innerHTML = details;
+    flightDetailsContainer.style.display = "grid";
+    flightDetailsContainer.style.gridTemplateColumns = "1fr 1fr"; // Two-column layout
+    flightDetailsContainer.style.gap = "10px"; // Space between items
 
-    // Set max passengers based on available seats
     const numPassengersInput = document.getElementById('num-passengers');
     numPassengersInput.max = flight.availableSeats;
-
-    // Add event listener for passenger input changes
     numPassengersInput.addEventListener('input', () => updatePassengerFields(flight.availableSeats));
 }
 
-// Generate passenger input fields dynamically
 function updatePassengerFields(maxSeats) {
     const numPassengers = parseInt(document.getElementById('num-passengers').value, 10);
     const container = document.getElementById('passenger-fields');
     container.innerHTML = '';
 
-    // Check if input exceeds available seats
     if (numPassengers > maxSeats) {
-        container.innerHTML = `<p style="color: red;">You can't book more than ${maxSeats} seats.</p>`;
+        container.innerHTML = `<p style="color: red;">You cannot book more than ${maxSeats} seats.</p>`;
         return;
     }
 
-    // Generate fields for each passenger
     for (let i = 1; i <= numPassengers; i++) {
         container.innerHTML += `
             <div class="passenger">
                 <h3>Passenger ${i}</h3>
                 <label for="name-${i}">Full Name:</label>
                 <input type="text" id="name-${i}" placeholder="Enter full name"><br>
-                <label for="passport-${i}">Passport ID:</label>
-                <input type="text" id="passport-${i}" placeholder="Enter passport ID"><br>
+                <label for="passport-id-${i}">Passport ID:</label>
+                <input type="text" id="passport-id-${i}" placeholder="Enter passport ID"><br>
             </div>
         `;
     }
 }
 
-// Function to validate inputs
-export function validateInputs() {
-    console.log('here')
+function validateInputs() {
     const numPassengers = parseInt(document.getElementById('num-passengers').value, 10);
-    const passengerFieldsContainer = document.getElementById('passenger-fields');
     let isValid = true;
 
-    // Loop through each passenger's inputs to validate
     for (let i = 1; i <= numPassengers; i++) {
-        const nameInput = document.getElementById(`name-${i}`);
-        const passportInput = document.getElementById(`passport-id-${i}`);
+        const name = document.getElementById(`name-${i}`);
+        const passportId = document.getElementById(`passport-id-${i}`);
 
-        // Check if name is filled
-        if (!nameInput.value.trim()) {
+        if (!name.value.trim()) {
             isValid = false;
-            nameInput.style.border = "2px solid red"; // Highlight invalid input
+            name.style.border = "2px solid red";
         } else {
-            nameInput.style.border = ""; // Remove highlight if valid
+            name.style.border = "";
         }
 
-        // Check if passport ID is filled
-        if (!passportInput.value.trim()) {
+        if (!passportId.value.trim()) {
             isValid = false;
-            passportInput.style.border = "2px solid red"; // Highlight invalid input
+            passportId.style.border = "2px solid red";
         } else {
-            passportInput.style.border = ""; // Remove highlight if valid
+            passportId.style.border = "";
         }
     }
 
-    // Show alert only if all inputs are valid
     if (isValid) {
-        alert("Order is confirmed");
+        alert("Booking confirmed!");
     } else {
-        alert("Please fill all required fields.");
+        alert("Please fill in all passenger details.");
     }
 }

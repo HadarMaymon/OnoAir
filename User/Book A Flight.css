@@ -10,6 +10,50 @@ body {
     padding-bottom: 100px; /* Add padding to avoid overlap with the footer */
 }
 
+/* Search bar styling */
+.search-bar {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.search-bar input {
+    padding: 10px 15px;
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    transition: border-color 0.3s ease;
+}
+
+.search-bar input:focus {
+    border-color: #4A90E2;
+    outline: none;
+}
+
+.search-bar button {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #4A90E2;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.search-bar button:hover {
+    background-color: #357ABD;
+}
+
+.search-bar button:active {
+    transform: scale(0.98);
+}
+
+
 /* Container styling */
 .container {
     width: 80%;
@@ -20,7 +64,7 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #e0e0e0;
-    max-height: 460px;
+    max-height: 800px;
     overflow: auto;
 }
 
@@ -98,6 +142,7 @@ table td {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    font-weight: bold;
 }
 
 .book-button:hover {

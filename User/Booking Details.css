@@ -12,7 +12,7 @@ html {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding-bottom: 60px; /* Added bottom padding for footer clearance */
-    max-height: 460px;
+    max-height: 800px;
     overflow: auto;
 }
 
@@ -38,13 +38,17 @@ html {
     margin-bottom: 20px;
 }
 
-/* Flight info styling */
+
 .flight-info {
-    background-color: #f1f9ff;
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 4px;
-    margin-bottom: 20px;
+    text-align: center; 
+    background-color: #f1f9ff; 
+    border: 1px solid #ccc; 
+    padding: 15px 20px; 
+    border-radius: 4px; 
+    margin: 0 auto 20px auto; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+    max-width: 600px;
+    
 }
 
 /* Form styling */

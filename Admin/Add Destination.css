@@ -121,6 +121,22 @@ form button[type="submit"]:hover {
     transform: translateY(-1px); /* Slight lift on hover */
 }
 
+
+#success-message-container p {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+#success-message-container a {
+    color: #85baf7;
+    text-decoration:wavy;
+}
+
+#success-message-container a:hover {
+    text-decoration: underline;
+}
+
 /* Footer styling */
 footer {
     width: 100%;

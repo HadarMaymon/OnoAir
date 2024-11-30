@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('flight-details').textContent = "Flight details not found.";
     }
 
-    document.querySelector('.save-button').addEventListener('click', validateInputs);
+    document.querySelector('.save-button').addEventListener('click', handleSave);
 });
 
 function loadHeader() {
@@ -80,32 +80,80 @@ function updatePassengerFields(maxSeats) {
     }
 }
 
-function validateInputs() {
+function handleSave() {
     const numPassengers = parseInt(document.getElementById('num-passengers').value, 10);
     let isValid = true;
+    const passengerDetails = [];
+    const successMessageContainer = document.getElementById('success-message-container');
+    const errorMessages = []; // Collect error messages here
+
+    // Clear previous messages
+    successMessageContainer.innerHTML = '';
+    document.querySelectorAll(".error-message-inline").forEach((error) => error.remove());
 
     for (let i = 1; i <= numPassengers; i++) {
         const name = document.getElementById(`name-${i}`);
         const passportId = document.getElementById(`passport-id-${i}`);
 
-        if (!name.value.trim()) {
+        // Remove any existing error borders
+        name.style.border = "";
+        passportId.style.border = "";
+
+        // Validate name field: only letters and at least two words
+        const nameRegex = /^[a-zA-Z]+\s+[a-zA-Z]+$/;
+        if (!name.value.trim() || !nameRegex.test(name.value.trim())) {
             isValid = false;
             name.style.border = "2px solid red";
-        } else {
-            name.style.border = "";
+            errorMessages.push(`Passenger ${i}: Name must contain at least two words (letters only).`);
         }
 
-        if (!passportId.value.trim()) {
+        // Validate passport ID: only numbers and exactly 9 digits
+        const idRegex = /^\d{9}$/;
+        if (!passportId.value.trim() || !idRegex.test(passportId.value.trim())) {
             isValid = false;
             passportId.style.border = "2px solid red";
-        } else {
-            passportId.style.border = "";
+            errorMessages.push(`Passenger ${i}: ID must be exactly 9 numeric digits.`);
+        }
+
+        if (isValid) {
+            passengerDetails.push({
+                name: name.value.trim(),
+                passportId: passportId.value.trim(),
+            });
         }
     }
 
     if (isValid) {
-        alert("Booking confirmed!");
+        let passengersHTML = passengerDetails
+            .map(
+                (passenger, index) => `
+                    <p><strong>Passenger ${index + 1}:</strong></p>
+                    <p class="passenger-detail">Name: ${passenger.name}</p>
+                    <p class="passenger-detail">ID: ${passenger.passportId}</p>
+                `
+            )
+            .join('');
+
+        successMessageContainer.innerHTML = `
+            <p class="success-message">Flight booked successfully!</p>
+            <div class="passenger-details-container">
+                ${passengersHTML}
+            </div>
+        `;
+
+        setTimeout(() => {
+            window.location.href = "Book A Flight.html";
+        }, 5000);
     } else {
-        alert("Please fill in all passenger details.");
+        // Display errors collectively below the main message
+        const errorListHTML = errorMessages
+            .map((msg) => `<p class="error-message">${msg}</p>`)
+            .join('');
+        successMessageContainer.innerHTML = `
+            <p class="error-message">Please correct the errors above to proceed:</p>
+            <div class="error-list">
+                ${errorListHTML}
+            </div>
+        `;
     }
 }

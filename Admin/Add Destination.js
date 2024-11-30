@@ -46,16 +46,29 @@ document.addEventListener("DOMContentLoaded", function () {
             imageUrl
         };
 
-        // Log the new destination to the console (can be sent to a server or stored locally)
+        // Log the new destination to the console (optional)
         console.log("New Destination Added:", newDestination);
+
+        // Display success message
+        const successMessage = document.createElement("div");
+        successMessage.innerHTML = `
+            <p style="color: blue; font-weight: bold; margin-top: 10px;">Destination added successfully!</p>
+            <div style="margin-top: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: #f9f9f9;">
+                <p><strong>Code:</strong> ${newDestination.destinationCode}</p>
+                <p><strong>Name:</strong> ${newDestination.destinationName}</p>
+                <p><strong>Airport:</strong> ${newDestination.airportName}</p>
+                <p><strong>URL:</strong> <a href="${newDestination.airportUrl}" target="_blank">${newDestination.airportUrl}</a></p>
+                <p><strong>Image:</strong> <a href="${newDestination.imageUrl}" target="_blank">${newDestination.imageUrl}</a></p>
+            </div>
+        `;
+        form.parentElement.appendChild(successMessage);
 
         // Reset the form
         form.reset();
 
-        // Show success message
-        alert("Destination added successfully!");
-
-        // Redirect to Manage Destination page
-        window.location.href = "Manage Destination.html";
+        // Redirect to Manage Destination page after 5 seconds
+        setTimeout(() => {
+            window.location.href = "Manage Destination.html";
+        }, 5000);
     });
 });

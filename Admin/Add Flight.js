@@ -1,36 +1,71 @@
+import { FlightData } from '../Flight Data.js';
 
-const airports = [
-    "Tel Aviv (Ben Gurion Airport)",
-    "New York (JFK Airport)",
-    "London (Heathrow Airport)",
-    "Paris (Charles de Gaulle Airport)",
-    "Tokyo (Haneda Airport)",
-    "Dubai (Dubai International Airport)",
-    "Berlin (Brandenburg Airport)",
-    "Sydney (Kingsford Smith Airport)",
-    "Rome (Leonardo da Vinci Airport)",
-    "Singapore (Changi Airport)"
-];
+document.addEventListener("DOMContentLoaded", () => {
+    // Load the header and footer
+    loadHeader();
+    loadFooter();
+
+    // Populate the dropdowns for origin and destination
+    populateAirportOptions();
+
+    // Add form submission event listener
+    document.getElementById('add-flight-form').addEventListener('submit', validateAndAddFlight);
+});
+
+function loadHeader() {
+    fetch('../header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('header-placeholder').innerHTML = data;
+        })
+        .catch(error => console.error('Error loading header:', error));
+}
+
+function loadFooter() {
+    fetch('../footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer-placeholder').innerHTML = data;
+        })
+        .catch(error => console.error('Error loading footer:', error));
+}
 
 function populateAirportOptions() {
+    const flightData = new FlightData();
+    const flights = flightData.getFlights();
+
+    // Use a Set to store unique airport names
+    const airports = new Set();
+
+    flights.forEach(flight => {
+        airports.add(flight.origin);
+        airports.add(flight.destination);
+    });
+
     const originSelect = document.getElementById('origin');
     const destinationSelect = document.getElementById('destination');
 
-    airports.forEach(airport => {
-        const optionOrigin = document.createElement('option');
-        optionOrigin.value = airport;
-        optionOrigin.textContent = airport;
-        originSelect.appendChild(optionOrigin);
+    // Clear existing options
+    originSelect.innerHTML = '<option value="">Select Origin</option>';
+    destinationSelect.innerHTML = '<option value="">Select Destination</option>';
 
-        const optionDestination = document.createElement('option');
-        optionDestination.value = airport;
-        optionDestination.textContent = airport;
-        destinationSelect.appendChild(optionDestination);
+    // Populate dropdowns with unique airports
+    airports.forEach(airport => {
+        const originOption = document.createElement('option');
+        originOption.value = airport;
+        originOption.textContent = airport;
+
+        const destinationOption = document.createElement('option');
+        destinationOption.value = airport;
+        destinationOption.textContent = airport;
+
+        originSelect.appendChild(originOption);
+        destinationSelect.appendChild(destinationOption);
     });
 }
 
-function validateForm(event) {
-    event.preventDefault(); // Prevent default form submission behavior
+function validateAndAddFlight(event) {
+    event.preventDefault(); // Prevent form submission
 
     // Retrieve form values
     const flightNo = document.getElementById('flight-no').value.trim();
@@ -40,71 +75,88 @@ function validateForm(event) {
     const boardingTime = document.getElementById('boarding-time').value;
     const arrivalDate = document.getElementById('arrival-date').value;
     const arrivalTime = document.getElementById('arrival-time').value;
-    const noOfSeats = document.getElementById('no-of-seats').value;
+    const noOfSeats = parseInt(document.getElementById('no-of-seats').value, 10);
 
-    // Validation logic
+    const messageContainer = document.getElementById('message-container');
+    messageContainer.innerHTML = ''; // Clear any previous messages
+
+    // Validation
+    let isValid = true;
+    const messages = [];
+
     if (!flightNo) {
-        alert("Error: Please enter the flight number.");
-        return;
+        isValid = false;
+        messages.push("Flight number is required.");
     }
 
     if (!origin || !destination) {
-        alert("Error: Please select both origin and destination.");
-        return;
+        isValid = false;
+        messages.push("Both origin and destination must be selected.");
     }
 
     if (origin === destination) {
-        alert("Error: Origin and destination cannot be the same.");
-        return;
+        isValid = false;
+        messages.push("Origin and destination cannot be the same.");
     }
 
     if (!boardingDate || !boardingTime) {
-        alert("Error: Please select the boarding date and time.");
-        return;
+        isValid = false;
+        messages.push("Boarding date and time must be selected.");
     }
 
     if (!arrivalDate || !arrivalTime) {
-        alert("Error: Please select the arrival date and time.");
-        return;
+        isValid = false;
+        messages.push("Arrival date and time must be selected.");
     }
 
     const boardingDateTime = new Date(`${boardingDate}T${boardingTime}`);
     const arrivalDateTime = new Date(`${arrivalDate}T${arrivalTime}`);
 
     if (boardingDateTime >= arrivalDateTime) {
-        alert("Error: Arrival date and time must be after boarding date and time.");
-        return;
+        isValid = false;
+        messages.push("Arrival date and time must be after boarding date and time.");
+    }
+
+    if (boardingDateTime < new Date()) {
+        isValid = false;
+        messages.push("Boarding date and time cannot be in the past.");
     }
 
     if (!noOfSeats || noOfSeats < 1 || noOfSeats > 300) {
-        alert("Error: Please enter a valid number of seats (1-300).");
+        isValid = false;
+        messages.push("Number of seats must be between 1 and 300.");
+    }
+
+    if (!isValid) {
+        messages.forEach(message => {
+            const errorMessage = document.createElement('p');
+            errorMessage.className = 'error-message';
+            errorMessage.textContent = message;
+            messageContainer.appendChild(errorMessage);
+        });
+        const summaryMessage = document.createElement('p');
+        summaryMessage.className = 'summary-message';
+        summaryMessage.textContent = "Please correct the errors above to proceed.";
+        messageContainer.appendChild(summaryMessage);
         return;
     }
 
-    // Show success message
-    alert("Flight added successfully!");
+    // Success message and flight details
+    const successMessage = `
+        <p class="success-message">Flight added successfully!</p>
+        <div class="flight-details-container">
+            <p><strong>Flight No:</strong> ${flightNo}</p>
+            <p><strong>Origin:</strong> ${origin}</p>
+            <p><strong>Destination:</strong> ${destination}</p>
+            <p><strong>Boarding:</strong> ${boardingDateTime.toLocaleString()}</p>
+            <p><strong>Arrival:</strong> ${arrivalDateTime.toLocaleString()}</p>
+            <p><strong>Number of Seats:</strong> ${noOfSeats}</p>
+        </div>
+    `;
+    messageContainer.innerHTML = successMessage;
 
-    // Redirect to Manage Flight page
-    window.location.href = "Manage Flight.html";
+    // Redirect to Manage Flight page after 5 seconds
+    setTimeout(() => {
+        window.location.href = "Manage Flight.html";
+    }, 5000);
 }
-
-document.addEventListener("DOMContentLoaded", function () {
-    // Load header and footer
-    fetch('../header.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('header-placeholder').innerHTML = data;
-        });
-
-    fetch('../footer.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('footer-placeholder').innerHTML = data;
-        });
-
-    // Populate airport options
-    populateAirportOptions();
-
-    // Attach form submission event listener
-    document.getElementById('add-flight-form').addEventListener('submit', validateForm);
-});

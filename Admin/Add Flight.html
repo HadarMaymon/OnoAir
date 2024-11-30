@@ -27,7 +27,6 @@
                 <label for="origin">Origin:</label>
                 <select id="origin" name="origin" required>
                     <option value="">Select Origin</option>
-                    <!-- Airport options will be populated by JavaScript -->
                 </select>
             </div>
 
@@ -35,11 +34,9 @@
                 <label for="destination">Destination:</label>
                 <select id="destination" name="destination" required>
                     <option value="">Select Destination</option>
-                    <!-- Airport options will be populated by JavaScript -->
                 </select>
             </div>
 
-            <!-- Rest of the form fields remain the same -->
             <div class="form-group">
                 <label for="boarding-date">Boarding Date:</label>
                 <input type="date" id="boarding-date" name="boarding-date" required>
@@ -66,15 +63,16 @@
             </div>
 
             <button type="submit" class="save-button">Save</button>
+
+            <div id="message-container" class="message-container"></div>
         </form>
     </div>
 
-    <!-- Load JavaScript files in the correct order -->
-    <script src="../header.js"></script>
-    <script src="../footer.js"></script>
-    <script src="./Add Flight.js"></script>
-
     <!-- Footer -->
     <div id="footer-placeholder"></div>
+
+
+    <!-- JavaScript -->
+    <script type="module" src="./Add Flight.js"></script>
 </body>
 </html>

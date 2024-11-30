@@ -6,12 +6,12 @@ html {
     font-family: Arial, Helvetica, sans-serif;
     width: 90%;
     max-width: 1000px;
-    margin: 100px auto 20px auto; /* Top margin for header and bottom margin */
+    margin: 100px auto 20px auto;
     background-color: white;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding-bottom: 60px; /* Added bottom padding for footer clearance */
+    padding-bottom: 60px;
     max-height: 800px;
     overflow: auto;
 }
@@ -38,27 +38,27 @@ html {
     margin-bottom: 20px;
 }
 
-
+/* Flight Info Styling */
 .flight-info {
-    text-align: center; 
-    background-color: #f1f9ff; 
-    border: 1px solid #ccc; 
-    padding: 15px 20px; 
-    border-radius: 4px; 
-    margin: 0 auto 20px auto; 
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+    text-align: center;
+    background-color: #f1f9ff;
+    border: 1px solid #ccc;
+    padding: 15px 20px;
+    border-radius: 4px;
+    margin: 0 auto 20px auto;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     max-width: 600px;
-    
 }
 
-/* Form styling */
+/* Form Styling */
 label {
     display: block;
     margin-top: 10px;
     font-weight: bold;
 }
 
-input[type="text"], input[type="number"] {
+input[type="text"],
+input[type="number"] {
     width: calc(100% - 20px);
     padding: 8px;
     margin-top: 5px;
@@ -66,7 +66,7 @@ input[type="text"], input[type="number"] {
     border-radius: 4px;
 }
 
-/* Save button */
+/* Save Button Styling */
 .save-button {
     display: block;
     width: 100%;
@@ -77,33 +77,65 @@ input[type="text"], input[type="number"] {
     border: none;
     border-radius: 25px;
     cursor: pointer;
-    margin-top: 20px; /* Added margin to move the button down */
+    margin-top: 20px;
 }
 
 .save-button:hover {
     background-color: #357ABD;
 }
-.message {
+
+/* Success Message Container */
+#success-message-container {
+    margin-top: 20px;
+    text-align: left;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Success Message Text */
+#success-message-container p {
+    font-family: Arial, Helvetica, sans-serif;
     margin: 10px 0;
-    padding: 10px;
-    border-radius: 5px;
-    display: none; /* Hidden by default */
     font-size: 16px;
+    color: #1a73e8; 
+    font-weight: bold;
 }
 
-.message.success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+/* Success Message Links */
+#success-message-container a {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #1a73e8; 
+    text-decoration: none;
 }
 
-.message.error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+#success-message-container a:hover {
+    text-decoration: underline;
 }
 
+/* Passenger Details Styling */
+#success-message-container div p {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    margin: 5px 0;
+    color: #333;
+    line-height: 1.5;
+}
 
+/* Error Message Styling */
+#success-message-container .error-message {
+    font-family: Arial, Helvetica, sans-serif;
+    color: red;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+/* Footer */
 .footer {
     position: fixed;
     bottom: 0;

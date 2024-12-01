@@ -12,17 +12,6 @@
     <!-- Header placeholder -->
     <div id="header-placeholder"></div>
 
-    <!-- Load header.html content into the placeholder -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            fetch('header.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('header-placeholder').innerHTML = data;
-                });
-        });
-    </script>
-
     <!-- Main content container with links -->
     <div class="container">
         <h2>Welcome to OnoAir</h2>
@@ -44,15 +33,8 @@
 
     <!-- Footer -->
     <div id="footer-1"></div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            fetch('footer.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('footer-1').innerHTML = data;
-                });
-        });
-    </script>
 
+    <!-- External JavaScript File -->
+    <script src="MainScreen.js"></script>
 </body>
 </html>

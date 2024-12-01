@@ -71,6 +71,8 @@ body {
     overflow-y: auto;
     max-height: calc(100vh - 200px); /* Ensures content fits with header and footer */
     text-align: center;
+    overflow: auto;
+    max-height: 460px;
 }
 
 /* Heading styling */

@@ -62,6 +62,7 @@ function goToBookingDetails(flight) {
 function filterFlights() {
     const query = document.getElementById('searchInput').value.toLowerCase();
     const rows = document.querySelectorAll('#flights-container tr');
+    let visibleRows = 0;
 
     rows.forEach(row => {
         const origin = row.cells[1].textContent.toLowerCase();
@@ -69,8 +70,17 @@ function filterFlights() {
 
         if (origin.includes(query) || destination.includes(query)) {
             row.style.display = ''; // Show matching rows
+            visibleRows++;
         } else {
             row.style.display = 'none'; // Hide non-matching rows
         }
     });
+
+    const messageContainer = document.getElementById('no-results-message');
+    if (visibleRows === 0) {
+        messageContainer.textContent = `No flights match your search for "${query}".`;
+        messageContainer.style.display = 'block'; // Show the message
+    } else {
+        messageContainer.style.display = 'none'; // Hide the message
+    }
 }

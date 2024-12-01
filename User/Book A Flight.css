@@ -149,6 +149,16 @@ table td {
     background-color: #357ABD;
 }
 
+#no-results-message {
+    display: none; 
+    color: red;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    margin-top: 20px; 
+}
+
+
 /* Footer styling */
 .footer {
     position: fixed;

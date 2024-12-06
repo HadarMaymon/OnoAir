@@ -1,7 +1,26 @@
-<button mat-button [matMenuTriggerFor]="menu">Menu</button>
+<div class="menu-container">
+  <button mat-button [matMenuTriggerFor]="mainMenu" class="menu-button">
+    <mat-icon>menu</mat-icon>
+  </button>
 
-<mat-menu #menu="matMenu">
-  <button mat-menu-item>Option 1</button>
-  <button mat-menu-item>Option 2</button>
-  <button mat-menu-item>Option 3</button>
-</mat-menu>
+  <mat-menu #mainMenu="matMenu">
+    <button mat-menu-item [matMenuTriggerFor]="adminMenu">
+      Admin
+      <mat-icon>keyboard_arrow_right</mat-icon>
+    </button>
+    <button mat-menu-item [matMenuTriggerFor]="userMenu">
+      User
+      <mat-icon>keyboard_arrow_right</mat-icon>
+    </button>
+  </mat-menu>
+
+  <mat-menu #adminMenu="matMenu">
+    <button mat-menu-item>Add Flight</button>
+    <button mat-menu-item>Add Destination</button>
+  </mat-menu>
+
+  <mat-menu #userMenu="matMenu">
+    <button mat-menu-item>Search a flight</button>
+    <button mat-menu-item>My Bookings</button>
+  </mat-menu>
+</div>

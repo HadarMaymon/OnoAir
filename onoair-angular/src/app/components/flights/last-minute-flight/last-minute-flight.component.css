@@ -1,0 +1,69 @@
+/* Overall container */
+.last-minute-flights-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 20px;
+  font-family: Arial, sans-serif;
+}
+
+/* Title styling */
+h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+/* Cards container - Flexbox for horizontal layout */
+.cards-container {
+  display: flex;
+  flex-direction: row; 
+  justify-content: center;
+  gap: 20px; 
+  flex-wrap: wrap; 
+}
+
+/* Individual card */
+.flight-card {
+  width: 200px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  overflow: hidden; 
+  text-align: center;
+  padding-bottom: 10px;
+}
+
+/* Image placeholder */
+.image-placeholder {
+  width: 100%;
+  height: 120px;
+  background-color: #e0e0e0; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+}
+
+/* Text styling inside cards */
+.destination {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 10px 0 5px;
+}
+
+.date {
+  font-size: 1rem;
+  color: #555;
+}
+
+.find-flight-button-container {
+  text-align: center;
+  margin-top: 80px;
+}

@@ -1,0 +1,24 @@
+<div class="last-minute-flights-container">
+  <h1>Last Minute Flights</h1>
+
+  <div class="cards-container">
+    <mat-card *ngFor="let flight of flights" class="flight-card">
+      <mat-card-header>
+        <div class="image-placeholder">
+          <img [src]="flight.image" alt="{{ flight.destination }}" />
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="destination">{{ flight.destination }}</p>
+        <p class="date">{{ flight.date }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Button to navigate to Find A Flight -->
+  <div class="find-flight-button-container">
+    <button mat-raised-button color="primary" (click)="onFindFlightClick()">
+      Find A Flight
+    </button>
+  </div>  
+</div>

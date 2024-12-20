@@ -1,0 +1,180 @@
+.find-a-flight-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+.search-bar {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+mat-label {
+    font-size: 16px;
+    color: #555;
+}
+
+.mat-input-element {
+    font-size: 16px;
+    padding: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+.mat-header-row {
+    background-color: #4caf50;
+    color: white;
+}
+
+.mat-header-cell,
+.mat-cell {
+    font-size: 15px;
+    padding: 12px;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid #e0e0e0;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+/* Flight Number Column */
+.mat-column-flightNumber {
+    width: 10%;
+    text-align: center;
+    padding-left: 10px;
+}
+
+/* Origin and Destination Columns */
+.mat-column-origin {
+    width: 20%;
+}
+
+.mat-column-destination {
+    width: 20%;
+}
+
+/* Date and Time Columns */
+.mat-column-date {
+    width: 10%;
+}
+
+.mat-column-departureTime {
+    width: 10%;
+}
+
+.mat-column-duration {
+    width: 10%;
+}
+
+/* Price Column */
+.mat-column-price {
+    width: 10%;
+}
+
+/* Actions Column */
+.mat-column-actions {
+    width: 10%;
+    text-align: center; /* Center-align the "Actions" column */
+}
+
+.mat-cell-actions {
+    display: flex;
+    justify-content: flex-end; /* Move the Book button slightly to the right */
+    align-items: center;
+    padding-right: 10px; /* Add extra space for alignment */
+}
+
+/* Row Hover Effect */
+.mat-row {
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease;
+}
+
+.mat-row:hover {
+    background-color: #f1f1f1;
+}
+
+/* Book Button Styling */
+.mat-raised-button {
+    background-color: #ff4081;
+    color: white;
+    font-weight: bold;
+    border-radius: 20px;
+    padding: 5px 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mat-raised-button:hover {
+    background-color: #e91e63;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Paginator Styling */
+.mat-paginator {
+    margin-top: 20px;
+    background-color: #f8f8f8;
+    border-top: 1px solid #e0e0e0;
+}
+
+.mat-paginator-range-label {
+    font-size: 14px;
+    color: #555;
+}
+
+.mat-paginator-icon {
+    color: #4caf50;
+}
+
+.mat-paginator-page-size-label {
+    font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .mat-header-cell,
+    .mat-cell {
+        font-size: 14px;
+        padding: 8px;
+        word-wrap: break-word;
+    }
+
+    .mat-column-flightNumber,
+    .mat-column-date,
+    .mat-column-departureTime,
+    .mat-column-duration,
+    .mat-column-price,
+    .mat-column-actions {
+        width: auto;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+
+    .mat-raised-button {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+}

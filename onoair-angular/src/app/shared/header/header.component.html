@@ -1,37 +1,43 @@
 <div class="header-container">
-    <!-- Logo Section -->
-    <div class="logo-container">
-        <img src="assets/onoairLogo.png" class="header-logo" />
-      <span class="header-title"></span>
-    </div>
-  
-    <!-- Menu Section -->
-    <div class="menu-container">
-      <button mat-button [matMenuTriggerFor]="mainMenu" class="menu-button">
-        <mat-icon>menu</mat-icon>
-      </button>
-  
-      <mat-menu #mainMenu="matMenu">
-        <button mat-menu-item [matMenuTriggerFor]="adminMenu">
-          Admin
-          <mat-icon>keyboard_arrow_right</mat-icon>
-        </button>
-        <button mat-menu-item [matMenuTriggerFor]="userMenu">
-          User
-          <mat-icon>keyboard_arrow_right</mat-icon>
-        </button>
-      </mat-menu>
-  
-      <mat-menu #adminMenu="matMenu">
-        <button mat-menu-item>Add Flight</button>
-        <button mat-menu-item>Add Destination</button>
-      </mat-menu>
-  
-      <mat-menu #userMenu="matMenu">
-        <button mat-menu-item>Search Flight</button>
-        <button mat-menu-item>My Bookings</button>
-        <button mat-menu-item>Last Minute Flights</button>
-      </mat-menu>
-    </div>
+  <!-- Logo Section -->
+  <div class="logo-container">
+    <!-- Add routerLink to navigate to 'last-minute-flight' -->
+    <img 
+      src="assets/onoairLogo.png" 
+      class="header-logo" 
+      alt="OnoAir Logo"
+      routerLink="/last-minute-flight" 
+      style="cursor: pointer;" 
+    />
+    <span class="header-title"></span>
   </div>
-  
+
+  <!-- Menu Section -->
+  <div class="menu-container">
+    <button mat-button [matMenuTriggerFor]="mainMenu" class="menu-button">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <mat-menu #mainMenu="matMenu">
+      <button mat-menu-item [matMenuTriggerFor]="adminMenu">
+        Admin
+        <mat-icon>keyboard_arrow_right</mat-icon>
+      </button>
+      <button mat-menu-item [matMenuTriggerFor]="userMenu">
+        User
+        <mat-icon>keyboard_arrow_right</mat-icon>
+      </button>
+    </mat-menu>
+
+    <mat-menu #adminMenu="matMenu">
+      <button mat-menu-item>Add Flight</button>
+      <button mat-menu-item>Add Destination</button>
+    </mat-menu>
+
+    <mat-menu #userMenu="matMenu">
+      <button mat-menu-item>Search Flight</button>
+      <button mat-menu-item>My Bookings</button>
+      <button mat-menu-item routerLink="/last-minute-flight">Last Minute Flights</button>
+    </mat-menu>
+  </div>
+</div>

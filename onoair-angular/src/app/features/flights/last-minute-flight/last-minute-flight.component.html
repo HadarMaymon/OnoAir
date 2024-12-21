@@ -1,7 +1,6 @@
 <div class="last-minute-flights-container">
   <h1>Last Minute Flights</h1>
 
-  <!-- Check if there are any flights -->
   <div class="cards-container" *ngIf="lastMinuteFlights.length > 0; else noFlightsMessage">
     <mat-card *ngFor="let flight of lastMinuteFlights" class="flight-card">
       <mat-card-header>
@@ -9,17 +8,26 @@
           <img [src]="flight.image" alt="{{ flight.destination }}" />
         </div>
       </mat-card-header>
+      
       <mat-card-content>
-        <p class="destination">Destination: {{ flight.destination }}</p>
-        <p class="origin">Origin: {{ flight.origin }}</p>
-        <p class="date">Date: {{ flight.date }}</p>
-        <p class="price">Price: ${{ flight.price }}</p>
+        <p class="destination"><b>Destination:</b> {{ flight.destination }}</p>
+        <p class="origin"><b>Origin:</b> {{ flight.origin }}</p>
+        <p class="date"><b>Date:</b> {{ flight.date }}</p>
+        <p class="price"><b>Price:</b> ${{ flight.price }}</p>
       </mat-card-content>
+    
+      <!-- Book Button (Center and Push Down) -->
+      <mat-card-actions class="mat-card-actions">
+        <button mat-raised-button color="primary" (click)="bookFlight(flight)">Book</button>
+      </mat-card-actions>
     </mat-card>
+    
   </div>
 
-  <!-- No flights available message -->
   <ng-template #noFlightsMessage>
     <p class="no-flights-message">No available flights at the moment.</p>
   </ng-template>
+
+  <!-- Find A Flight Component -->
+  <app-find-a-flight></app-find-a-flight>
 </div>

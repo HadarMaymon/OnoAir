@@ -1,32 +1,39 @@
-import { Component, OnInit, AfterViewInit, ViewChild, Inject } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { FlightService, Flight } from '../../../service/flights/flights';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
+import { FlightService, Flight } from '../../../service/flights/flights';
+import { MatSortModule } from '@angular/material/sort';
+import { RouterModule } from '@angular/router'; 
+
 
 @Component({
-  selector: 'app-find-a-flight',
-  templateUrl: './find-a-flight.component.html',
-  styleUrls: ['./find-a-flight.component.css'],
+  selector: 'app-manage-flight',
+  templateUrl: './manage-flight.component.html',
+  styleUrls: ['./manage-flight.component.css'],
   standalone: true,
   imports: [
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
     MatTableModule,
     MatPaginatorModule,
+    MatSort,
+    MatIconModule,
+    MatButtonModule,
+    MatInputModule,
+    FormsModule,
+    CommonModule,
     MatSortModule,
-    CommonModule
+    RouterModule
   ],
+  template: '<h1>Manage Flights</h1>'
 })
-export class FindAFlightComponent implements OnInit, AfterViewInit {
+export class ManageFlightComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
     'flightNumber',
     'origin',
@@ -43,21 +50,22 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(@Inject(FlightService) private flightService: FlightService) {}
+  constructor(private flightService: FlightService) {}
 
   ngOnInit(): void {
-    const flights = this.flightService.getAllFlights();
-    this.dataSource = new MatTableDataSource(flights);
+    const flight = this.flightService.getAllFlights();
+    this.dataSource = new MatTableDataSource(flight);
   }
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+
     this.dataSource.sortingDataAccessor = (item, property) => {
       if (property === 'date') {
         return this.parseDate(item.date);
       }
-      return (item as any)[property];
+      return (item as any)[property] || '';
     };
   }
 
@@ -66,10 +74,8 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  bookFlight(flight: Flight): void {
-    alert(
-      `You have booked flight ${flight.flightNumber} from ${flight.origin} to ${flight.destination} on ${flight.date}`
-    );
+  editFlight(flight: Flight): void {
+    console.log('Editing flight:', flight);
   }
 
   private parseDate(dateStr: string): number {

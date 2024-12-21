@@ -63,6 +63,14 @@ h1 {
   color: #555;
 }
 
+.mat-card-actions {
+  display: flex;
+  justify-content: center;  /* Center horizontally */
+  margin-top: auto;  /* Push the button down */
+  padding-bottom: 15px;  /* Add some space below the button */
+}
+
+
 .find-flight-button-container {
   text-align: center;
   margin-top: 80px;
@@ -74,3 +82,5 @@ h1 {
   text-align: center;
   margin-top: 20px;
 }
+
+

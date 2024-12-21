@@ -1,23 +1,25 @@
 .find-a-flight-container {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 20px;
+    max-width: 1400px;  /* Increase container width */
+    margin: 30px auto;  /* More vertical spacing */
+    padding: 30px;  
     background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow-x: auto;  /* Allow horizontal scroll if table overflows */
 }
 
 h1 {
     text-align: center;
-    font-size: 28px;
+    font-size: 32px;  
     color: #333;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     font-family: 'Arial', sans-serif;
 }
 
 .search-bar {
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 mat-form-field {
@@ -31,13 +33,15 @@ mat-label {
 
 .mat-input-element {
     font-size: 16px;
-    padding: 10px;
+    padding: 12px;
 }
 
+/* Ensure table can expand */
 table {
     width: 100%;
+    min-width: 1200px;  
+    table-layout: auto;  
     border-collapse: collapse;
-    table-layout: auto;
 }
 
 .mat-header-row {
@@ -47,70 +51,68 @@ table {
 
 .mat-header-cell,
 .mat-cell {
-    font-size: 15px;
-    padding: 12px;
-    text-align: left;
+    font-size: 16px;
+    padding: 15px;  
+    text-align: center;  
     vertical-align: middle;
     border-bottom: 1px solid #e0e0e0;
-    word-wrap: break-word;
-    white-space: normal;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 65px;  
 }
 
-/* Flight Number Column */
+/* Adjust Specific Columns for More Space */
 .mat-column-flightNumber {
-    width: 10%;
-    text-align: center;
-    padding-left: 10px;
+    width: 12%;
+    text-align: center;  
 }
 
-/* Origin and Destination Columns */
-.mat-column-origin {
-    width: 20%;
+.mat-column-availableSeats {
+    width: 12%; 
+    text-align: center;  
 }
 
+/* Make sure the content is centered below the headers */
+.mat-column-flightNumber .mat-cell,
+.mat-column-availableSeats .mat-cell {
+    text-align: center; 
+    font-weight: bold;
+}
+
+/* Origin/Destination Columns */
+.mat-column-origin,
 .mat-column-destination {
     width: 20%;
 }
 
-/* Date and Time Columns */
-.mat-column-date {
-    width: 10%;
-}
-
-.mat-column-departureTime {
-    width: 10%;
-}
-
-.mat-column-duration {
-    width: 10%;
-}
-
-/* Price Column */
+/* Date/Time/Price Columns */
+.mat-column-date,
+.mat-column-departureTime,
+.mat-column-duration,
 .mat-column-price {
     width: 10%;
 }
 
-/* Actions Column */
+/* Increase Action Column Width for Buttons */
 .mat-column-actions {
-    width: 10%;
-    text-align: center; /* Center-align the "Actions" column */
+    width: 12%;  /* Give more space for buttons */
+    text-align: center;
 }
 
-.mat-cell-actions {
-    display: flex;
-    justify-content: flex-end; /* Move the Book button slightly to the right */
-    align-items: center;
-    padding-right: 10px; /* Add extra space for alignment */
+.mat-column-actions .mat-cell {
+    white-space: nowrap;
+    overflow: visible;  /* Allow button to fully display */
 }
 
 /* Row Hover Effect */
 .mat-row {
-    background-color: #f9f9f9;
+    background-color: #fdfdfd;
     transition: background-color 0.3s ease;
 }
 
 .mat-row:hover {
-    background-color: #f1f1f1;
+    background-color: #f3f3f3;
 }
 
 /* Book Button Styling */
@@ -119,21 +121,19 @@ table {
     color: white;
     font-weight: bold;
     border-radius: 20px;
-    padding: 5px 15px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 8px 20px;  
     text-align: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    white-space: nowrap;  /* Prevent button from wrapping */
 }
 
 .mat-raised-button:hover {
     background-color: #e91e63;
     transform: scale(1.05);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 /* Paginator Styling */
 .mat-paginator {
-    margin-top: 20px;
+    margin-top: 25px;
     background-color: #f8f8f8;
     border-top: 1px solid #e0e0e0;
 }
@@ -151,30 +151,67 @@ table {
     font-size: 14px;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+    .find-a-flight-container {
+        max-width: 1000px;
+        overflow-x: auto;
+    }
+    
     .mat-header-cell,
     .mat-cell {
         font-size: 14px;
-        padding: 8px;
-        word-wrap: break-word;
+        padding: 12px;
+    }
+    
+    .mat-column-flightNumber,
+    .mat-column-availableSeats {
+        width: 15%;
     }
 
-    .mat-column-flightNumber,
     .mat-column-date,
     .mat-column-departureTime,
     .mat-column-duration,
-    .mat-column-price,
-    .mat-column-actions {
+    .mat-column-price {
         width: auto;
     }
 
+    .mat-column-actions {
+        width: 14%;  /* Increase action column for smaller screens */
+    }
+    
+    h1 {
+        font-size: 26px;
+    }
+}
+
+@media (max-width: 768px) {
+    .mat-header-cell,
+    .mat-cell {
+        font-size: 13px;
+        padding: 10px;
+    }
+    
+    .mat-column-flightNumber,
+    .mat-column-availableSeats {
+        width: 20%;
+    }
+    
+    .mat-column-origin,
+    .mat-column-destination {
+        width: 30%;
+    }
+
+    .mat-column-actions {
+        width: 20%;
+    }
+    
     h1 {
         font-size: 22px;
     }
 
     .mat-raised-button {
         font-size: 12px;
-        padding: 5px 10px;
+        padding: 6px 12px;
     }
 }

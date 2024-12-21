@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
 
 export interface Flight {
-  flightNumber: string; // Unique flight number
-  origin: string; // Destination city and airport
-  destination: string; // Origin city and airport
-  date: string; // Flight date
-  departureTime: string; // Departure time
-  duration: string; // Duration of the flight
-  price: number; // Flight price
-  image: string; // Image for the destination
-  isDynamicDate: boolean; // Indicates if the date is dynamically assigned
+  flightNumber: string;
+  origin: string; 
+  destination: string; 
+  date: string; 
+  departureTime: string;
+  duration: string; 
+  price: number; 
+  image: string; 
+  availableSeats: number;
+  isDynamicDate: boolean; 
 }
 
 @Injectable({
@@ -27,6 +29,7 @@ export class FlightService {
       price: 200,
       image: 'assets/destinations/berlin.jpeg',
       isDynamicDate: false,
+      availableSeats: 10,
     },
     {
       flightNumber: 'ON5678',
@@ -38,6 +41,7 @@ export class FlightService {
       price: 150,
       image: 'assets/destinations/dublin.jpeg',
       isDynamicDate: false,
+      availableSeats: 3,
     },
     {
       flightNumber: 'ON9101',
@@ -49,6 +53,7 @@ export class FlightService {
       price: 300,
       image: 'assets/destinations/paris.jpeg',
       isDynamicDate: true,
+      availableSeats: 7,
     },
     {
       flightNumber: 'ON1213',
@@ -60,6 +65,7 @@ export class FlightService {
       price: 800,
       image: 'assets/destinations/bora-bora.jpeg',
       isDynamicDate: true,
+      availableSeats: 27,
     },
     {
       flightNumber: 'ON1415',
@@ -71,6 +77,7 @@ export class FlightService {
       price: 600,
       image: 'assets/destinations/los-angeles.jpeg',
       isDynamicDate: true,
+      availableSeats: 15,
     },
     {
       flightNumber: 'ON1617',
@@ -82,6 +89,7 @@ export class FlightService {
       price: 350,
       image: 'assets/destinations/new_york.jpeg',
       isDynamicDate: false,
+      availableSeats: 5,
     },
     {
       flightNumber: 'ON1819',
@@ -93,6 +101,7 @@ export class FlightService {
       price: 250,
       image: 'assets/destinations/pyongyang.jpeg',
       isDynamicDate: true,
+      availableSeats: 9,
     },
     {
       flightNumber: 'ON2021',
@@ -104,6 +113,7 @@ export class FlightService {
       price: 300,
       image: 'assets/destinations/san francisco.jpeg',
       isDynamicDate: false,
+      availableSeats: 7,
     },
     {
       flightNumber: 'ON2223',
@@ -115,6 +125,7 @@ export class FlightService {
       price: 200,
       image: 'assets/destinations/thailand.jpeg',
       isDynamicDate: true,
+      availableSeats: 11,
     },
     {
       flightNumber: 'ON2425',
@@ -126,12 +137,15 @@ export class FlightService {
       price: 700,
       image: 'assets/destinations/tokyo.jpeg',
       isDynamicDate: true,
+      availableSeats: 19,
     },
   ];
 
-  constructor() {
-    this.assignDynamicDates();
+  getAllFlights(): Flight[] {
+    this.assignDynamicDates();  // Ensure dates are assigned before returning flights
+    return this.flights;
   }
+  
 
   private assignDynamicDates(): void {
     this.flights.forEach((flight, index) => {
@@ -147,7 +161,10 @@ export class FlightService {
     return today.toLocaleDateString('en-GB'); // Format as DD/MM/YYYY
   }
 
-  getAllFlights(): Flight[] {
-    return this.flights;
+  getFlightByNumber(flightNumber: string): Observable<any> {
+    const flight = this.flights.find(f => f.flightNumber === flightNumber);
+    return of(flight);  // Return Observable (null if not found)
   }
+
+
 }

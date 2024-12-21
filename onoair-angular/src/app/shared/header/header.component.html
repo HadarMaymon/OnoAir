@@ -1,12 +1,11 @@
 <div class="header-container">
   <!-- Logo Section -->
   <div class="logo-container">
-    <!-- Add routerLink to navigate to 'last-minute-flight' -->
     <img 
       src="assets/onoairLogo.png" 
       class="header-logo" 
       alt="OnoAir Logo"
-      routerLink="/last-minute-flight" 
+      (click)="navigateToHome()"  
       style="cursor: pointer;" 
     />
     <span class="header-title"></span>
@@ -30,14 +29,17 @@
     </mat-menu>
 
     <mat-menu #adminMenu="matMenu">
-      <button mat-menu-item>Add Flight</button>
-      <button mat-menu-item>Add Destination</button>
+      <button mat-menu-item routerLink="/manage-flight">
+        Manage Flights
+      </button>
+      <button mat-menu-item>
+        Add Destination
+      </button>
     </mat-menu>
 
     <mat-menu #userMenu="matMenu">
-      <button mat-menu-item>Search Flight</button>
+      <button mat-menu-item routerLink="/find-a-flight">Find A Flight</button>
       <button mat-menu-item>My Bookings</button>
-      <button mat-menu-item routerLink="/last-minute-flight">Last Minute Flights</button>
     </mat-menu>
   </div>
 </div>

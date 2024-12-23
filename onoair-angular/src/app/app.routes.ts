@@ -4,6 +4,8 @@ import { FindAFlightComponent } from './features/flights/find-a-flight/find-a-fl
 import { HomepageComponent } from './shared/homepage/homepage.component';
 import { ManageFlightComponent} from './features/flights/manage-flight/manage-flight.component';
 import { EditFlightComponent } from './features/flights/edit-flight/edit-flight.component';
+import { ManageDestinationComponent } from './features/destinations/manage-destinations/manage-destinations.component';
+import { EditDestinationsComponent } from './features/destinations/edit-destinations/edit-destinations.component';
 
 export const routes: Routes = [
   { path: 'homepage', component: HomepageComponent },
@@ -12,5 +14,7 @@ export const routes: Routes = [
   { path: 'find-a-flight', component: FindAFlightComponent },
   { path: 'manage-flight', component: ManageFlightComponent },  
   { path: 'edit-flight/:flightNumber', component: EditFlightComponent },
+  { path: 'manage-destinations', component: ManageDestinationComponent },
+  { path: 'edit-destinations/:destinationName', component: EditDestinationsComponent },
   { path: '**', redirectTo: 'last-minute-flight' }
 ];

@@ -1,0 +1,25 @@
+<div *ngIf="destination; else notFound" class="edit-destination-container mat-elevation-z8">
+  <h1>Edit Destination: {{ destination.destinationName }}</h1>  
+
+  <div class="details">
+    <p><strong>Destination Name:</strong> {{ destination.destinationName }}</p>
+    <p><strong>Airport Name:</strong> {{ destination.airportName }}</p>
+    <p><strong>Airport Website:</strong> 
+      <a [href]="destination.airportWebsite" target="_blank">{{ destination.airportWebsite }}</a>
+    </p>
+    <p><strong>IATA Code:</strong> {{ destination.IATA }}</p>
+    <p><strong>Time Zone:</strong> {{ destination.timeZone }}</p>
+    <p><strong>Currency:</strong> {{ destination.currency }}</p>
+    <p><strong>Image:</strong></p>
+    <img *ngIf="destination.image" [src]="destination.image" alt="Destination Image" width="300">
+  </div>
+
+  <div class="actions">
+    <button mat-raised-button color="primary">Save Changes</button>
+    <button mat-stroked-button color="warn" (click)="redirectToDestinationList()">Cancel</button>
+  </div>
+</div>
+
+<ng-template #notFound>
+    <h2>Destination not found!</h2>
+</ng-template>

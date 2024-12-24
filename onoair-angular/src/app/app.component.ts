@@ -8,12 +8,14 @@ import { FindAFlightComponent } from './features/flights/find-a-flight/find-a-fl
 import { ManageFlightComponent } from './features/flights/manage-flight/manage-flight.component';
 import { ManageDestinationComponent } from './features/destinations/manage-destinations/manage-destinations.component';
 import { EditDestinationsComponent } from './features/destinations/edit-destinations/edit-destinations.component';
+import { BookAFlightComponent } from './features/booking/book-a-flight/book-a-flight.component';
+import { MyBookingsComponent } from './features/booking/my-bookings/my-bookings.component';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   imports: [MatMenuModule, MatButtonModule, HomepageComponent, HeaderComponent, LastMinuteFlightComponent, FindAFlightComponent,
-    RouterOutlet, ManageFlightComponent, ManageDestinationComponent, EditDestinationsComponent],
+    RouterOutlet, ManageFlightComponent, ManageDestinationComponent, EditDestinationsComponent, BookAFlightComponent, MyBookingsComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

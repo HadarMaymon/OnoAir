@@ -1,25 +1,54 @@
 .edit-destination-container {
-    max-width: 800px;
-    margin: 50px auto;
-    padding: 24px;
+    max-width: 750px;
+    margin: 80px auto;
+    padding: 40px;
     background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .details p {
-    font-size: 16px;
-    margin: 8px 0;
-  }
-  
-  .details a {
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Softer, larger shadow */
+    text-align: left;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+.details p {
+    font-size: 18px;
+    margin: 16px 0;
+    line-height: 1.6;
+}
+
+.details strong {
+    font-weight: 600;
+}
+
+.details a {
     color: #1976d2;
     text-decoration: none;
-  }
-  
-  .actions {
-    margin-top: 24px;
+    font-weight: 500;
+}
+
+img {
+    margin-top: 20px;
+    border-radius: 8px;
+}
+
+.actions {
+    margin-top: 40px;
     display: flex;
-    justify-content: space-between;
-  }
-  
+    justify-content: flex-start;
+}
+
+button {
+    font-size: 16px;
+    padding: 12px 32px;
+    border-radius: 24px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+

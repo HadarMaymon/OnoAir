@@ -10,7 +10,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { CommonModule } from '@angular/common';
-
+import { Router, RouterLink } from '@angular/router';
 @Component({
   selector: 'app-find-a-flight',
   templateUrl: './find-a-flight.component.html',
@@ -23,7 +23,8 @@ import { CommonModule } from '@angular/common';
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    CommonModule
+    CommonModule,
+    RouterLink,
   ],
 })
 export class FindAFlightComponent implements OnInit, AfterViewInit {
@@ -43,7 +44,10 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(@Inject(FlightService) private flightService: FlightService) {}
+  constructor(
+    @Inject(FlightService) private flightService: FlightService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     const flights = this.flightService.getAllFlights();
@@ -66,10 +70,9 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
+  // Navigate to book-a-flight component
   bookFlight(flight: Flight): void {
-    alert(
-      `You have booked flight ${flight.flightNumber} from ${flight.origin} to ${flight.destination} on ${flight.date}`
-    );
+    this.router.navigate(['/book-a-flight', flight.flightNumber]);
   }
 
   private parseDate(dateStr: string): number {

@@ -1,20 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FlightService, Flight } from '../../../service/flights/flights';
-import { RouterLink} from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-edit-flight',
-  templateUrl: './edit-flight.component.html',
-  styleUrls: ['./edit-flight.component.css'],
-  imports: [RouterLink,CommonModule, MatIconModule,MatButtonModule],
+  selector: 'app-book-a-flight',
+  templateUrl: './book-a-flight.component.html',
+  styleUrls: ['./book-a-flight.component.css'],
+  standalone: true,
+  imports: [CommonModule, MatIconModule, MatButtonModule],
 })
-export class EditFlightComponent implements OnInit {
-  flight: any;
+export class BookAFlightComponent implements OnInit {
+  flight: Flight | null = null;
   flightNumber: string | null = null;
 
   constructor(
@@ -46,7 +47,17 @@ export class EditFlightComponent implements OnInit {
   }
 
   redirectToFlightList(): void {
-    alert('Flight not found. Redirecting to homepage.');  // Optional alert
+    alert('Flight not found. Redirecting to homepage.');  
     this.router.navigate(['/last-minute-flight']);
   }
+
+  confirmBooking(): void {
+    if (this.flight) {
+      alert(`Flight to ${this.flight.destination} has been booked successfully!`);
+      this.router.navigate(['/last-minute-flight']);  // Redirect after booking
+    } else {
+      alert('No flight selected. Please try again.');
+    }
+  }
+  
 }

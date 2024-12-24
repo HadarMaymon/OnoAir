@@ -24,7 +24,7 @@ export class DestinationsService {
       IATA: 'JFK',
       timeZone: 'Eastern Standard Time (EST) - UTC-5 / UTC-4 (EDT)',
       currency: 'USD',
-      image: '/assets/destinations/new-york.jpeg',
+      image: '/assets/destinations/new_york.jpeg',
     },
     {
       destinationName: 'Los Angeles',

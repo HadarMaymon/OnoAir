@@ -6,6 +6,10 @@ import { ManageFlightComponent} from './features/flights/manage-flight/manage-fl
 import { EditFlightComponent } from './features/flights/edit-flight/edit-flight.component';
 import { ManageDestinationComponent } from './features/destinations/manage-destinations/manage-destinations.component';
 import { EditDestinationsComponent } from './features/destinations/edit-destinations/edit-destinations.component';
+import { BookAFlightComponent } from './features/booking/book-a-flight/book-a-flight.component';
+import { MyBookingsComponent } from './features/booking/my-bookings/my-bookings.component';
+import { MyBookingsDetailsComponent } from './features/booking/my-bookings-details/my-bookings-details.component';
+
 
 export const routes: Routes = [
   { path: 'homepage', component: HomepageComponent },
@@ -16,5 +20,8 @@ export const routes: Routes = [
   { path: 'edit-flight/:flightNumber', component: EditFlightComponent },
   { path: 'manage-destinations', component: ManageDestinationComponent },
   { path: 'edit-destinations/:destinationName', component: EditDestinationsComponent },
+  { path: 'book-a-flight/:flightNumber', component: BookAFlightComponent },
+  { path: 'my-bookings', component: MyBookingsComponent },
+  { path: 'my-bookings-details/:bookingId', component: MyBookingsDetailsComponent},
   { path: '**', redirectTo: 'last-minute-flight' }
 ];

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
@@ -24,7 +24,7 @@ import { RouterModule } from '@angular/router';
 export class LastMinuteFlightComponent implements OnInit {
   lastMinuteFlights: Flight[] = [];
 
-  constructor(private flightService: FlightService) {}
+  constructor(private flightService: FlightService, private router: Router) {}
 
   ngOnInit(): void {
     this.filterLastMinuteFlights();
@@ -44,8 +44,10 @@ export class LastMinuteFlightComponent implements OnInit {
   }
 
   bookFlight(flight: Flight): void {
-    alert(`You have booked a flight to ${flight.destination} on ${flight.date}`);
-    // Here you could add logic to send booking details to a backend service
+    // Navigate to book-a-flight component
+    this.router.navigateByUrl(
+      `/book-a-flight?destination=${flight.destination}&origin=${flight.origin}&date=${flight.date}&price=${flight.price}`
+    );
   }
 
   private parseDate(dateStr: string): Date {

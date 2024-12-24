@@ -1,0 +1,51 @@
+.book-flight-container {
+    max-width: 700px;
+    margin: 60px auto;
+    padding: 50px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    font-family: 'Poppins', sans-serif;
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.book-flight-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.book-flight-container h1 {
+    text-align: center;
+    font-size: 2.8rem;
+    margin-bottom: 30px;
+    color: #212121;
+    font-weight: 700;
+}
+
+.flight-details {
+    margin: 20px 0;
+    line-height: 2;
+}
+
+.flight-details p {
+    font-size: 1.2rem;
+    margin: 12px 0;
+    color: #424242;
+}
+
+.flight-details strong {
+    color: #000000;
+    font-weight: 700;
+}
+
+
+.not-found-message {
+    text-align: center;
+    color: #d32f2f;
+    margin-top: 50px;
+    font-size: 1.8rem;
+    font-weight: 500;
+}
+
+

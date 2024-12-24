@@ -11,6 +11,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
+
 @Component({
   selector: 'app-find-a-flight',
   templateUrl: './find-a-flight.component.html',
@@ -25,6 +26,7 @@ import { Router, RouterLink } from '@angular/router';
     MatSortModule,
     CommonModule,
     RouterLink,
+    
   ],
 })
 export class FindAFlightComponent implements OnInit, AfterViewInit {

@@ -6,7 +6,7 @@
     border-radius: 12px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
     position: relative;
-    overflow-x: auto;  /* Horizontal scroll for small screens */
+    overflow-x: auto;
 }
 
 h1 {
@@ -15,7 +15,9 @@ h1 {
     color: #333;
     margin-bottom: 25px;
     font-family: 'Arial', sans-serif;
+    
 }
+
 
 .search-bar {
     width: 100%;
@@ -41,6 +43,7 @@ table {
     min-width: 1200px;  
     table-layout: fixed;  /* Fix table layout to prevent shifting */
     border-collapse: collapse;
+    
 }
 
 .mat-header-row {
@@ -100,6 +103,7 @@ table {
 .mat-row {
     background-color: #fdfdfd;
     transition: background-color 0.3s ease;
+    
 }
 
 .mat-row:hover {
@@ -120,7 +124,7 @@ table {
     transform: scale(1.05);
 }
 
-/* Paginator Styling */
+
 .mat-paginator {
     margin-top: 25px;
     background-color: #f8f8f8;
@@ -130,6 +134,7 @@ table {
 .mat-paginator-range-label {
     font-size: 14px;
     color: #555;
+    
 }
 
 .mat-paginator-icon {
@@ -140,7 +145,6 @@ table {
     font-size: 14px;
 }
 
-/* Responsive Adjustments */
 @media (max-width: 1200px) {
     .find-a-flight-container {
         max-width: 1000px;
@@ -174,3 +178,5 @@ table {
         padding: 6px 12px;
     }
 }
+
+

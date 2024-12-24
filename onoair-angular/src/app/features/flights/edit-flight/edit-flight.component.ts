@@ -49,4 +49,10 @@ export class EditFlightComponent implements OnInit {
     alert('Flight not found. Redirecting to homepage.');  // Optional alert
     this.router.navigate(['/last-minute-flight']);
   }
+
+  saveChanges(): void {
+    alert('Changes saved successfully! Redirecting to homepage.');
+    this.router.navigate(['/homepage']);  // Navigate to homepage
+  }
+  
 }

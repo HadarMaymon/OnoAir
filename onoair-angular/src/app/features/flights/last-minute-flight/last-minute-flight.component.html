@@ -1,6 +1,6 @@
 <div class="last-minute-flights-container">
   <h1>Last Minute Flights</h1>
-
+  
   <div class="cards-container" *ngIf="lastMinuteFlights.length > 0; else noFlightsMessage">
     <mat-card *ngFor="let flight of lastMinuteFlights" class="flight-card">
       <mat-card-header>
@@ -16,12 +16,8 @@
         <p class="price"><b>Price:</b> ${{ flight.price }}</p>
       </mat-card-content>
     
-      <mat-card-actions class="mat-card-actions">
-        <button 
-          mat-raised-button 
-          color="primary" 
-          [routerLink]="'/book-a-flight/' + flight.flightNumber"
-        >
+      <mat-card-actions class="center-actions">
+        <button mat-raised-button color="primary" [routerLink]="'/book-a-flight/' + flight.flightNumber">
           Book
         </button>
       </mat-card-actions>
@@ -29,8 +25,6 @@
   </div>
 
   <ng-template #noFlightsMessage>
-    <p class="no-flights-message">No available flights at the moment.</p>
+    <p>No last-minute flights available at the moment.</p>
   </ng-template>
-
-  <app-find-a-flight></app-find-a-flight>
 </div>

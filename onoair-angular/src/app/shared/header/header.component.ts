@@ -15,6 +15,6 @@ export class HeaderComponent {
   constructor(private router: Router) {}  
 
   navigateToHome(): void {
-    this.router.navigate(['/last-minute-flight']);  
+    this.router.navigate(['/homepage']);  
   }
 }

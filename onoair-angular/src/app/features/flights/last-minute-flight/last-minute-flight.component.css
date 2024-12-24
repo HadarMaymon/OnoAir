@@ -1,4 +1,3 @@
-/* Overall container */
 .last-minute-flights-container {
   display: flex;
   flex-direction: column;
@@ -7,39 +6,51 @@
   text-align: center;
   margin: 20px;
   font-family: Arial, sans-serif;
+  padding-bottom: 80px;
 }
 
-/* Title styling */
 h1 {
   font-size: 2.5rem;
   font-weight: bold;
   margin-bottom: 30px;
 }
 
-/* Cards container - Flexbox for horizontal layout */
 .cards-container {
   display: flex;
-  flex-direction: row; 
+  flex-direction: row;
   justify-content: center;
-  gap: 20px; 
-  flex-wrap: wrap; 
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: stretch; 
 }
 
-/* Individual card */
 .flight-card {
-  width: 200px; 
+  width: 220px;  
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
-  overflow: hidden; 
+  overflow: hidden;
   text-align: center;
-  padding-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 450px;  
 }
 
-/* Image placeholder */
+
+.card-content {
+  flex-grow: 1;
+}
+
+.mat-card-actions {
+  margin-top: auto;  
+  display: flex;
+  justify-content: center;
+}
+
 .image-placeholder {
   width: 100%;
   height: 120px;
-  background-color: #e0e0e0; 
+  background-color: #e0e0e0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,10 +59,9 @@ h1 {
 .image-placeholder img {
   width: 100%;
   height: 100%;
-  object-fit: cover; 
+  object-fit: cover;
 }
 
-/* Text styling inside cards */
 .destination {
   font-size: 1.2rem;
   font-weight: bold;
@@ -63,24 +73,9 @@ h1 {
   color: #555;
 }
 
-.mat-card-actions {
-  display: flex;
-  justify-content: center;  /* Center horizontally */
-  margin-top: auto;  /* Push the button down */
-  padding-bottom: 15px;  /* Add some space below the button */
-}
-
-
-.find-flight-button-container {
+button[mat-raised-button] {
+  display: block;
+  margin: 10px auto;
+  padding: 10px 20px;
   text-align: center;
-  margin-top: 80px;
 }
-
-.no-flights-message {
-  font-size: 1.2rem;
-  color: #ff0000; /* Red color for emphasis */
-  text-align: center;
-  margin-top: 20px;
-}
-
-

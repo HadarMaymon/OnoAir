@@ -48,13 +48,13 @@ export class BookAFlightComponent implements OnInit {
 
   redirectToFlightList(): void {
     alert('Flight not found. Redirecting to homepage.');  
-    this.router.navigate(['/last-minute-flight']);
+    this.router.navigate(['/homepage']);
   }
 
   confirmBooking(): void {
     if (this.flight) {
       alert(`Flight to ${this.flight.destination} has been booked successfully!`);
-      this.router.navigate(['/last-minute-flight']);  // Redirect after booking
+      this.router.navigate(['/homepage']); 
     } else {
       alert('No flight selected. Please try again.');
     }

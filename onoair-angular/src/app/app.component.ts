@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {MatMenuModule} from "@angular/material/menu";
 import {MatButtonModule} from "@angular/material/button";
-import { HomepageComponent } from './shared/homepage/homepage.component';
+import { HomepageComponent } from './features/home/homepage/homepage.component';
 import { HeaderComponent } from "./shared/header/header.component";
 import { LastMinuteFlightComponent } from "./features/flights/last-minute-flight/last-minute-flight.component";
 import { FindAFlightComponent } from './features/flights/find-a-flight/find-a-flight.component';
@@ -10,12 +10,13 @@ import { ManageDestinationComponent } from './features/destinations/manage-desti
 import { EditDestinationsComponent } from './features/destinations/edit-destinations/edit-destinations.component';
 import { BookAFlightComponent } from './features/booking/book-a-flight/book-a-flight.component';
 import { MyBookingsComponent } from './features/booking/my-bookings/my-bookings.component';
+import { FooterComponent } from './shared/footer/footer.component';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   imports: [MatMenuModule, MatButtonModule, HomepageComponent, HeaderComponent, LastMinuteFlightComponent, FindAFlightComponent,
-    RouterOutlet, ManageFlightComponent, ManageDestinationComponent, EditDestinationsComponent, BookAFlightComponent, MyBookingsComponent],
+    RouterOutlet, ManageFlightComponent, ManageDestinationComponent, EditDestinationsComponent, BookAFlightComponent, MyBookingsComponent, FooterComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

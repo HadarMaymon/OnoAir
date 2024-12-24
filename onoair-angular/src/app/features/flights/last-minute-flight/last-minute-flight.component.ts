@@ -4,7 +4,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { FlightService, Flight } from '../../../service/flights/flights';
-import { FindAFlightComponent } from '../find-a-flight/find-a-flight.component';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -17,7 +16,6 @@ import { RouterModule } from '@angular/router';
     MatCardModule,
     MatButtonModule,
     CommonModule,
-    FindAFlightComponent,
     RouterModule  
   ],
 })

@@ -11,7 +11,8 @@
       <p><strong>Available Seats:</strong> {{ flight?.availableSeats }}</p>
     </div>
   
-    <button mat-raised-button color="primary">Save Changes</button>
+    <button mat-raised-button color="primary" (click)="saveChanges()">Save Changes</button>
+
 </div>
 
 <ng-template #notFound>

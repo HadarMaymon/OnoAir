@@ -1,7 +1,7 @@
 .find-a-flight-container {
     max-width: 1400px;
     margin: 30px auto;
-    padding: 30px;
+    padding: 80px;
     background-color: #ffffff;
     border-radius: 12px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
@@ -41,7 +41,7 @@ mat-label {
 table {
     width: 100%;
     min-width: 1200px;  
-    table-layout: fixed;  /* Fix table layout to prevent shifting */
+    table-layout: fixed; 
     border-collapse: collapse;
     
 }
@@ -64,7 +64,6 @@ table {
     height: 65px;
 }
 
-/* Fix Column Widths for Consistency */
 .mat-column-flightNumber {
     width: 12%;
 }
@@ -89,17 +88,15 @@ table {
     width: 12%;
 }
 
-/* Ensure Alignment Consistency */
 .mat-column-flightNumber,
 .mat-column-availableSeats,
 .mat-column-origin,
 .mat-column-destination,
 .mat-column-date,
 .mat-column-actions {
-    box-sizing: border-box;  /* Prevent table shift by maintaining box model */
+    box-sizing: border-box;  
 }
 
-/* Row Hover Effect */
 .mat-row {
     background-color: #fdfdfd;
     transition: background-color 0.3s ease;
@@ -110,7 +107,6 @@ table {
     background-color: #f3f3f3;
 }
 
-/* Button Styling */
 .mat-raised-button {
     background-color: #ff4081;
     color: white;

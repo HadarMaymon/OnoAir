@@ -1,7 +1,7 @@
 .manage-flight-container {
     max-width: 1200px;
     margin: 20px auto;
-    padding: 20px;
+    padding: 80px;
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -34,7 +34,7 @@ mat-label {
 table {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed;  /* Fix the table layout */
+    table-layout: fixed;  
 }
 
 .mat-header-row {
@@ -48,17 +48,16 @@ table {
     padding: 12px;
     text-align: center;
     border-bottom: 1px solid #e0e0e0;
-    white-space: normal;  /* Allow wrapping */
+    white-space: normal;  
     word-wrap: break-word;
     overflow-wrap: break-word;
-    height: auto;  /* Adjust cell height for multiline content */
+    height: auto;  
 }
 
-/* Specific column width adjustments */
 .mat-column-destinationName,
 .mat-column-airportName,
 .mat-column-IATA {
-    width: 20%;  /* Fixed width for main columns */
+    width: 20%;  
 }
 
 .mat-column-timeZone,
@@ -90,7 +89,7 @@ table {
     
     .mat-column-destinationName,
     .mat-column-airportName {
-        width: 100%;  /* Allow full width for narrow screens */
-        display: block;  /* Stack as rows */
+        width: 100%;  
+        display: block;  
     }
 }

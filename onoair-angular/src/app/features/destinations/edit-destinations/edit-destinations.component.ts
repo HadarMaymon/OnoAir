@@ -46,7 +46,7 @@ export class EditDestinationsComponent implements OnInit {
   }
 
   redirectToDestinationList(): void {
-    alert('Destination not found. Redirecting to destinations list.');  
+    alert('Destination not found. Redirecting to homepage.');  
     this.router.navigate(['/destinations']);
   }
 }

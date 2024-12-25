@@ -1,7 +1,25 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;  /* Full viewport height */
+}
+
+.main-content {
+    flex: 1;  /* Push footer to the bottom */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .book-flight-container {
     max-width: 700px;
-    margin: 60px auto;
-    padding: 80px;
+    margin: 40px auto;
+    padding: 60px;
     background-color: #ffffff;
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -39,13 +57,11 @@
     font-weight: 700;
 }
 
-
-.not-found-message {
+.footer {
+    height: 80px;
+    background-color: #f8f8f8;
+    color: #555;
     text-align: center;
-    color: #d32f2f;
-    margin-top: 50px;
-    font-size: 1.8rem;
-    font-weight: 500;
+    line-height: 80px;
+    border-top: 1px solid #ddd;
 }
-
-

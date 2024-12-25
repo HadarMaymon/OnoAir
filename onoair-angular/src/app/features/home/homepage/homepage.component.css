@@ -1,13 +1,13 @@
 html, body {
     height: 100%;
-    margin: 0;
+    margin:auto;
     font-family: Roboto, "Helvetica Neue", sans-serif;
     overflow-y: auto;
 }
 
 .homepage-container {
     min-height: 100vh;
-    padding: 80px;
+    padding: 40px;
     box-sizing: border-box;
     overflow-y: auto;
 }

@@ -1,20 +1,24 @@
-<div *ngIf="flight; else notFound" class="edit-flight-container">
-    <h1>Edit Flight: {{ flight?.flightNumber }}</h1>  
-    
-    <div class="details">
-      <p><strong>Origin:</strong> {{ flight?.origin }}</p>
-      <p><strong>Destination:</strong> {{ flight?.destination }}</p>
-      <p><strong>Date:</strong> {{ flight?.date }}</p>
-      <p><strong>Departure Time:</strong> {{ flight?.departureTime }}</p>
-      <p><strong>Duration:</strong> {{ flight?.duration }}</p>
-      <p><strong>Price:</strong> ${{ flight?.price }}</p>
-      <p><strong>Available Seats:</strong> {{ flight?.availableSeats }}</p>
-    </div>
-  
-    <button mat-raised-button color="primary" (click)="saveChanges()">Save Changes</button>
+<div class="wrapper">
+  <div class="main-content">
+      <div *ngIf="flight; else notFound" class="edit-flight-container">
+          <h1>Edit Flight: {{ flight?.flightNumber }}</h1>  
+
+          <div class="details">
+              <p><strong>Origin:</strong> {{ flight?.origin }}</p>
+              <p><strong>Destination:</strong> {{ flight?.destination }}</p>
+              <p><strong>Date:</strong> {{ flight?.date }}</p>
+              <p><strong>Departure Time:</strong> {{ flight?.departureTime }}</p>
+              <p><strong>Duration:</strong> {{ flight?.duration }}</p>
+              <p><strong>Price:</strong> ${{ flight?.price }}</p>
+              <p><strong>Available Seats:</strong> {{ flight?.availableSeats }}</p>
+          </div>
+
+          <button mat-raised-button color="primary" (click)="saveChanges()">Save Changes</button>
+      </div>
+
+      <ng-template #notFound>
+          <h2>Flight not found!</h2>
+      </ng-template>
+  </div>
 
 </div>
-
-<ng-template #notFound>
-    <h2>Flight not found!</h2>
-</ng-template>

@@ -53,10 +53,13 @@ export class ManageFlightComponent implements OnInit, AfterViewInit {
   constructor(private flightService: FlightService) {}
 
   ngOnInit(): void {
-    const flight = this.flightService.getAllFlights();
-    this.dataSource = new MatTableDataSource(flight);
+    this.flightService.getAllFlights().subscribe((flights) => {
+      this.dataSource = new MatTableDataSource(flights);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
-
+  
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;

@@ -27,19 +27,20 @@ export class LastMinuteFlightComponent implements OnInit {
   ngOnInit(): void {
     this.filterLastMinuteFlights();
   }
-
+  
   private filterLastMinuteFlights(): void {
     const today = new Date();
     const oneWeekFromNow = new Date();
     oneWeekFromNow.setDate(today.getDate() + 7);
-
-    this.lastMinuteFlights = this.flightService
-      .getAllFlights()
-      .filter((flight) => {
+  
+    this.flightService.getAllFlights().subscribe((flights) => {
+      this.lastMinuteFlights = flights.filter((flight) => {
         const flightDate = this.parseDate(flight.date);
         return flightDate >= today && flightDate <= oneWeekFromNow;
       });
+    });
   }
+  
 
   bookFlight(flight: Flight): void {
     // Navigate to book-a-flight component

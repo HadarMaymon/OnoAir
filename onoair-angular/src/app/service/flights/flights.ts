@@ -1,17 +1,33 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { DestinationsService } from '../destinations/destinations.service';
 
-export interface Flight {
-  flightNumber: string;
-  origin: string; 
-  destination: string; 
-  date: string; 
-  departureTime: string;
-  duration: string; 
-  price: number; 
-  image: string; 
-  availableSeats: number;
-  isDynamicDate: boolean; 
+export class Flight {
+  constructor(
+    public flightNumber: string,
+    public origin: string,
+    public destination: string,
+    public date: string,
+    public departureTime: string,
+    public duration: string,
+    public price: number,
+    public image: string = '',
+    public availableSeats: number,
+    public isDynamicDate: boolean
+  ) {}
+
+  updatePrice(newPrice: number): void {
+    this.price = newPrice;
+  }
+
+  updateSeats(seats: number): void {
+    this.availableSeats = seats;
+  }
+
+  assignDynamicDate(date: string): void {
+    this.date = date;
+  }
 }
 
 @Injectable({
@@ -19,138 +35,41 @@ export interface Flight {
 })
 export class FlightService {
   private flights: Flight[] = [
-    {
-      flightNumber: 'ON1234',
-      origin: 'Paris (Charles de Gaulle Airport)', // Destination
-      destination: 'Berlin (Berlin Brandenburg Airport)', // Origin
-      date: '29/1/2025',
-      departureTime: '10:30 AM',
-      duration: '1h 50m',
-      price: 200,
-      image: 'assets/destinations/berlin.jpeg',
-      isDynamicDate: false,
-      availableSeats: 10,
-    },
-    {
-      flightNumber: 'ON5678',
-      origin: 'London (Heathrow Airport)', // Destination
-      destination: 'Dublin (Dublin Airport)', // Origin
-      date: '31/1/2025',
-      departureTime: '2:00 PM',
-      duration: '1h 20m',
-      price: 150,
-      image: 'assets/destinations/dublin.jpeg',
-      isDynamicDate: false,
-      availableSeats: 3,
-    },
-    {
-      flightNumber: 'ON9101',
-      origin: 'Tel Aviv (Ben Gurion Airport)', // Destination
-      destination: 'Paris (Charles de Gaulle Airport)', // Origin
-      date: '',
-      departureTime: '5:00 PM',
-      duration: '4h 30m',
-      price: 300,
-      image: 'assets/destinations/paris.jpeg',
-      isDynamicDate: true,
-      availableSeats: 7,
-    },
-    {
-      flightNumber: 'ON1213',
-      origin: 'Los Angeles (LAX)', // Destination
-      destination: 'Bora Bora (Motu Mute Airport)', // Origin
-      date: '',
-      departureTime: '9:00 AM',
-      duration: '8h 20m',
-      price: 800,
-      image: 'assets/destinations/bora-bora.jpeg',
-      isDynamicDate: true,
-      availableSeats: 27,
-    },
-    {
-      flightNumber: 'ON1415',
-      origin: 'Tokyo (Narita Airport)', // Destination
-      destination: 'Los Angeles (LAX)', // Origin
-      date: '',
-      departureTime: '11:00 AM',
-      duration: '12h 10m',
-      price: 600,
-      image: 'assets/destinations/los-angeles.jpeg',
-      isDynamicDate: true,
-      availableSeats: 15,
-    },
-    {
-      flightNumber: 'ON1617',
-      origin: 'San Francisco (SFO)', // Destination
-      destination: 'New York (JFK)', // Origin
-      date: '8/1/2025',
-      departureTime: '7:30 AM',
-      duration: '6h 15m',
-      price: 350,
-      image: 'assets/destinations/new_york.jpeg',
-      isDynamicDate: false,
-      availableSeats: 5,
-    },
-    {
-      flightNumber: 'ON1819',
-      origin: 'Beijing (Beijing Capital Airport)', // Destination
-      destination: 'Pyongyang (Pyongyang Sunan International Airport)', // Origin
-      date: '',
-      departureTime: '3:00 PM',
-      duration: '2h 0m',
-      price: 250,
-      image: 'assets/destinations/pyongyang.jpeg',
-      isDynamicDate: true,
-      availableSeats: 9,
-    },
-    {
-      flightNumber: 'ON2021',
-      origin: 'Chicago (O’Hare International Airport)', // Destination
-      destination: 'San Francisco (SFO)', // Origin
-      date: '15/1/2025',
-      departureTime: '4:00 PM',
-      duration: '4h 30m',
-      price: 300,
-      image: 'assets/destinations/san francisco.jpeg',
-      isDynamicDate: false,
-      availableSeats: 7,
-    },
-    {
-      flightNumber: 'ON2223',
-      origin: 'Singapore (Changi Airport)', // Destination
-      destination: 'Thailand (Suvarnabhumi Airport)', // Origin
-      date: '',
-      departureTime: '12:30 PM',
-      duration: '2h 10m',
-      price: 200,
-      image: 'assets/destinations/thailand.jpeg',
-      isDynamicDate: true,
-      availableSeats: 11,
-    },
-    {
-      flightNumber: 'ON2425',
-      origin: 'Sydney (Kingsford Smith Airport)', // Destination
-      destination: 'Tokyo (Narita Airport)', // Origin
-      date: '',
-      departureTime: '10:00 PM',
-      duration: '9h 40m',
-      price: 700,
-      image: 'assets/destinations/tokyo.jpeg',
-      isDynamicDate: true,
-      availableSeats: 19,
-    },
+    new Flight('ON1234', 'Paris', 'Berlin', '29/1/2025', '10:30 AM', '1h 50m', 200, '', 10, false),
+    new Flight('ON5678', 'London', 'Dublin', '31/1/2025', '2:00 PM', '1h 20m', 150, '', 3, false),
+    new Flight('ON9101', 'Tel Aviv', 'Paris', '', '5:00 PM', '4h 30m', 300, '', 7, true),
+    new Flight('ON1213', 'Los Angeles', 'Bora Bora', '', '9:00 AM', '8h 20m', 800, '', 27, true),
+    new Flight('ON1415', 'Tokyo', 'Los Angeles', '', '11:00 AM', '12h 10m', 600, '', 15, true),
+    new Flight('ON1617', 'San Francisco', 'New York', '8/1/2025', '7:30 AM', '6h 15m', 350, '', 5, false),
+    new Flight('ON1819', 'Beijing', 'Pyongyang', '', '3:00 PM', '2h 0m', 250, '', 9, true),
+    new Flight('ON2021', 'Chicago', 'San Francisco', '15/1/2025', '4:00 PM', '4h 30m', 300, '', 7, false),
+    new Flight('ON2223', 'Singapore', 'Thailand', '', '12:30 PM', '2h 10m', 200, '', 11, true),
+    new Flight('ON2425', 'Sydney', 'Tokyo', '', '10:00 PM', '9h 40m', 700, '', 19, true),
   ];
 
-  getAllFlights(): Flight[] {
-    this.assignDynamicDates();  // Ensure dates are assigned before returning flights
-    return this.flights;
+  constructor(private destinationsService: DestinationsService) {}
+
+  getAllFlights(): Observable<Flight[]> {
+    this.assignDynamicDates();
+
+    const flightRequests = this.flights.map(flight =>
+      this.destinationsService.getDestinationByName(flight.destination).pipe(
+        map(destination => {
+          console.log('Fetched Destination for Flight:', destination);
+          flight.image = destination?.image || 'https://via.placeholder.com/300';
+          return flight;
+        })
+      )
+    );
+
+    return forkJoin(flightRequests);
   }
-  
 
   private assignDynamicDates(): void {
     this.flights.forEach((flight, index) => {
       if (flight.isDynamicDate) {
-        flight.date = this.getFutureDate(index + 1);
+        const newDate = this.getFutureDate(index + 1);
+        flight.assignDynamicDate(newDate);
       }
     });
   }
@@ -158,13 +77,11 @@ export class FlightService {
   private getFutureDate(daysToAdd: number): string {
     const today = new Date();
     today.setDate(today.getDate() + daysToAdd);
-    return today.toLocaleDateString('en-GB'); // Format as DD/MM/YYYY
+    return today.toLocaleDateString('en-GB');
   }
 
-  getFlightByNumber(flightNumber: string): Observable<any> {
+  getFlightByNumber(flightNumber: string): Observable<Flight | undefined> {
     const flight = this.flights.find(f => f.flightNumber === flightNumber);
-    return of(flight);  // Return Observable (null if not found)
+    return of(flight);
   }
-
-
 }

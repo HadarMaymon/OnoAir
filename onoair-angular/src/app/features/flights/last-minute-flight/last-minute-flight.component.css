@@ -5,7 +5,8 @@
   justify-content: center;
   text-align: center;
   margin: auto;
-  font-family: Arial, sans-serif;
+  font-family: 'Poppins', sans-serif;
+  font-size: large;
   padding-bottom: 80px;
 }
 
@@ -13,6 +14,21 @@ h1 {
   font-size: 2.5rem;
   font-weight: bold;
   margin-bottom: 30px;
+}
+
+.destination {
+  font-size: 1rem; 
+  margin: 10px 0 5px;
+  color: black;
+}
+
+.destination-city {
+  font-size: 1.4rem;  
+  text-transform: uppercase;  
+  font-weight: 800;  
+  color: black; 
+  margin-top: 5px;
+  font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 .cards-container {

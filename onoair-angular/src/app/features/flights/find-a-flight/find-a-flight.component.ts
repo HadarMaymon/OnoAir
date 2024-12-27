@@ -52,10 +52,13 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    const flights = this.flightService.getAllFlights();
-    this.dataSource = new MatTableDataSource(flights);
+    this.flightService.getAllFlights().subscribe((flights) => {
+      this.dataSource = new MatTableDataSource(flights);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
-
+  
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;

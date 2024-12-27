@@ -19,20 +19,21 @@ export class MyBookingsComponent implements OnInit {
   constructor(private bookingService: BookingsService, private router: Router) {}
 
   ngOnInit(): void {
-    const allBookings = this.bookingService.getAllBookings();
     const now = new Date();
-
-    this.upcomingBookings = allBookings.filter((booking: Booking) => {
-      const boardingDate = this.parseDate(booking.boarding);
-      return boardingDate > now;
-    });
-
-    this.previousBookings = allBookings.filter((booking: Booking) => {
-      const boardingDate = this.parseDate(booking.boarding);
-      return boardingDate <= now;
+  
+    this.bookingService.getAllBookings().subscribe((allBookings: Booking[]) => {
+      this.upcomingBookings = allBookings.filter((booking: Booking) => {
+        const boardingDate = this.parseDate(booking.boarding);
+        return boardingDate > now;
+      });
+  
+      this.previousBookings = allBookings.filter((booking: Booking) => {
+        const boardingDate = this.parseDate(booking.boarding);
+        return boardingDate <= now;
+      });
     });
   }
-
+  
   private parseDate(dateStr: string): Date {
     const [day, month, yearAndTime] = dateStr.split('/');
     const [year, time] = yearAndTime.split(' ');

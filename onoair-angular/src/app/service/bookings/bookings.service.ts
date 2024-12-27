@@ -1,21 +1,36 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { DestinationsService } from '../destinations/destinations.service';
+import { forkJoin } from 'rxjs';
 
-export interface Passenger {
-  name: string;
-  id: string;
+export class Passenger {
+  constructor(
+    public name: string,
+    public id: string
+  ) {}
 }
 
-export interface Booking {
-  bookingId: string;
-  origin: string;
-  destination: string;
-  boarding: string;
-  landing: string;
-  numberOfPassengers: number;  // Explicit passenger count
-  passengers: Passenger[];
-  image: string;
-  isDynamicDate: boolean;
+export class Booking {
+  constructor(
+    public bookingId: string,
+    public origin: string,
+    public destination: string,
+    public boarding: string = '',
+    public landing: string = '',
+    public numberOfPassengers: number,
+    public passengers: Passenger[],
+    public image: string = '',
+    public isDynamicDate: boolean
+  ) {}
+
+  updateBoardingTime(time: string) {
+    this.boarding = time;
+  }
+
+  updateLandingTime(time: string) {
+    this.landing = time;
+  }
 }
 
 @Injectable({
@@ -23,180 +38,203 @@ export interface Booking {
 })
 export class BookingsService {
   private bookings: Booking[] = [
-    {
-      bookingId: 'BK1001',
-      origin: 'Tel Aviv',
-      destination: 'Berlin',
-      boarding: '',
-      landing: '',
-      numberOfPassengers: 5,
-      passengers: [
-        { name: 'Hadar Maymon', id: '322334244' },
-        { name: 'Ran Bar', id: '312487622' },
-        { name: 'Lior Cohen', id: '205678943' },
-        { name: 'Noga Levi', id: '309812675' },
-        { name: 'Tomer Dahan', id: '305478291' },
+    new Booking(
+      'BK1001',
+      'Tel Aviv',
+      'Berlin',
+      '',
+      '',
+      5,
+      [
+        new Passenger('Hadar Maymon', '322334244'),
+        new Passenger('Ran Bar', '312487622'),
+        new Passenger('Lior Cohen', '205678943'),
+        new Passenger('Noga Levi', '309812675'),
+        new Passenger('Tomer Dahan', '305478291')
       ],
-      image: 'assets/destinations/berlin.jpeg',
-      isDynamicDate: true,
-    },
-    {
-      bookingId: 'BK1002',
-      origin: 'Krakow',
-      destination: 'Bora Bora',
-      boarding: '16/7/2025 20:00',
-      landing: '17/7/2025 01:00',
-      numberOfPassengers: 4,
-      passengers: [
-        { name: 'Hadar Maymon', id: '322334244' },
-        { name: 'Ran Bar', id: '312487622' },
-        { name: 'Maya Azulay', id: '208754123' },
-        { name: 'Tomer Dahan', id: '305478291' },
+      '',
+      true
+    ),
+    new Booking(
+      'BK1002',
+      'Krakow',
+      'Bora Bora',
+      '16/7/2025 20:00',
+      '17/7/2025 01:00',
+      4,
+      [
+        new Passenger('Hadar Maymon', '322334244'),
+        new Passenger('Ran Bar', '312487622'),
+        new Passenger('Maya Azulay', '208754123'),
+        new Passenger('Tomer Dahan', '305478291')
       ],
-      image: 'assets/destinations/bora-bora.jpeg',
-      isDynamicDate: false,
-    },
-    {
-      bookingId: 'BK1003',
-      origin: 'London',
-      destination: 'Dublin',
-      boarding: '',
-      landing: '',
-      numberOfPassengers: 2,
-      passengers: [
-        { name: 'Hadar Maymon', id: '322334244' },
-        { name: 'Ran Bar', id: '312487622' },
+      '',
+      false
+    ),
+    new Booking(
+      'BK1003',
+      'London',
+      'Dublin',
+      '',
+      '',
+      2,
+      [
+        new Passenger('Hadar Maymon', '322334244'),
+        new Passenger('Ran Bar', '312487622')
       ],
-      image: 'assets/destinations/dublin.jpeg',
-      isDynamicDate: true,
-    },
-    {
-      bookingId: 'BK1004',
-      origin: 'Madrid',
-      destination: 'Los Angeles',
-      boarding: '20/5/2024 20:00',
-      landing: '21/5/2024 02:00',
-      numberOfPassengers: 6,
-      passengers: [
-        { name: 'Hadar Maymon', id: '322334244' },
-        { name: 'Ran Bar', id: '312487622' },
-        { name: 'Lior Cohen', id: '205678943' },
-        { name: 'Maya Azulay', id: '208754123' },
-        { name: 'Noga Levi', id: '309812675' },
-        { name: 'Elior Ben-Ami', id: '278943512' },
+      '',
+      true
+    ),
+    new Booking(
+      'BK1004',
+      'Madrid',
+      'Los Angeles',
+      '20/5/2024 20:00',
+      '21/5/2024 02:00',
+      6,
+      [
+        new Passenger('Hadar Maymon', '322334244'),
+        new Passenger('Ran Bar', '312487622'),
+        new Passenger('Lior Cohen', '205678943'),
+        new Passenger('Maya Azulay', '208754123'),
+        new Passenger('Noga Levi', '309812675'),
+        new Passenger('Elior Ben-Ami', '278943512')
       ],
-      image: 'assets/destinations/los-angeles.jpeg',
-      isDynamicDate: false,
-    },
-    {
-      bookingId: 'BK1005',
-      origin: 'Rome',
-      destination: 'New York',
-      boarding: '',
-      landing: '',
-      numberOfPassengers: 3,
-      passengers: [
-        { name: 'Hadar Maymon', id: '322334244' },
-        { name: 'Ran Bar', id: '312487622' },
-        { name: 'Noga Levi', id: '309812675' },
+      '',
+      false
+    ),
+    new Booking(
+      'BK1005',
+      'Rome',
+      'New York',
+      '',
+      '',
+      3,
+      [
+        new Passenger('Hadar Maymon', '322334244'),
+        new Passenger('Ran Bar', '312487622'),
+        new Passenger('Noga Levi', '309812675')
       ],
-      image: 'assets/destinations/new_york.jpeg',
-      isDynamicDate: true,
-    },
-    {
-      bookingId: 'BK1006',
-      origin: 'Paris',
-      destination: 'Pyongyang',
-      boarding: '5/3/2024 15:00',
-      landing: '6/3/2024 19:00',
-      numberOfPassengers: 1,
-      passengers: [
-        { name: 'Ofir Shuali', id: '322805359' },
+      '',
+      true
+    ),
+    new Booking(
+      'BK1006',
+      'Paris',
+      'Pyongyang',
+      '5/3/2024 15:00',
+      '6/3/2024 19:00',
+      1,
+      [
+        new Passenger('Ofir Shuali', '322805359')
       ],
-      image: 'assets/destinations/pyongyang.jpeg',
-      isDynamicDate: false,
-    },
-    {
-      bookingId: 'BK1007',
-      origin: 'Singapore',
-      destination: 'San Francisco',
-      boarding: '',
-      landing: '',
-      numberOfPassengers: 8,
-      passengers: [
-        { name: 'Hadar Maymon', id: '322334244' },
-        { name: 'Ran Bar', id: '312487622' },
-        { name: 'Tomer Dahan', id: '305478291' },
-        { name: 'Noga Levi', id: '309812675' },
-        { name: 'Lior Cohen', id: '205678943' },
-        { name: 'Elior Ben-Ami', id: '278943512' },
-        { name: 'Maya Azulay', id: '208754123' },
-        { name: 'Tomer Dahan', id: '305478291' },
+      '',
+      false
+    ),
+    new Booking(
+      'BK1007',
+      'Singapore',
+      'San Francisco',
+      '',
+      '',
+      8,
+      [
+        new Passenger('Hadar Maymon', '322334244'),
+        new Passenger('Ran Bar', '312487622'),
+        new Passenger('Tomer Dahan', '305478291'),
+        new Passenger('Noga Levi', '309812675'),
+        new Passenger('Lior Cohen', '205678943'),
+        new Passenger('Elior Ben-Ami', '278943512'),
+        new Passenger('Maya Azulay', '208754123'),
+        new Passenger('Tomer Dahan', '305478291')
       ],
-      image: 'assets/destinations/san francisco.jpeg',
-      isDynamicDate: true,
-    },
-    {
-      bookingId: 'BK1008',
-      origin: 'Tokyo',
-      destination: 'Thailand',
-      boarding: '',
-      landing: '',
-      numberOfPassengers: 4,
-      passengers: [
-        { name: 'Hadar Maymon', id: '322334244' },
-        { name: 'Ran Bar', id: '312487622' },
-        { name: 'Lior Cohen', id: '205678943' },
-        { name: 'Noga Levi', id: '309812675' },
+      '',
+      true
+    ),
+    new Booking(
+      'BK1008',
+      'Tokyo',
+      'Bangkok',
+      '',
+      '',
+      4,
+      [
+        new Passenger('Hadar Maymon', '322334244'),
+        new Passenger('Ran Bar', '312487622'),
+        new Passenger('Lior Cohen', '205678943'),
+        new Passenger('Noga Levi', '309812675')
       ],
-      image: 'assets/destinations/thailand.jpeg',
-      isDynamicDate: true,
-    },
-    {
-      bookingId: 'BK1009',
-      origin: 'Berlin',
-      destination: 'Paris',
-      boarding: '',
-      landing: '',
-      numberOfPassengers: 5,
-      passengers: [
-        { name: 'Hadar Maymon', id: '322334244' },
-        { name: 'Ran Bar', id: '312487622' },
-        { name: 'Elior Ben-Ami', id: '278943512' },
-        { name: 'Maya Azulay', id: '208754123' },
-        { name: 'Tomer Dahan', id: '305478291' },
+      '',
+      true
+    ),
+    new Booking(
+      'BK1009',
+      'Berlin',
+      'Paris',
+      '',
+      '',
+      5,
+      [
+        new Passenger('Hadar Maymon', '322334244'),
+        new Passenger('Ran Bar', '312487622'),
+        new Passenger('Elior Ben-Ami', '278943512'),
+        new Passenger('Maya Azulay', '208754123'),
+        new Passenger('Tomer Dahan', '305478291')
       ],
-      image: 'assets/destinations/paris.jpeg',
-      isDynamicDate: true,
-    },
-    {
-      bookingId: 'BK1010',
-      origin: 'Bangkok',
-      destination: 'Tokyo',
-      boarding: '',
-      landing: '',
-      numberOfPassengers: 6,
-      passengers: [
-        { name: 'Hadar Maymon', id: '322334244' },
-        { name: 'Ran Bar', id: '312487622' },
-        { name: 'Noga Levi', id: '309812675' },
-        { name: 'Lior Cohen', id: '205678943' },
-        { name: 'Elior Ben-Ami', id: '278943512' },
-        { name: 'Maya Azulay', id: '208754123' },
+      '',
+      true
+    ),
+    new Booking(
+      'BK1010',
+      'Bangkok',
+      'Tokyo',
+      '',
+      '',
+      6,
+      [
+        new Passenger('Hadar Maymon', '322334244'),
+        new Passenger('Ran Bar', '312487622'),
+        new Passenger('Noga Levi', '309812675'),
+        new Passenger('Lior Cohen', '205678943'),
+        new Passenger('Elior Ben-Ami', '278943512'),
+        new Passenger('Maya Azulay', '208754123')
       ],
-      image: 'assets/destinations/tokyo.jpeg',
-      isDynamicDate: true,
-    },
+      '',
+      true
+    )
   ];
 
-  getAllBookings(): Booking[] {
-    this.assignDynamicDates();
-    return this.bookings;
-  }
+  constructor(private destinationsService: DestinationsService) {}
 
+  getAllBookings(): Observable<Booking[]> {
+    this.assignDynamicDates();
+  
+    const destinationRequests = this.bookings.map(booking =>
+      this.destinationsService.getDestinationByName(booking.destination).pipe(
+        map((destination) => {
+          console.log('Fetched Destination:', destination);  
+          booking.image = destination?.image || 'https://via.placeholder.com/300';
+          return booking;
+        })
+      )
+    );
+  
+    return forkJoin(destinationRequests);
+  }
+  
   getBookingById(bookingId: string): Observable<Booking | undefined> {
     const booking = this.bookings.find(b => b.bookingId === bookingId);
-    return of(booking);
+
+    if (!booking) {
+      return of(undefined);
+    }
+
+    return this.destinationsService.getDestinationByName(booking.destination).pipe(
+      map(destination => {
+        booking.image = destination?.image || 'assets/default-destination.jpg';
+        return booking;
+      })
+    );
   }
 
   private assignDynamicDates(): void {

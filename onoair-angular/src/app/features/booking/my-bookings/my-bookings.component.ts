@@ -12,28 +12,24 @@ import { Router } from '@angular/router';
   imports: [CommonModule, MatButtonModule],
 })
 export class MyBookingsComponent implements OnInit {
-  upcomingBookings: Booking[] = [];
-  previousBookings: Booking[] = [];
+  bookingSections: { title: string; bookings: Booking[] }[] = [];
 
-  // Inject Router alongside BookingsService
   constructor(private bookingService: BookingsService, private router: Router) {}
 
   ngOnInit(): void {
     const now = new Date();
-  
+
     this.bookingService.getAllBookings().subscribe((allBookings: Booking[]) => {
-      this.upcomingBookings = allBookings.filter((booking: Booking) => {
-        const boardingDate = this.parseDate(booking.boarding);
-        return boardingDate > now;
-      });
-  
-      this.previousBookings = allBookings.filter((booking: Booking) => {
-        const boardingDate = this.parseDate(booking.boarding);
-        return boardingDate <= now;
-      });
+      const upcoming = allBookings.filter(booking => this.parseDate(booking.boarding) > now);
+      const previous = allBookings.filter(booking => this.parseDate(booking.boarding) <= now);
+
+      this.bookingSections = [
+        { title: 'Upcoming Bookings', bookings: upcoming },
+        { title: 'Previous Bookings', bookings: previous }
+      ];
     });
   }
-  
+
   private parseDate(dateStr: string): Date {
     const [day, month, yearAndTime] = dateStr.split('/');
     const [year, time] = yearAndTime.split(' ');
@@ -41,7 +37,6 @@ export class MyBookingsComponent implements OnInit {
     return new Date(Number(year), Number(month) - 1, Number(day), Number(hours), Number(minutes));
   }
 
-  // Navigate to booking details with booking ID
   viewBooking(bookingId: string): void {
     this.router.navigate(['/my-bookings-details', bookingId]);
   }

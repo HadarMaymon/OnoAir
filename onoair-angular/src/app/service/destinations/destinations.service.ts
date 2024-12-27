@@ -12,7 +12,6 @@ export class Destination {
     public image: string
   ) {}
 
-  // Example method to update currency if needed
   updateCurrency(newCurrency: string): void {
     this.currency = newCurrency;
   }
@@ -116,10 +115,12 @@ export class DestinationsService {
     )
   ];
 
+
   getDestinationByName(name: string): Observable<Destination | undefined> {
     const destination = this.destinations.find(d => d.destinationName === name);
     return of(destination);
   }
+
   addDestination(destination: Destination): Observable<void> {
     this.destinations.push(destination);
     return of();

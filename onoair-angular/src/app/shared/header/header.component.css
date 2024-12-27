@@ -18,6 +18,7 @@
 .header-logo {
     max-height: 160px; 
     width: auto;
+    cursor: pointer;
 }
 
 .menu-container {

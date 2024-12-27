@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
   selector: 'app-edit-flight',
   templateUrl: './edit-flight.component.html',
   styleUrls: ['./edit-flight.component.css'],
-  imports: [RouterLink,CommonModule, MatIconModule,MatButtonModule],
+  imports: [CommonModule, MatIconModule,MatButtonModule],
 })
 export class EditFlightComponent implements OnInit {
   flight: any;

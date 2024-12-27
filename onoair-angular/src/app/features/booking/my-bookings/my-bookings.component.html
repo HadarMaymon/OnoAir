@@ -1,34 +1,25 @@
 <div class="my-bookings-container">
-    <h1>Upcoming Bookings</h1>
-    <div *ngIf="upcomingBookings.length > 0; else noUpcoming">
-      <div *ngFor="let booking of upcomingBookings" class="booking-card">
+  <div *ngFor="let section of bookingSections">
+    <h1>{{ section.title }}</h1>
+
+    <div *ngIf="section.bookings.length > 0; else noBookings">
+      <div *ngFor="let booking of section.bookings" class="booking-card">
         <img [src]="booking.image" alt="{{ booking.destination }}" class="destination-image">
         <div class="booking-details">
-          <p><strong>Origin:</strong> {{ booking.origin }} Boarding: {{ booking.boarding }}</p>
-          <p><strong>Destination:</strong> {{ booking.destination }} Landing: {{ booking.landing }}</p>
+          <p><strong>Origin:</strong> {{ booking.origin }}</p>
+          <p><strong>Boarding:</strong> {{ booking.boarding }}</p>
+          <p><strong>Destination:</strong> {{ booking.destination }}</p>
+          <p><strong>Landing:</strong> {{ booking.landing }}</p>
           <p><strong>No. of passengers:</strong> {{ booking.numberOfPassengers }}</p>
-          <button mat-raised-button color="primary" (click)="viewBooking(booking.bookingId)">View</button> 
+          <button mat-raised-button color="primary" (click)="viewBooking(booking.bookingId)">
+            View
+          </button>
         </div>
       </div>
     </div>
-    <ng-template #noUpcoming>
-      <p>No upcoming bookings.</p>
-    </ng-template>
-  
-    <h1>Previous Bookings</h1>
-    <div *ngIf="previousBookings.length > 0; else noPrevious">
-      <div *ngFor="let booking of previousBookings" class="booking-card">
-        <img [src]="booking.image" alt="{{ booking.destination }}" class="destination-image">
-        <div class="booking-details">
-          <p><strong>Origin:</strong> {{ booking.origin }} Boarding: {{ booking.boarding }}</p>
-          <p><strong>Destination:</strong> {{ booking.destination }} Landing: {{ booking.landing }}</p>
-          <p><strong>No. of passengers:</strong> {{ booking.numberOfPassengers }}</p>
-          <button mat-raised-button color="primary" (click)="viewBooking(booking.bookingId)">View</button>
-        </div>
-      </div>
-    </div>
-    <ng-template #noPrevious>
-      <p>No previous bookings.</p>
+
+    <ng-template #noBookings>
+      <p>No {{ section.title.toLowerCase() }} bookings.</p>
     </ng-template>
   </div>
-  
+</div>

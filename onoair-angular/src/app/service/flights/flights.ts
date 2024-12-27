@@ -33,6 +33,7 @@ export class Flight {
 @Injectable({
   providedIn: 'root',
 })
+
 export class FlightService {
   private flights: Flight[] = [
     new Flight('ON1234', 'Paris', 'Berlin', '29/1/2025', '10:30 AM', '1h 50m', 200, '', 10, false),

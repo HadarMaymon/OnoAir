@@ -25,7 +25,6 @@ import { Router, RouterLink } from '@angular/router';
     MatPaginatorModule,
     MatSortModule,
     CommonModule,
-    RouterLink,
     
   ],
 })

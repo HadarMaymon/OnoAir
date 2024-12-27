@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
   selector: 'app-edit-destinations',
   templateUrl: './edit-destinations.component.html',
   styleUrls: ['./edit-destinations.component.css'],
-  imports: [RouterLink, CommonModule, MatIconModule, MatButtonModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule],
 })
 export class EditDestinationsComponent implements OnInit {
   destination: Destination | undefined;
@@ -48,5 +48,10 @@ export class EditDestinationsComponent implements OnInit {
   redirectToDestinationList(): void {
     alert('Destination not found. Redirecting to homepage.');  
     this.router.navigate(['/destinations']);
+  }
+  
+  saveChanges(): void {
+    alert('Changes saved successfully! Redirecting to homepage.');
+    this.router.navigate(['/homepage']);  
   }
 }

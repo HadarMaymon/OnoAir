@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FlightService, Flight } from '../../../service/flights/flights';
-import { RouterLink } from '@angular/router';
+import { FlightService } from '../../../service/flights/flights';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
+import { Flight } from '../../../models/flight';
 
 @Component({
   selector: 'app-book-a-flight',

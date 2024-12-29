@@ -3,8 +3,9 @@ import { RouterLink, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
-import { FlightService, Flight } from '../../../service/flights/flights';
+import { FlightService } from '../../../service/flights/flights';
 import { RouterModule } from '@angular/router';
+import { Flight } from '../../../models/flight';
 
 @Component({
   selector: 'app-last-minute-flight',

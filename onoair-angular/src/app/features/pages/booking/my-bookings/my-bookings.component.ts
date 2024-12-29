@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { BookingsService, Booking } from '../../../service/bookings/bookings.service';
+import { BookingsService } from '../../../service/bookings/bookings.service';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
+import { Booking } from '../../../models/booking';
 
 @Component({
   selector: 'app-my-bookings',

@@ -2,33 +2,8 @@ import { Injectable } from '@angular/core';
 import { Observable, of, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DestinationsService } from '../destinations/destinations.service';
+import { Flight } from '../../models/flight';
 
-export class Flight {
-  constructor(
-    public flightNumber: string,
-    public origin: string,
-    public destination: string,
-    public date: string,
-    public departureTime: string,
-    public duration: string,
-    public price: number,
-    public image: string = '',
-    public availableSeats: number,
-    public isDynamicDate: boolean
-  ) {}
-
-  updatePrice(newPrice: number): void {
-    this.price = newPrice;
-  }
-
-  updateSeats(seats: number): void {
-    this.availableSeats = seats;
-  }
-
-  assignDynamicDate(date: string): void {
-    this.date = date;
-  }
-}
 
 @Injectable({
   providedIn: 'root',
@@ -56,7 +31,6 @@ export class FlightService {
     const flightRequests = this.flights.map(flight =>
       this.destinationsService.getDestinationByName(flight.destination).pipe(
         map(destination => {
-          console.log('Fetched Destination for Flight:', destination);
           flight.image = destination?.image || 'https://via.placeholder.com/300';
           return flight;
         })
@@ -86,3 +60,4 @@ export class FlightService {
     return of(flight);
   }
 }
+

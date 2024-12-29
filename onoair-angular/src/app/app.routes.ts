@@ -1,15 +1,15 @@
 import { Routes } from '@angular/router';
-import { LastMinuteFlightComponent } from './features/flights/last-minute-flight/last-minute-flight.component';
-import { FindAFlightComponent } from './features/flights/find-a-flight/find-a-flight.component';
-import { HomepageComponent } from './features/home/homepage/homepage.component';
-import { ManageFlightComponent} from './features/flights/manage-flight/manage-flight.component';
-import { EditFlightComponent } from './features/flights/edit-flight/edit-flight.component';
-import { ManageDestinationComponent } from './features/destinations/manage-destinations/manage-destinations.component';
-import { EditDestinationsComponent } from './features/destinations/edit-destinations/edit-destinations.component';
-import { BookAFlightComponent } from './features/booking/book-a-flight/book-a-flight.component';
-import { MyBookingsComponent } from './features/booking/my-bookings/my-bookings.component';
-import { MyBookingsDetailsComponent } from './features/booking/my-bookings-details/my-bookings-details.component';
-import { HelpPageComponent } from './features/help/help-page/help-page.component'; 
+import { LastMinuteFlightComponent } from './features/pages/flights/last-minute-flight/last-minute-flight.component';
+import { FindAFlightComponent } from './features/pages/flights/find-a-flight/find-a-flight.component';
+import { HomepageComponent } from './features/pages/home/homepage/homepage.component';
+import { ManageFlightComponent} from './features/pages/flights/manage-flight/manage-flight.component';
+import { EditFlightComponent } from './features/pages/flights/edit-flight/edit-flight.component';
+import { ManageDestinationComponent } from './features/pages/destinations/manage-destinations/manage-destinations.component';
+import { EditDestinationsComponent } from './features/pages/destinations/edit-destinations/edit-destinations.component';
+import { BookAFlightComponent } from './features/pages/booking/book-a-flight/book-a-flight.component';
+import { MyBookingsComponent } from './features/pages/booking/my-bookings/my-bookings.component';
+import { MyBookingsDetailsComponent } from './features/pages/booking/my-bookings-details/my-bookings-details.component';
+import { HelpPageComponent } from './features/pages/help/help-page/help-page.component'; 
 
 
 export const routes: Routes = [

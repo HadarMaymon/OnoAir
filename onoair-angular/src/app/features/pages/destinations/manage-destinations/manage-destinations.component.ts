@@ -9,11 +9,11 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
-import { DestinationsService, Destination } from '../../../service/destinations/destinations.service';
+import { Router } from '@angular/router';
+import { DestinationsService } from '../../../service/destinations/destinations.service';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-
+import { Destination } from '../../../models/destination';
 @Component({
   selector: 'app-manage-destinations',
   templateUrl: './manage-destinations.component.html',

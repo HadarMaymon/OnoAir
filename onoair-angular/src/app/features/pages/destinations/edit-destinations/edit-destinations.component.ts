@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DestinationsService, Destination } from '../../../service/destinations/destinations.service';
-import { RouterLink } from '@angular/router';
+import { DestinationsService } from '../../../service/destinations/destinations.service';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
+import { Destination } from '../../../models/destination';
 
 @Component({
   selector: 'app-edit-destinations',
@@ -24,24 +24,23 @@ export class EditDestinationsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Get the destination name from URL
     this.destinationName = this.route.snapshot.paramMap.get('destinationName');
 
     if (this.destinationName) {
       this.destinationService.getDestinationByName(this.destinationName).subscribe({
         next: (data) => {
           if (data) {
-            this.destination = data;  // Destination found, render details
+            this.destination = data; 
           } else {
-            this.redirectToDestinationList();  // Redirect if not found
+            this.redirectToDestinationList();  
           }
         },
         error: () => {
-          this.redirectToDestinationList();  // Redirect on error
+          this.redirectToDestinationList(); 
         }
       });
     } else {
-      this.redirectToDestinationList();  // Redirect if no name provided
+      this.redirectToDestinationList();  
     }
   }
 

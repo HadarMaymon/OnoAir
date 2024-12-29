@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BookingsService, Booking } from '../../../service/bookings/bookings.service';
+import { BookingsService } from '../../../service/bookings/bookings.service';
 import { MatCardModule } from '@angular/material/card'; 
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
-
+import { Booking } from '../../../models/booking';
 
 
 @Component({

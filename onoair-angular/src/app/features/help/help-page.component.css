@@ -1,0 +1,25 @@
+.help-page-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 80px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+
+}
+
+mat-expansion-panel {
+    margin-bottom: 15px;
+}
+
+mat-panel-title {
+    font-weight: bold;
+}

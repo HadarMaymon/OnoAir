@@ -6,6 +6,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Flight } from '../../model/flight';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog'; // Import MatDialog
+import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component'; // Import dialog component
 
 @Component({
   selector: 'app-edit-flight',
@@ -21,7 +23,8 @@ export class EditFlightComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private flightService: FlightService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog // Inject MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -44,18 +47,50 @@ export class EditFlightComponent implements OnInit {
   }
 
   redirectToFlightList(): void {
-    alert('Flight not found. Redirecting to Manage Flight.');
-    this.router.navigate(['/manage-flight']);
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '350px',
+      data: {
+        title: 'Error',
+        message: 'Flight not found. Redirecting to Manage Flight.',
+        showConfirmButton: false,
+        showCloseButton: true,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.router.navigate(['/manage-flight']);
+    });
   }
 
   saveChanges(): void {
     if (this.flight) {
       this.flightService.updateFlight(this.flight).then(() => {
-        alert('Changes saved successfully!');
-        this.router.navigate(['/manage-flight']);
+        // Open a success dialog
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+          width: '350px',
+          data: {
+            title: 'Success',
+            message: 'Changes saved successfully!',
+            showConfirmButton: false,
+            showCloseButton: true,
+          },
+        });
+
+        dialogRef.afterClosed().subscribe(() => {
+          this.router.navigate(['/manage-flight']);
+        });
       }).catch((error) => {
+        // Open an error dialog
+        this.dialog.open(ConfirmDialogComponent, {
+          width: '350px',
+          data: {
+            title: 'Error',
+            message: 'Failed to save changes. Please try again.',
+            showConfirmButton: false,
+            showCloseButton: true,
+          },
+        });
         console.error('Error saving changes:', error);
-        alert('Failed to save changes. Please try again.');
       });
     }
   }

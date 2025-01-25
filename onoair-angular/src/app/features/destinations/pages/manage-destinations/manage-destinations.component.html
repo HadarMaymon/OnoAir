@@ -1,62 +1,64 @@
 <div class="manage-flight-container">
-    <h1>Manage Destinations</h1>  
-
+    <h1>Manage Destinations</h1>
+  
     <!-- Search Bar -->
     <mat-form-field class="search-bar" appearance="outline">
-        <mat-label>Search Destinations</mat-label>
-        <input matInput (keyup)="applyFilter($event)" placeholder="Type to search..." />
+      <mat-label>Search Destinations</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Type to search..." />
     </mat-form-field>
-
+  
     <!-- Table of Destinations -->
     <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-        
-        <!-- Destination Name -->
-        <ng-container matColumnDef="destinationName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Destination </th>
-            <td mat-cell *matCellDef="let element"> {{element.destinationName}} </td>
-        </ng-container>
-
-        <!-- Airport Name -->
-        <ng-container matColumnDef="airportName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Airport </th>
-            <td mat-cell *matCellDef="let element"> {{element.airportName}} </td>
-        </ng-container>
-
-        <!-- IATA -->
-        <ng-container matColumnDef="IATA">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> IATA </th>
-            <td mat-cell *matCellDef="let element"> {{element.IATA}} </td>
-        </ng-container>
-
-        <!-- Time Zone -->
-        <ng-container matColumnDef="timeZone">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Time Zone </th>
-            <td mat-cell *matCellDef="let element"> {{element.timeZone}} </td>
-        </ng-container>
-
-        <!-- Currency -->
-        <ng-container matColumnDef="currency">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Currency </th>
-            <td mat-cell *matCellDef="let element"> {{element.currency}} </td>
-        </ng-container>
-
-        <!-- Actions -->
-        <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef> Actions </th>
-            <td mat-cell *matCellDef="let element">
-                <button mat-icon-button color="primary" [routerLink]="['/edit-destinations', element.destinationName]">
-                    <mat-icon>edit</mat-icon>
-                </button>                             
-            </td>
-        </ng-container>
-
-        <!-- Header and Row Rendering -->
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <!-- Destination Name -->
+      <ng-container matColumnDef="destinationName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Destination </th>
+        <td mat-cell *matCellDef="let element"> {{element.destinationName}} </td>
+      </ng-container>
+  
+      <!-- Airport Name -->
+      <ng-container matColumnDef="airportName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Airport </th>
+        <td mat-cell *matCellDef="let element"> {{element.airportName}} </td>
+      </ng-container>
+  
+      <!-- IATA -->
+      <ng-container matColumnDef="IATA">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> IATA </th>
+        <td mat-cell *matCellDef="let element"> {{element.IATA}} </td>
+      </ng-container>
+  
+      <!-- Time Zone -->
+      <ng-container matColumnDef="timeZone">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Time Zone </th>
+        <td mat-cell *matCellDef="let element"> {{element.timeZone}} </td>
+      </ng-container>
+  
+      <!-- Currency -->
+      <ng-container matColumnDef="currency">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Currency </th>
+        <td mat-cell *matCellDef="let element"> {{element.currency}} </td>
+      </ng-container>
+  
+      <!-- Actions -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Actions </th>
+        <td mat-cell *matCellDef="let element">
+          <!-- Use IATA in the routerLink -->
+          <button mat-icon-button color="primary" [routerLink]="['/edit-destinations', element.IATA]">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="confirmDelete(element)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+  
+      <!-- Header and Row Rendering -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
-
+  
     <!-- Pagination -->
     <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
- 
-    
-</div>
+  </div>
+  

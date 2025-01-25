@@ -19,7 +19,7 @@ export const routes: Routes = [
   { path: 'manage-flight', component: ManageFlightComponent },  
   { path: 'edit-flight/:flightNumber', component: EditFlightComponent },
   { path: 'manage-destinations', component: ManageDestinationComponent },
-  { path: 'edit-destinations/:destinationName', component: EditDestinationsComponent },
+  { path: 'edit-destinations/:IATA', component: EditDestinationsComponent },
   { path: 'book-a-flight/:flightNumber', component: BookAFlightComponent },
   { path: 'my-bookings', component: MyBookingsComponent },
   { path: 'my-bookings-details/:bookingId', component: MyBookingsDetailsComponent },

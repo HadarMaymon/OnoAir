@@ -112,6 +112,7 @@ export class DestinationsService {
   /**
    * Upload static destinations to Firestore.
    */
+
   uploadStaticDestinations(): Promise<void> {
     const destinationCollection = collection(this.firestore, 'destinations').withConverter(destinationConverter);
     const uploadPromises = this.destinations.map((destination) => {
@@ -120,10 +121,38 @@ export class DestinationsService {
         console.error(`Error uploading destination ${destination.destinationName}:`, error);
       });
     });
-
+  
     return Promise.all(uploadPromises)
       .then(() => console.log('All static destinations uploaded successfully!'))
       .catch((error) => console.error('Error uploading static destinations:', error));
+  }
+  
+  syncStaticDestinations(): void {
+    const destinationCollection = collection(this.firestore, 'destinations').withConverter(destinationConverter);
+
+    getDocs(destinationCollection).then((snapshot) => {
+      const existingDestinations = snapshot.docs.map((doc) => doc.data() as Destination);
+      const existingIATAs = new Set(existingDestinations.map((d) => d.IATA));
+
+      // Check for missing destinations in Firestore
+      const missingDestinations = this.destinations.filter((destination) => !existingIATAs.has(destination.IATA));
+
+      if (missingDestinations.length > 0) {
+        console.log(`Syncing ${missingDestinations.length} missing destinations...`);
+        const uploadPromises = missingDestinations.map((destination) => {
+          const destinationDoc = doc(destinationCollection, destination.IATA);
+          return setDoc(destinationDoc, destination).then(() => {
+            console.log(`Synced destination: ${destination.destinationName}`);
+          });
+        });
+
+        Promise.all(uploadPromises)
+          .then(() => console.log('Static destinations synced successfully!'))
+          .catch((error) => console.error('Error syncing static destinations:', error));
+      } else {
+        console.log('All destinations are up-to-date.');
+      }
+    });
   }
 
   /**
@@ -140,13 +169,14 @@ export class DestinationsService {
   /**
    * Get a single destination by its name.
    */
-  getDestinationByName(name: string): Observable<Destination | undefined> {
+  getDestinationByIATA(IATA: string): Observable<Destination | undefined> {
     return this.destinations$.pipe(
       map((destinations) =>
-        destinations.find((destination) => destination.destinationName.toLowerCase() === name.toLowerCase())
+        destinations.find((destination) => destination.IATA.toLowerCase() === IATA.toLowerCase())
       )
     );
   }
+  
 
   /**
    * Add a new destination to Firestore.

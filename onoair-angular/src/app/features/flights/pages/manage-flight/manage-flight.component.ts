@@ -13,6 +13,9 @@ import { FlightService } from '../../service/flights.service';
 import { MatSortModule } from '@angular/material/sort';
 import { RouterModule } from '@angular/router';
 import { Flight } from '../../model/flight';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component'; // Updated import
 
 @Component({
   selector: 'app-manage-flight',
@@ -30,6 +33,7 @@ import { Flight } from '../../model/flight';
     CommonModule,
     MatSortModule,
     RouterModule,
+    MatDialogModule
   ],
 })
 export class ManageFlightComponent implements OnInit, AfterViewInit {
@@ -49,7 +53,7 @@ export class ManageFlightComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private flightService: FlightService) {}
+  constructor(private flightService: FlightService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     // Load flights from Firestore and populate the table
@@ -82,18 +86,31 @@ export class ManageFlightComponent implements OnInit, AfterViewInit {
 
   editFlight(flight: Flight): void {
     console.log('Editing flight:', flight);
-    // Example: Navigate to an edit flight page
-    // You can implement an edit form and pass flight details via a route
+    this.dialog.open(ConfirmDialogComponent, {
+      width: '350px',
+      data: {
+        type: 'edit',
+        name: `flight ${flight.flightNumber} to ${flight.destination}`,
+      },
+    });
   }
 
-  deleteFlight(flight: Flight): void {
-    if (confirm(`Are you sure you want to delete flight ${flight.flightNumber}?`)) {
-      this.flightService.deleteFlight(flight.flightNumber).then(() => {
-        console.log(`Flight ${flight.flightNumber} deleted successfully.`);
-      }).catch((error) => {
-        console.error(`Failed to delete flight ${flight.flightNumber}:`, error);
-      });
-    }
+  confirmDelete(flight: Flight): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '350px',
+      data: { type: 'delete', name: `flight ${flight.flightNumber} to ${flight.destination}` },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'yes') {
+        this.flightService.deleteFlight(flight.flightNumber).then(() => {
+          alert(`Flight ${flight.flightNumber} deleted successfully.`);
+        }).catch((error) => {
+          console.error(`Error deleting flight ${flight.flightNumber}:`, error);
+          alert('Failed to delete flight. Please try again.');
+        });
+      }
+    });
   }
 
   private parseDate(dateStr: string): number {

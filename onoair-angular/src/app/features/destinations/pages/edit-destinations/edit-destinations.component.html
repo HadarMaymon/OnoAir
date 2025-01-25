@@ -1,30 +1,55 @@
 <div class="wrapper">
-  <div class="main-content">
-      <div *ngIf="destination; else notFound" class="edit-destination-container mat-elevation-z8">
-          <h1>Edit Destination: {{ destination.destinationName }}</h1>  
+    <div class="main-content">
+        <h1>Edit Destination</h1>
 
-          <div class="details">
-              <p><strong>Destination Name:</strong> {{ destination.destinationName }}</p>
-              <p><strong>Airport Name:</strong> {{ destination.airportName }}</p>
-              <p><strong>Airport Website:</strong> 
-                  <a [href]="destination.airportWebsite" target="_blank">{{ destination.airportWebsite }}</a>
-              </p>
-              <p><strong>IATA Code:</strong> {{ destination.IATA }}</p>
-              <p><strong>Time Zone:</strong> {{ destination.timeZone }}</p>
-              <p><strong>Currency:</strong> {{ destination.currency }}</p>
-              <p><strong>Image:</strong></p>
-              <img *ngIf="destination.image" [src]="destination.image" alt="Destination Image" width="300">
-          </div>
+        <form [formGroup]="destinationForm" (ngSubmit)="saveChanges()">
+            <!-- Destination Name -->
+            <mat-form-field appearance="fill">
+                <mat-label>Destination Name</mat-label>
+                <input matInput formControlName="destinationName" placeholder="Enter destination name" />
+            </mat-form-field>
 
-          <div class="actions">
-            <button mat-raised-button color="primary" (click)="saveChanges()">Save Changes</button>
-            <button mat-raised-button color="warn" (click)="deleteDestination()">Delete Destination</button>
-          </div>
-      </div>
+            <!-- Airport Name -->
+            <mat-form-field appearance="fill">
+                <mat-label>Airport Name</mat-label>
+                <input matInput formControlName="airportName" placeholder="Enter airport name" />
+            </mat-form-field>
 
-      <ng-template #notFound>
-          <h2 class="not-found">Destination not found!</h2>
-      </ng-template>
-  </div>
+            <!-- Airport Website -->
+            <mat-form-field appearance="fill">
+                <mat-label>Airport Website</mat-label>
+                <input matInput formControlName="airportWebsite" placeholder="Enter airport website" type="url" />
+            </mat-form-field>
 
+            <!-- IATA Code -->
+            <mat-form-field appearance="fill">
+                <mat-label>IATA Code</mat-label>
+                <input matInput formControlName="IATA" placeholder="IATA Code" />
+            </mat-form-field>
+
+            <!-- Time Zone -->
+            <mat-form-field appearance="fill">
+                <mat-label>Time Zone</mat-label>
+                <input matInput formControlName="timeZone" placeholder="Enter time zone" />
+            </mat-form-field>
+
+            <!-- Currency -->
+            <mat-form-field appearance="fill">
+                <mat-label>Currency</mat-label>
+                <input matInput formControlName="currency" placeholder="Enter currency" />
+            </mat-form-field>
+
+            <!-- Image -->
+            <mat-form-field appearance="fill">
+                <mat-label>Image URL</mat-label>
+                <input matInput formControlName="image" placeholder="Enter image URL" />
+            </mat-form-field>
+
+            <div class="actions">
+                <button mat-raised-button color="primary" type="submit">Save Changes</button>
+            </div>
+
+            
+        </form>
+    </div>
 </div>

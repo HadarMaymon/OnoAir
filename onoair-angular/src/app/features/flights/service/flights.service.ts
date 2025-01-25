@@ -60,7 +60,7 @@ export class FlightService {
 
     const uploadPromises = this.flights.map((flight) => {
       if (flight.isDynamicDate) {
-        const newDate = this.getFutureDate(1, 30); // Random future date between 1 and 30 days
+        const newDate = this.getFutureDate(1, 15); 
         flight.assignDynamicDate(newDate);
       }
 

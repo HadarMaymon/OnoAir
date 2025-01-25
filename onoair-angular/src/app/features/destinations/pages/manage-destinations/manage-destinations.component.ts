@@ -14,6 +14,8 @@ import { DestinationsService } from '../../service/destinations.service';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { Destination } from '../../models/destination';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component'; // Updated import
 
 @Component({
   selector: 'app-manage-destinations',
@@ -50,12 +52,16 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
 
   constructor(
     private destinationService: DestinationsService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog // Inject MatDialog here
   ) {}
 
   ngOnInit(): void {
+    // Sync static destinations with Firestore
+    this.destinationService.syncStaticDestinations();
+  
     // Start syncing destinations from Firestore
-    this.destinationService.syncDestinations(); 
+    this.destinationService.syncDestinations();
     this.destinationService.destinations$.subscribe({
       next: (destinations) => {
         this.dataSource.data = destinations; // Update the table with destinations
@@ -81,12 +87,43 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
   }
 
   uploadDestinations(): void {
-    this.destinationService.uploadStaticDestinations()
-      .then(() => {
-        alert('Destinations uploaded successfully!');
-      })
-      .catch(() => {
-        alert('Failed to upload destinations. Please try again.');
-      });
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '350px',
+      data: { type: 'save', name: 'all destinations' }, // Save confirmation dialog
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result === 'yes') {
+        this.destinationService
+          .uploadStaticDestinations()
+          .then(() => {
+            alert('Destinations uploaded successfully!');
+          })
+          .catch(() => {
+            alert('Failed to upload destinations. Please try again.');
+          });
+      }
+    });
+  }
+
+  confirmDelete(destination: Destination): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '350px',
+      data: { type: 'delete', name: `destination ${destination.destinationName}` },
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result === 'yes') {
+        this.destinationService
+          .deleteDestination(destination.IATA)
+          .then(() => {
+            alert(`Destination ${destination.destinationName} deleted successfully.`);
+          })
+          .catch((error) => {
+            console.error(`Error deleting destination ${destination.destinationName}:`, error);
+            alert('Failed to delete destination. Please try again.');
+          });
+      }
+    });
   }
 }

@@ -1,11 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { Destination } from '../models/destination';
+import { Firestore, collection, doc, setDoc, deleteDoc, onSnapshot,getDocs } from '@angular/fire/firestore';
+import { map } from 'rxjs/operators';
+import { destinationConverter } from './converter/destination-converter';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DestinationsService {
+
+  private destinationsSubject = new BehaviorSubject<Destination[]>([]);
+  destinations$ = this.destinationsSubject.asObservable();
 
   private destinations: Destination[] = [
     new Destination(
@@ -101,17 +107,84 @@ export class DestinationsService {
   ];
 
 
+  constructor(private firestore: Firestore) {}
+
+  /**
+   * Upload static destinations to Firestore.
+   */
+  uploadStaticDestinations(): Promise<void> {
+    const destinationCollection = collection(this.firestore, 'destinations').withConverter(destinationConverter);
+    const uploadPromises = this.destinations.map((destination) => {
+      const destinationDoc = doc(destinationCollection, destination.IATA); // Use IATA as document ID
+      return setDoc(destinationDoc, destination).catch((error) => {
+        console.error(`Error uploading destination ${destination.destinationName}:`, error);
+      });
+    });
+
+    return Promise.all(uploadPromises)
+      .then(() => console.log('All static destinations uploaded successfully!'))
+      .catch((error) => console.error('Error uploading static destinations:', error));
+  }
+
+  /**
+   * Sync destinations with Firestore in real-time.
+   */
+  syncDestinations(): void {
+    const destinationCollection = collection(this.firestore, 'destinations').withConverter(destinationConverter);
+    onSnapshot(destinationCollection, (snapshot) => {
+      const destinations = snapshot.docs.map((doc) => doc.data());
+      this.destinationsSubject.next(destinations);
+    });
+  }
+
+  /**
+   * Get a single destination by its name.
+   */
   getDestinationByName(name: string): Observable<Destination | undefined> {
-    const destination = this.destinations.find(d => d.destinationName === name);
-    return of(destination);
+    return this.destinations$.pipe(
+      map((destinations) =>
+        destinations.find((destination) => destination.destinationName.toLowerCase() === name.toLowerCase())
+      )
+    );
   }
 
-  addDestination(destination: Destination): Observable<void> {
-    this.destinations.push(destination);
-    return of();
+  /**
+   * Add a new destination to Firestore.
+   */
+  addDestination(destination: Destination): Promise<void> {
+    const destinationCollection = collection(this.firestore, 'destinations').withConverter(destinationConverter);
+    const destinationDoc = doc(destinationCollection, destination.IATA); // Use IATA as document ID
+    return setDoc(destinationDoc, destination).then(() => {
+      console.log(`Destination ${destination.destinationName} added successfully.`);
+    });
   }
 
-  getDestinations(): Observable<Destination[]> {
-    return of(this.destinations);
+  /**
+   * Update an existing destination in Firestore.
+   */
+  updateDestination(destination: Destination): Promise<void> {
+    const destinationCollection = collection(this.firestore, 'destinations').withConverter(destinationConverter);
+    const destinationDoc = doc(destinationCollection, destination.IATA); // Use IATA as document ID
+    return setDoc(destinationDoc, destination).then(() => {
+      console.log(`Destination ${destination.destinationName} updated successfully.`);
+    });
   }
+
+  /**
+   * Delete a destination from Firestore.
+   */
+  deleteDestination(IATA: string): Promise<void> {
+    const destinationDoc = doc(this.firestore, 'destinations', IATA).withConverter(destinationConverter);
+    return deleteDoc(destinationDoc).then(() => {
+      console.log(`Destination with IATA ${IATA} deleted successfully!`);
+    });
+  }
+
+  getAllDestinations(): Promise<Destination[]> {
+    const destinationCollection = collection(this.firestore, 'destinations').withConverter(destinationConverter);
+  
+    return getDocs(destinationCollection).then((snapshot) => {
+      return snapshot.docs.map((doc) => doc.data() as Destination);
+    });
+  }  
 }

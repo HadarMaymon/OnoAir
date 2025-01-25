@@ -3,7 +3,7 @@ import { RouterLink, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
-import { FlightService } from '../../service/flights';
+import { FlightService } from '../../service/flights.service';
 import { RouterModule } from '@angular/router';
 import { Flight } from '../../model/flight';
 
@@ -17,7 +17,7 @@ import { Flight } from '../../model/flight';
     MatCardModule,
     MatButtonModule,
     CommonModule,
-    RouterModule  
+    RouterModule,
   ],
 })
 export class LastMinuteFlightComponent implements OnInit {
@@ -26,25 +26,32 @@ export class LastMinuteFlightComponent implements OnInit {
   constructor(private flightService: FlightService, private router: Router) {}
 
   ngOnInit(): void {
-    this.filterLastMinuteFlights();
+    this.flightService.uploadStaticFlights().then(() => {
+      console.log('Static flights uploaded to Firestore.');
+      this.filterLastMinuteFlights();
+    }).catch((error) => {
+      console.error('Error uploading static flights:', error);
+      this.filterLastMinuteFlights(); 
+    });
   }
-  
+
   private filterLastMinuteFlights(): void {
     const today = new Date();
     const oneWeekFromNow = new Date();
     oneWeekFromNow.setDate(today.getDate() + 7);
-  
-    this.flightService.getAllFlights().subscribe((flights) => {
+
+    // Use `syncFlights` or `flights$` for real-time updates
+    this.flightService.syncFlightsWithImages();
+
+    this.flightService.flights$.subscribe((flights) => {
       this.lastMinuteFlights = flights.filter((flight) => {
         const flightDate = this.parseDate(flight.date);
         return flightDate >= today && flightDate <= oneWeekFromNow;
       });
     });
   }
-  
 
   bookFlight(flight: Flight): void {
-    // Navigate to book-a-flight component
     this.router.navigateByUrl(
       `/book-a-flight?destination=${flight.destination}&origin=${flight.origin}&date=${flight.date}&price=${flight.price}`
     );

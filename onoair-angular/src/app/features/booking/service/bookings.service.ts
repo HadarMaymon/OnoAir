@@ -1,15 +1,22 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { DestinationsService } from '../../destinations/service/destinations.service';
-import { forkJoin } from 'rxjs';
 import { Booking } from '../models/booking';
 import { Passenger } from '../../destinations/models/passenger';
+import { Firestore, collection, doc, setDoc, onSnapshot, getDoc, DocumentSnapshot} from '@angular/fire/firestore';
+import { BehaviorSubject } from 'rxjs';
+import { bookingConverter } from './converters/booking-converter';
+import { DestinationsService} from '../../destinations/service/destinations.service';
+import { destinationConverter } from '../../destinations/service/converter/destination-converter';
 
 @Injectable({
   providedIn: 'root',
 })
+
 export class BookingsService {
+
+  private bookingsSubject = new BehaviorSubject<Booking[]>([]);
+  bookings$ = this.bookingsSubject.asObservable();
+
+
   private bookings: Booking[] = [
     new Booking(
       'BK1001',
@@ -177,52 +184,129 @@ export class BookingsService {
     )
   ];
 
-  constructor(private destinationsService: DestinationsService) {}
 
-  getAllBookings(): Observable<Booking[]> {
-    this.assignDynamicDates();
-  
-    const destinationRequests = this.bookings.map(booking =>
-      this.destinationsService.getDestinationByName(booking.destination).pipe(
-        map((destination) => {
-          console.log('Fetched Destination:', destination);  
-          booking.image = destination?.image || 'https://via.placeholder.com/300';
-          return booking;
-        })
-      )
-    );
-  
-    return forkJoin(destinationRequests);
-  }
-  
-  getBookingById(bookingId: string): Observable<Booking | undefined> {
-    const booking = this.bookings.find(b => b.bookingId === bookingId);
+  constructor(private firestore: Firestore, private destinationsService: DestinationsService) {}
 
-    if (!booking) {
-      return of(undefined);
-    }
+  /**
+   * Upload static bookings to Firestore (Run once to populate Firestore with initial data)
+   */
+  uploadStaticBookings(): Promise<void> {
+    const bookingCollection = collection(this.firestore, 'bookings').withConverter(bookingConverter);
 
-    return this.destinationsService.getDestinationByName(booking.destination).pipe(
-      map(destination => {
-        booking.image = destination?.image || 'assets/default-destination.jpg';
-        return booking;
-      })
-    );
-  }
-
-  private assignDynamicDates(): void {
-    this.bookings.forEach((booking, index) => {
+    const uploadPromises = this.bookings.map((booking) => {
       if (booking.isDynamicDate) {
-        booking.boarding = this.getFutureDate(index + 1, 'boarding');
-        booking.landing = this.getFutureDate(index + 2, 'landing');
+        // Generate random boarding and landing dates
+        const boardingDate = this.getRandomFutureDate(1, 30);
+        const flightDuration = this.getFlightDuration(booking.origin, booking.destination);
+        const timeZoneDifference = this.getTimeZoneDifference(booking.origin, booking.destination);
+        const landingDate = this.calculateLandingTime(boardingDate, flightDuration, timeZoneDifference);
+
+        booking.boarding = boardingDate;
+        booking.landing = landingDate;
       }
+
+      const bookingDoc = doc(bookingCollection, booking.bookingId);
+      return setDoc(bookingDoc, booking).catch((error) => {
+        console.error(`Error uploading booking ${booking.bookingId}:`, error);
+      });
+    });
+
+    return Promise.all(uploadPromises).then(() => {
+      console.log('All static bookings uploaded successfully!');
+    }).catch((error) => {
+      console.error('Error uploading static bookings:', error);
     });
   }
 
-  private getFutureDate(daysToAdd: number, type: string): string {
+  /**
+   * Sync bookings with Firestore and fetch associated destination images
+   */
+  syncBookingsWithImages(): void {
+    const bookingCollection = collection(this.firestore, 'bookings').withConverter(bookingConverter);
+  
+    onSnapshot(bookingCollection, async (snapshot) => {
+      const bookings = snapshot.docs.map((doc) => doc.data());
+      
+      // Fetch destinations from the DestinationService
+      const destinations = await this.destinationsService.getAllDestinations();
+  
+      // Map images to bookings
+      bookings.forEach((booking) => {
+        const destination = destinations.find((dest) => dest.destinationName === booking.destination);
+        if (destination) {
+          booking.image = destination.image; // Attach the image from DestinationService
+        } else {
+          booking.image = 'assets/images/default-destination.jpg'; // Fallback image
+        }
+      });
+  
+      this.bookingsSubject.next(bookings);
+    });
+  }
+    
+  // Helper method to get destination image
+  private async getDestinationImage(location: string): Promise<string | undefined> {
+    const destinationDoc = doc(this.firestore, 'destinations', location).withConverter(destinationConverter);
+    const snapshot = await getDoc(destinationDoc);
+    return snapshot.exists() ? (snapshot.data()?.image as string) : undefined;
+  }
+  
+  getBookingById(bookingId: string): Promise<Booking | undefined> {
+    const bookingDoc = doc(this.firestore, 'bookings', bookingId).withConverter(bookingConverter);
+
+    return getDoc(bookingDoc)
+      .then((snapshot) => (snapshot.exists() ? snapshot.data() : undefined))
+      .catch((error) => {
+        console.error(`Error fetching booking with ID ${bookingId}:`, error);
+        return undefined;
+      });
+  }
+
+  private getRandomFutureDate(minDays: number, maxDays: number): string {
     const today = new Date();
-    today.setDate(today.getDate() + daysToAdd);
-    const time = type === 'boarding' ? '10:00' : '14:00';
-    return `${today.toLocaleDateString('en-GB')} ${time}`;
+    const randomDaysToAdd = Math.floor(Math.random() * (maxDays - minDays + 1)) + minDays;
+    today.setDate(today.getDate() + randomDaysToAdd);
+
+    const formattedDate = today.toLocaleDateString('en-GB');
+    const time = randomDaysToAdd % 2 === 0 ? '10:00' : '14:00';
+    return `${formattedDate} ${time}`;
+  }
+
+  private calculateLandingTime(boarding: string, flightDuration: number, timeZoneDifference: number): string {
+    const [day, month, yearAndTime] = boarding.split('/');
+    const [year, time] = yearAndTime.split(' ');
+    const [hours, minutes] = time.split(':');
+    const boardingDate = new Date(Number(year), Number(month) - 1, Number(day), Number(hours), Number(minutes));
+
+    boardingDate.setHours(boardingDate.getHours() + flightDuration + timeZoneDifference);
+
+    const formattedDate = boardingDate.toLocaleDateString('en-GB');
+    const formattedTime = boardingDate.toTimeString().slice(0, 5);
+    return `${formattedDate} ${formattedTime}`;
+  }
+
+  private getFlightDuration(origin: string, destination: string): number {
+    const flightDurations: { [key: string]: { [key: string]: number } } = {
+      'Tel Aviv': { 'Berlin': 4, 'Paris': 5 },
+      'Bangkok': { 'Tokyo': 6 },
+      'Krakow': { 'Bora Bora': 12 },
+    };
+
+    return flightDurations[origin]?.[destination] || 3;
+  }
+
+  private getTimeZoneDifference(origin: string, destination: string): number {
+    const timeZones: { [key: string]: number } = {
+      'Tel Aviv': 2,
+      'Berlin': 1,
+      'Paris': 1,
+      'Bangkok': 7,
+      'Tokyo': 9,
+    };
+
+    const originOffset = timeZones[origin] || 0;
+    const destinationOffset = timeZones[destination] || 0;
+
+    return destinationOffset - originOffset;
   }
 }

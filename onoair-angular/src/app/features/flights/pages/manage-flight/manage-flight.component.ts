@@ -9,11 +9,10 @@ import { FormsModule } from '@angular/forms';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
-import { FlightService } from '../../service/flights';
+import { FlightService } from '../../service/flights.service';
 import { MatSortModule } from '@angular/material/sort';
-import { RouterModule } from '@angular/router'; 
+import { RouterModule } from '@angular/router';
 import { Flight } from '../../model/flight';
-
 
 @Component({
   selector: 'app-manage-flight',
@@ -30,9 +29,8 @@ import { Flight } from '../../model/flight';
     FormsModule,
     CommonModule,
     MatSortModule,
-    RouterModule
+    RouterModule,
   ],
-  template: '<h1>Manage Flights</h1>'
 })
 export class ManageFlightComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
@@ -54,23 +52,27 @@ export class ManageFlightComponent implements OnInit, AfterViewInit {
   constructor(private flightService: FlightService) {}
 
   ngOnInit(): void {
-    this.flightService.getAllFlights().subscribe((flights) => {
+    // Load flights from Firestore and populate the table
+    this.flightService.syncFlightsWithImages(); // Start real-time sync
+    this.flightService.flights$.subscribe((flights) => {
       this.dataSource = new MatTableDataSource(flights);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
   }
-  
-  ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
 
-    this.dataSource.sortingDataAccessor = (item, property) => {
-      if (property === 'date') {
-        return this.parseDate(item.date);
-      }
-      return (item as any)[property] || '';
-    };
+  ngAfterViewInit(): void {
+    if (this.dataSource) {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+
+      this.dataSource.sortingDataAccessor = (item, property) => {
+        if (property === 'date') {
+          return this.parseDate(item.date);
+        }
+        return (item as any)[property] || '';
+      };
+    }
   }
 
   applyFilter(event: Event): void {
@@ -80,6 +82,18 @@ export class ManageFlightComponent implements OnInit, AfterViewInit {
 
   editFlight(flight: Flight): void {
     console.log('Editing flight:', flight);
+    // Example: Navigate to an edit flight page
+    // You can implement an edit form and pass flight details via a route
+  }
+
+  deleteFlight(flight: Flight): void {
+    if (confirm(`Are you sure you want to delete flight ${flight.flightNumber}?`)) {
+      this.flightService.deleteFlight(flight.flightNumber).then(() => {
+        console.log(`Flight ${flight.flightNumber} deleted successfully.`);
+      }).catch((error) => {
+        console.error(`Failed to delete flight ${flight.flightNumber}:`, error);
+      });
+    }
   }
 
   private parseDate(dateStr: string): number {

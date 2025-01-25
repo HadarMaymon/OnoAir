@@ -29,10 +29,9 @@ export class MyBookingsDetailsComponent implements OnInit {
   ngOnInit(): void {
     const bookingId = this.route.snapshot.paramMap.get('bookingId');
     if (bookingId) {
-      this.bookingService.getBookingById(bookingId).subscribe((booking) => {
+      this.bookingService.getBookingById(bookingId).then((booking) => {
         this.booking = booking;
-      });
-    }
+      });    }
   }
 
   navigateToBookings(): void {

@@ -1,24 +1,32 @@
-<div class="wrapper">
-  <div class="main-content">
-      <div *ngIf="flight; else notFound" class="edit-flight-container">
-          <h1>Edit Flight: {{ flight?.flightNumber }}</h1>  
-
-          <div class="details">
-              <p><strong>Origin:</strong> {{ flight?.origin }}</p>
-              <p><strong>Destination:</strong> {{ flight?.destination }}</p>
-              <p><strong>Date:</strong> {{ flight?.date }}</p>
-              <p><strong>Departure Time:</strong> {{ flight?.departureTime }}</p>
-              <p><strong>Duration:</strong> {{ flight?.duration }}</p>
-              <p><strong>Price:</strong> ${{ flight?.price }}</p>
-              <p><strong>Available Seats:</strong> {{ flight?.availableSeats }}</p>
-          </div>
-
-          <button mat-raised-button color="primary" (click)="saveChanges()">Save Changes</button>
-      </div>
-
-      <ng-template #notFound>
-          <h2>Flight not found!</h2>
-      </ng-template>
+<div *ngIf="flight; else loadingTemplate">
+    <h1>Edit Flight: {{ flight.flightNumber }}</h1>
+    <form>
+      <label for="origin">Origin:</label>
+      <input id="origin" [(ngModel)]="flight.origin" name="origin" />
+      
+      <label for="destination">Destination:</label>
+      <input id="destination" [(ngModel)]="flight.destination" name="destination" />
+  
+      <label for="date">Date:</label>
+      <input id="date" [(ngModel)]="flight.date" name="date" type="date" />
+  
+      <label for="departureTime">Departure Time:</label>
+      <input id="departureTime" [(ngModel)]="flight.departureTime" name="departureTime" />
+  
+      <label for="duration">Duration:</label>
+      <input id="duration" [(ngModel)]="flight.duration" name="duration" />
+  
+      <label for="price">Price:</label>
+      <input id="price" [(ngModel)]="flight.price" name="price" type="number" />
+  
+      <label for="availableSeats">Available Seats:</label>
+      <input id="availableSeats" [(ngModel)]="flight.availableSeats" name="availableSeats" type="number" />
+  
+      <button mat-raised-button color="primary" (click)="saveChanges()">Save Changes</button>
+    </form>
   </div>
-
-</div>
+  
+  <ng-template #loadingTemplate>
+    <p>Loading flight details...</p>
+  </ng-template>
+  

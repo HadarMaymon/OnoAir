@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, Inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -19,7 +19,8 @@ import { Destination } from '../../models/destination';
   selector: 'app-manage-destinations',
   templateUrl: './manage-destinations.component.html',
   styleUrls: ['./manage-destinations.component.css'],
-  imports:[
+  standalone: true,
+  imports: [
     RouterLink,
     MatFormFieldModule,
     MatInputModule,
@@ -31,12 +32,18 @@ import { Destination } from '../../models/destination';
     MatSort,
     MatPaginator,
     MatIconModule,
-    ],
+  ],
 })
-
 export class ManageDestinationComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Destination>();
-  displayedColumns: string[] = ['destinationName', 'airportName', 'IATA', 'timeZone', 'currency', 'actions'];
+  displayedColumns: string[] = [
+    'destinationName',
+    'airportName',
+    'IATA',
+    'timeZone',
+    'currency',
+    'actions',
+  ];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -47,23 +54,21 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadDestinations();
+    // Start syncing destinations from Firestore
+    this.destinationService.syncDestinations(); 
+    this.destinationService.destinations$.subscribe({
+      next: (destinations) => {
+        this.dataSource.data = destinations; // Update the table with destinations
+      },
+      error: () => {
+        alert('Failed to sync destinations.');
+      },
+    });
   }
-
+  
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-  }
-
-  loadDestinations(): void {
-    this.destinationService.getDestinations().subscribe({
-      next: (data) => {
-        this.dataSource.data = data;
-      },
-      error: () => {
-        alert('Failed to load destinations.');
-      }
-    });
   }
 
   applyFilter(event: Event): void {
@@ -75,5 +80,13 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
     this.router.navigate(['/edit-destination', destinationName]);
   }
 
-
+  uploadDestinations(): void {
+    this.destinationService.uploadStaticDestinations()
+      .then(() => {
+        alert('Destinations uploaded successfully!');
+      })
+      .catch(() => {
+        alert('Failed to upload destinations. Please try again.');
+      });
+  }
 }

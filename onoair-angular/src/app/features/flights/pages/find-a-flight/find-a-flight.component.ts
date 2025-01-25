@@ -1,8 +1,8 @@
-import { Component, OnInit, AfterViewInit, ViewChild, Inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { FlightService } from '../../service/flights';
+import { FlightService } from '../../service/flights.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,7 +10,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { Flight } from '../../model/flight';
 
 @Component({
@@ -26,7 +26,6 @@ import { Flight } from '../../model/flight';
     MatPaginatorModule,
     MatSortModule,
     CommonModule,
-    
   ],
 })
 export class FindAFlightComponent implements OnInit, AfterViewInit {
@@ -46,37 +45,44 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(
-    @Inject(FlightService) private flightService: FlightService,
-    private router: Router
-  ) {}
+  constructor(private flightService: FlightService, private router: Router) {}
 
   ngOnInit(): void {
-    this.flightService.getAllFlights().subscribe((flights) => {
+    // Sync flights from Firestore
+    this.flightService.syncFlightsWithImages();
+    this.flightService.flights$.subscribe((flights) => {
       this.dataSource = new MatTableDataSource(flights);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
+      if (this.paginator) {
+        this.dataSource.paginator = this.paginator;
+      }
+      if (this.sort) {
+        this.dataSource.sort = this.sort;
+      }
     });
   }
-  
+
   ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-    this.dataSource.sortingDataAccessor = (item, property) => {
-      if (property === 'date') {
-        return this.parseDate(item.date);
-      }
-      return (item as any)[property];
-    };
+    if (this.dataSource) {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+      this.dataSource.sortingDataAccessor = (item, property) => {
+        if (property === 'date') {
+          return this.parseDate(item.date);
+        }
+        return (item as any)[property];
+      };
+    }
   }
 
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    if (this.dataSource) {
+      this.dataSource.filter = filterValue.trim().toLowerCase();
+    }
   }
 
-  // Navigate to book-a-flight component
   bookFlight(flight: Flight): void {
+    // Navigate to book-a-flight with flight number as a parameter
     this.router.navigate(['/book-a-flight', flight.flightNumber]);
   }
 

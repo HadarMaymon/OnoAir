@@ -177,4 +177,32 @@ export class FlightService {
     today.setDate(today.getDate() + randomDaysToAdd);
     return today.toLocaleDateString('en-GB'); // Format as dd/MM/yyyy
   }
+
+  getOrigins(): Promise<string[]> {
+    const flightCollection = collection(this.firestore, 'flights');
+    return getDocs(flightCollection)
+      .then((snapshot) => {
+        const origins = snapshot.docs.map((doc) => doc.data()['origin'] as string);
+        return Array.from(new Set(origins)); // Remove duplicates
+      })
+      .catch((error) => {
+        console.error('Error fetching origins:', error);
+        return [];
+      });
+  }
+  
+  getDestinations(): Promise<string[]> {
+    const flightCollection = collection(this.firestore, 'flights');
+    return getDocs(flightCollection)
+      .then((snapshot) => {
+        const destinations = snapshot.docs.map((doc) => doc.data()['destination'] as string);
+        return Array.from(new Set(destinations)); // Remove duplicates
+      })
+      .catch((error) => {
+        console.error('Error fetching destinations:', error);
+        return [];
+      });
+  }
+  
+  
 }

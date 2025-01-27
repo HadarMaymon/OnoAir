@@ -19,42 +19,32 @@ export class MyBookingsComponent implements OnInit {
 
   ngOnInit(): void {
     const now = new Date();
-  
-    // Ensure static bookings are uploaded only during development
-    this.bookingService.uploadStaticBookings()
-      .then(() => {
-        console.log('Static bookings uploaded successfully!');
-      })
-      .catch((error) => {
-        console.error('Error uploading static bookings:', error);
-      });
-  
+
     // Start real-time sync
     this.bookingService.syncBookingsWithImages();
-  
+
     // Subscribe to the real-time bookings observable
     this.bookingService.bookings$.subscribe((allBookings: Booking[]) => {
       console.log('All bookings:', allBookings); // Debug to ensure data is fetched
-  
+
       const upcoming = allBookings.filter((booking) => {
         const boardingDate = this.parseDate(booking.boarding);
         console.log(`Booking ID: ${booking.bookingId}, Boarding Date: ${boardingDate}`); // Debug
         return boardingDate > now;
       });
-  
+
       const previous = allBookings.filter((booking) => {
         const boardingDate = this.parseDate(booking.boarding);
         console.log(`Booking ID: ${booking.bookingId}, Boarding Date: ${boardingDate}`); // Debug
         return boardingDate <= now;
       });
-  
+
       this.bookingSections = [
         { title: 'Upcoming Bookings', bookings: upcoming },
         { title: 'Previous Bookings', bookings: previous },
       ];
     });
   }
-  
 
   private parseDate(dateStr: string): Date {
     if (!dateStr) {

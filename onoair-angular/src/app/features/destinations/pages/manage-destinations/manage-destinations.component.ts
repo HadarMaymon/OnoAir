@@ -53,13 +53,10 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
   constructor(
     private destinationService: DestinationsService,
     private router: Router,
-    private dialog: MatDialog // Inject MatDialog here
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
-    // Sync static destinations with Firestore
-    this.destinationService.syncStaticDestinations();
-  
     // Start syncing destinations from Firestore
     this.destinationService.syncDestinations();
     this.destinationService.destinations$.subscribe({
@@ -71,7 +68,7 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
       },
     });
   }
-  
+
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -86,32 +83,12 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
     this.router.navigate(['/edit-destination', destinationName]);
   }
 
-  uploadDestinations(): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '350px',
-      data: { type: 'save', name: 'all destinations' }, // Save confirmation dialog
-    });
-
-    dialogRef.afterClosed().subscribe((result: any) => {
-      if (result === 'yes') {
-        this.destinationService
-          .uploadStaticDestinations()
-          .then(() => {
-            alert('Destinations uploaded successfully!');
-          })
-          .catch(() => {
-            alert('Failed to upload destinations. Please try again.');
-          });
-      }
-    });
-  }
-
   confirmDelete(destination: Destination): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
       data: { type: 'delete', name: `destination ${destination.destinationName}` },
     });
-  
+
     dialogRef.afterClosed().subscribe((result) => {
       if (result?.confirmed && result.action === 'delete') {
         this.destinationService.deleteDestination(destination.IATA).then(() => {
@@ -123,5 +100,4 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
 }

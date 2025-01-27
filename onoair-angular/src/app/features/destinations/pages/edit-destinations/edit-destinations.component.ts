@@ -44,18 +44,19 @@ export class EditDestinationsComponent implements OnInit {
     this.originalIATA = this.route.snapshot.paramMap.get('IATA');
 
     if (this.originalIATA) {
-      this.destinationService.getDestinationByIATA(this.originalIATA).subscribe({
-        next: (data) => {
+      // Use .then to handle the promise
+      this.destinationService.getDestinationByIATA(this.originalIATA)
+        .then((data: Destination | undefined) => {
           if (data) {
             this.initForm(data);
           } else {
             this.redirectToDestinationList();
           }
-        },
-        error: () => {
+        })
+        .catch((error: any) => {
+          console.error('Error fetching destination:', error);
           this.redirectToDestinationList();
-        },
-      });
+        });
     } else {
       this.redirectToDestinationList();
     }

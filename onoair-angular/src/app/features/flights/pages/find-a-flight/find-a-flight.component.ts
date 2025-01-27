@@ -50,8 +50,7 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
   constructor(private flightService: FlightService, private router: Router) {}
 
   ngOnInit(): void {
-    // Sync flights from Firestore
-    this.flightService.syncFlightsWithImages();
+    // Subscribe to real-time flights data
     this.flightService.flights$.subscribe((flights) => {
       this.dataSource = new MatTableDataSource(flights);
       if (this.paginator) {
@@ -67,9 +66,11 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
     if (this.dataSource) {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+
+      // Custom sorting logic for date fields
       this.dataSource.sortingDataAccessor = (item, property) => {
         if (property === 'date' || property === 'arrivalDate') {
-          return this.parseDate(item.date);
+          return this.parseDate(item[property]);
         }
         return (item as any)[property];
       };
@@ -84,7 +85,7 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
   }
 
   bookFlight(flight: Flight): void {
-    // Navigate to book-a-flight with flight number as a parameter
+    // Navigate to booking page with the selected flight's number
     this.router.navigate(['/book-a-flight', flight.flightNumber]);
   }
 

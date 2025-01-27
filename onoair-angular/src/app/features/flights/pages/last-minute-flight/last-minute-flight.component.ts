@@ -26,32 +26,26 @@ export class LastMinuteFlightComponent implements OnInit {
   constructor(private flightService: FlightService, private router: Router) {}
 
   ngOnInit(): void {
-    this.flightService.uploadStaticFlights().then(() => {
-      console.log('Static flights uploaded to Firestore.');
-      this.filterLastMinuteFlights();
-    }).catch((error) => {
-      console.error('Error uploading static flights:', error);
-      this.filterLastMinuteFlights(); 
+    // Subscribe to real-time flights and filter last-minute flights
+    this.flightService.flights$.subscribe((flights) => {
+      this.filterLastMinuteFlights(flights);
     });
   }
 
-  private filterLastMinuteFlights(): void {
+  private filterLastMinuteFlights(flights: Flight[]): void {
     const today = new Date();
     const oneWeekFromNow = new Date();
     oneWeekFromNow.setDate(today.getDate() + 7);
 
-    // Use `syncFlights` or `flights$` for real-time updates
-    this.flightService.syncFlightsWithImages();
-
-    this.flightService.flights$.subscribe((flights) => {
-      this.lastMinuteFlights = flights.filter((flight) => {
-        const flightDate = this.parseDate(flight.date);
-        return flightDate >= today && flightDate <= oneWeekFromNow;
-      });
+    // Filter flights occurring within the next week
+    this.lastMinuteFlights = flights.filter((flight) => {
+      const flightDate = this.parseDate(flight.date);
+      return flightDate >= today && flightDate <= oneWeekFromNow;
     });
   }
 
   bookFlight(flight: Flight): void {
+    // Navigate to booking page with flight details
     this.router.navigateByUrl(
       `/book-a-flight?destination=${flight.destination}&origin=${flight.origin}&date=${flight.date}&price=${flight.price}`
     );

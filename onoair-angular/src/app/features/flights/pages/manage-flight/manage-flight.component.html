@@ -45,6 +45,19 @@
       <td mat-cell *matCellDef="let flight">{{ flight.duration }}</td>
     </ng-container>
 
+    <!-- Arrival Date Column -->
+   <ng-container matColumnDef="arrivalDate">
+     <th mat-header-cell *matHeaderCellDef mat-sort-header>Arrival Date</th>
+     <td mat-cell *matCellDef="let flight">{{ flight.arrivalDate }}</td>
+   </ng-container>
+
+    <!-- Arrival Time Column -->
+   <ng-container matColumnDef="arrivalTime">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Arrival Time</th>
+    <td mat-cell *matCellDef="let flight">{{ flight.arrivalTime }}</td>  
+   </ng-container>
+
+
     <!-- Price Column -->
     <ng-container matColumnDef="price">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Price</th>

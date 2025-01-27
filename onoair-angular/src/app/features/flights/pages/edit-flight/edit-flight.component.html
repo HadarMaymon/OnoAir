@@ -1,28 +1,57 @@
-<div *ngIf="flight; else loadingTemplate">
+<div *ngIf="flight; else loadingTemplate" class="edit-flight-container">
   <h1>Edit Flight: {{ flight.flightNumber }}</h1>
-  <form>
-    <label for="origin">Origin:</label>
-    <input id="origin" [(ngModel)]="flight.origin" name="origin" />
+  <form class="edit-flight-form">
+    <!-- Origin -->
+      <mat-label>Origin</mat-label>
+      <input matInput [(ngModel)]="flight.origin" name="origin" id="origin" placeholder="Enter origin">
+ 
 
-    <label for="destination">Destination:</label>
-    <input id="destination" [(ngModel)]="flight.destination" name="destination" />
+    <!-- Destination -->
+      <mat-label>Destination</mat-label>
+      <input matInput [(ngModel)]="flight.destination" name="destination" id="destination" placeholder="Enter destination">
 
-    <label for="date">Date:</label>
-    <input id="date" [(ngModel)]="flight.date" name="date" type="date" />
+    <!-- Date -->
+    <mat-form-field class="form-field" appearance="outline">
+      <mat-label>Departue Date</mat-label>
+      <input matInput [matDatepicker]="picker" [(ngModel)]="flight.date" name="date" id="date" placeholder="Select date">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
 
-    <label for="departureTime">Departure Time:</label>
-    <input id="departureTime" [(ngModel)]="flight.departureTime" name="departureTime" />
+    <!-- Departure Time -->
+      <mat-label>Departure Time</mat-label>
+      <input matInput [(ngModel)]="flight.departureTime" name="departureTime" type="time" id="departureTime" placeholder="Enter departure time">
 
-    <label for="duration">Duration:</label>
-    <input id="duration" [(ngModel)]="flight.duration" name="duration" />
+    <!-- Duration -->
+      <mat-label>Duration</mat-label>
+      <input matInput [(ngModel)]="flight.duration" name="duration" id="duration" placeholder="Enter duration (e.g., 2h 30m)">
 
-    <label for="price">Price:</label>
-    <input id="price" [(ngModel)]="flight.price" name="price" type="number" />
+    <!-- Arrival Date -->
+    <mat-form-field class="form-field" appearance="outline">
+      <mat-label>Arrival Date</mat-label>
+      <input matInput [matDatepicker]="arrivalPicker" [(ngModel)]="flight.arrivalDate" name="arrivalDate" id="arrivalDate" placeholder="Select arrival date">
+      <mat-datepicker-toggle matSuffix [for]="arrivalPicker"></mat-datepicker-toggle>
+      <mat-datepicker #arrivalPicker></mat-datepicker>
+    </mat-form-field>
 
-    <label for="availableSeats">Available Seats:</label>
-    <input id="availableSeats" [(ngModel)]="flight.availableSeats" name="availableSeats" type="number" />
+    <!-- Arrival Time -->
+      <mat-label>Arrival Time</mat-label>
+      <input matInput [(ngModel)]="flight.arrivalTime" name="arrivalTime" type="time" id="arrivalTime" placeholder="Enter arrival time">
 
-    <button mat-raised-button color="primary" (click)="saveChanges()">Save Changes</button>
+    <!-- Price -->
+      <mat-label>Price</mat-label>
+      <input matInput [(ngModel)]="flight.price" name="price" type="number" id="price" placeholder="Enter price">
+
+    <!-- Available Seats -->
+      <mat-label>Available Seats</mat-label>
+      <input matInput [(ngModel)]="flight.availableSeats" name="availableSeats" type="number" id="availableSeats" placeholder="Enter available seats">
+
+    <!-- Save Button -->
+    <div class="form-actions">
+      <button mat-raised-button color="primary" (click)="saveChanges()" type="submit">
+        Save Changes
+      </button>
+    </div>
   </form>
 </div>
 

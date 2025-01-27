@@ -6,6 +6,8 @@ export class Flight {
       public date: string,
       public departureTime: string,
       public duration: string,
+      public arrivalDate: string,
+      public arrivalTime: string,
       public price: number,
       public image: string = '',
       public availableSeats: number,

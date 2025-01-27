@@ -7,14 +7,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { Flight } from '../../model/flight';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog'; 
-import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component'; // Import dialog component
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';
+import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-edit-flight',
   templateUrl: './edit-flight.component.html',
   styleUrls: ['./edit-flight.component.css'],
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, FormsModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, FormsModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, MatNativeDateModule],
 })
 export class EditFlightComponent implements OnInit {
   flight: Flight | undefined;
@@ -64,6 +68,21 @@ export class EditFlightComponent implements OnInit {
 
   saveChanges(): void {
     if (this.flight) {
+      // Ensure date and arrivalDate are in the correct format (e.g., YYYY-MM-DD)
+      if (this.flight.date) {
+        this.flight.date = new Date(this.flight.date).toISOString().split('T')[0];
+      }
+      if (this.flight.arrivalDate) {
+        this.flight.arrivalDate = new Date(this.flight.arrivalDate).toISOString().split('T')[0];
+      }
+      
+        if (this.flight.departureTime) {
+      }
+      if (this.flight.arrivalTime) {
+  
+      }
+  
+      // Call the service to update the flight
       this.flightService.updateFlight(this.flight).then(() => {
         // Open a success dialog
         const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -75,7 +94,7 @@ export class EditFlightComponent implements OnInit {
             showCloseButton: true,
           },
         });
-
+  
         dialogRef.afterClosed().subscribe(() => {
           this.router.navigate(['/manage-flight']);
         });
@@ -94,4 +113,4 @@ export class EditFlightComponent implements OnInit {
       });
     }
   }
-}
+  }

@@ -36,6 +36,8 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
     'date',
     'departureTime',
     'duration',
+    'arrivalDate',
+    'arrivalTime',
     'price',
     'availableSeats',
     'actions',
@@ -66,7 +68,7 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
       this.dataSource.sortingDataAccessor = (item, property) => {
-        if (property === 'date') {
+        if (property === 'date' || property === 'arrivalDate') {
           return this.parseDate(item.date);
         }
         return (item as any)[property];

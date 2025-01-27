@@ -44,6 +44,8 @@ export class ManageFlightComponent implements OnInit, AfterViewInit {
     'date',
     'departureTime',
     'duration',
+    'arrivalDate',
+    'arrivalTime',
     'price',
     'availableSeats',
     'actions',

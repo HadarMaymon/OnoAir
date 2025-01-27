@@ -100,10 +100,11 @@ export class ManageFlightComponent implements OnInit, AfterViewInit {
       width: '350px',
       data: { type: 'delete', name: `flight ${flight.flightNumber} to ${flight.destination}` },
     });
-
+  
     dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'yes') {
+      if (result?.confirmed && result.action === 'delete') {
         this.flightService.deleteFlight(flight.flightNumber).then(() => {
+          this.dataSource.data = this.dataSource.data.filter(f => f.flightNumber !== flight.flightNumber);
           alert(`Flight ${flight.flightNumber} deleted successfully.`);
         }).catch((error) => {
           console.error(`Error deleting flight ${flight.flightNumber}:`, error);
@@ -112,7 +113,8 @@ export class ManageFlightComponent implements OnInit, AfterViewInit {
       }
     });
   }
-
+  
+  
   private parseDate(dateStr: string): number {
     const [day, month, year] = dateStr.split('/').map(Number);
     return new Date(year, month - 1, day).getTime();

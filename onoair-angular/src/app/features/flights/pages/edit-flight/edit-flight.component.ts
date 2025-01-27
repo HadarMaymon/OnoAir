@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Flight } from '../../model/flight';
 import { FormsModule } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog'; // Import MatDialog
+import { MatDialog } from '@angular/material/dialog'; 
 import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component'; // Import dialog component
 
 @Component({

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Firestore, collection, doc, setDoc, getDocs, onSnapshot, getDoc, deleteDoc } from '@angular/fire/firestore';
-import { DestinationsService } from '../../destinations/service/destinations.service';
 import { Flight } from '../model/flight';
 import { Destination } from '../../destinations/models/destination';
 
@@ -113,14 +112,22 @@ export class FlightService {
 
   /**
    * Delete a flight from Firestore
-   */
+   * 
+   *    */
   deleteFlight(flightNumber: string): Promise<void> {
-    const flightDoc = doc(this.firestore, 'flights', flightNumber);
-    return deleteDoc(flightDoc).then(() => {
-      console.log(`Flight ${flightNumber} deleted successfully!`);
-    });
-  }
+    const flightDoc = doc(this.firestore, 'flights', flightNumber); 
 
+    return deleteDoc(flightDoc)
+      .then(() => {
+        console.log(`Flight ${flightNumber} deleted successfully!`);
+      })
+      .catch((error) => {
+        console.error(`Error deleting flight ${flightNumber}:`, error);
+        throw error; 
+      });
+  }
+  
+  
   /**
    * Fetch all destinations from Firestore
    */

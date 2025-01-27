@@ -1,32 +1,31 @@
 <div *ngIf="flight; else loadingTemplate">
-    <h1>Edit Flight: {{ flight.flightNumber }}</h1>
-    <form>
-      <label for="origin">Origin:</label>
-      <input id="origin" [(ngModel)]="flight.origin" name="origin" />
-      
-      <label for="destination">Destination:</label>
-      <input id="destination" [(ngModel)]="flight.destination" name="destination" />
-  
-      <label for="date">Date:</label>
-      <input id="date" [(ngModel)]="flight.date" name="date" type="date" />
-  
-      <label for="departureTime">Departure Time:</label>
-      <input id="departureTime" [(ngModel)]="flight.departureTime" name="departureTime" />
-  
-      <label for="duration">Duration:</label>
-      <input id="duration" [(ngModel)]="flight.duration" name="duration" />
-  
-      <label for="price">Price:</label>
-      <input id="price" [(ngModel)]="flight.price" name="price" type="number" />
-  
-      <label for="availableSeats">Available Seats:</label>
-      <input id="availableSeats" [(ngModel)]="flight.availableSeats" name="availableSeats" type="number" />
-  
-      <button mat-raised-button color="primary" (click)="saveChanges()">Save Changes</button>
-    </form>
-  </div>
-  
-  <ng-template #loadingTemplate>
-    <p>Loading flight details...</p>
-  </ng-template>
-  
+  <h1>Edit Flight: {{ flight.flightNumber }}</h1>
+  <form>
+    <label for="origin">Origin:</label>
+    <input id="origin" [(ngModel)]="flight.origin" name="origin" />
+
+    <label for="destination">Destination:</label>
+    <input id="destination" [(ngModel)]="flight.destination" name="destination" />
+
+    <label for="date">Date:</label>
+    <input id="date" [(ngModel)]="flight.date" name="date" type="date" />
+
+    <label for="departureTime">Departure Time:</label>
+    <input id="departureTime" [(ngModel)]="flight.departureTime" name="departureTime" />
+
+    <label for="duration">Duration:</label>
+    <input id="duration" [(ngModel)]="flight.duration" name="duration" />
+
+    <label for="price">Price:</label>
+    <input id="price" [(ngModel)]="flight.price" name="price" type="number" />
+
+    <label for="availableSeats">Available Seats:</label>
+    <input id="availableSeats" [(ngModel)]="flight.availableSeats" name="availableSeats" type="number" />
+
+    <button mat-raised-button color="primary" (click)="saveChanges()">Save Changes</button>
+  </form>
+</div>
+
+<ng-template #loadingTemplate>
+  <p>Loading flight details...</p>
+</ng-template>

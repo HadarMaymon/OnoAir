@@ -111,19 +111,17 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
       width: '350px',
       data: { type: 'delete', name: `destination ${destination.destinationName}` },
     });
-
-    dialogRef.afterClosed().subscribe((result: any) => {
-      if (result === 'yes') {
-        this.destinationService
-          .deleteDestination(destination.IATA)
-          .then(() => {
-            alert(`Destination ${destination.destinationName} deleted successfully.`);
-          })
-          .catch((error) => {
-            console.error(`Error deleting destination ${destination.destinationName}:`, error);
-            alert('Failed to delete destination. Please try again.');
-          });
+  
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.confirmed && result.action === 'delete') {
+        this.destinationService.deleteDestination(destination.IATA).then(() => {
+          alert(`Destination ${destination.destinationName} deleted successfully.`);
+        }).catch((error) => {
+          console.error(`Error deleting destination ${destination.destinationName}:`, error);
+          alert('Failed to delete destination. Please try again.');
+        });
       }
     });
   }
+  
 }

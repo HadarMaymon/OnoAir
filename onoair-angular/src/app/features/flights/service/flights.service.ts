@@ -53,11 +53,13 @@ export class FlightService {
    */
   addFlight(flight: Flight): Promise<void> {
     const flightCollection = collection(this.firestore, 'flights');
-    const flightDoc = doc(flightCollection, flight.flightNumber);
-    return setDoc(flightDoc, { ...flight }).then(() => {
-      console.log(`Flight ${flight.flightNumber} added successfully!`);
-    });
+    const flightDoc = doc(flightCollection, flight.flightNumber); 
+    return setDoc(flightDoc, { ...flight })
+      .then(() => {
+        console.log(`Flight ${flight.flightNumber} added successfully!`);
+      });
   }
+  
 
   /**
    * Update an existing flight in Firestore

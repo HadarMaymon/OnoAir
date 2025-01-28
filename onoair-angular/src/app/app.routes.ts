@@ -10,6 +10,7 @@ import { BookAFlightComponent } from './features/booking/pages/book-a-flight/boo
 import { MyBookingsComponent } from './features/booking/pages/my-bookings/my-bookings.component';
 import { MyBookingsDetailsComponent } from './features/booking/pages/my-bookings-details/my-bookings-details.component';
 import { HelpPageComponent } from './features/help/help-page.component';
+import { AddFlightComponent } from './features/flights/pages/add-flight/add-flight.component';
 
 export const routes: Routes = [
   { path: '', component: HomepageComponent },  
@@ -24,5 +25,6 @@ export const routes: Routes = [
   { path: 'my-bookings', component: MyBookingsComponent },
   { path: 'my-bookings-details/:bookingId', component: MyBookingsDetailsComponent },
   { path: 'help', component: HelpPageComponent },
+  { path: 'add-flight', component: AddFlightComponent },
   { path: '**', redirectTo: '' } 
 ];

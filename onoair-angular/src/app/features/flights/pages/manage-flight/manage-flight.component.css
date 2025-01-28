@@ -6,9 +6,17 @@
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     position: relative;
-    overflow-x: auto;  
-    padding-bottom: 80px;
+    overflow-x: auto;
+    padding-bottom: 80px; /* Leave space for the button */
 }
+
+/* Center the Add Flight button below the table */
+.action-bar {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
 
 h1 {
     text-align: center;
@@ -81,4 +89,7 @@ table {
     table {
         table-layout: fixed;
     }
+
+
+    
 }

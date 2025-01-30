@@ -15,9 +15,6 @@ export class FlightService {
     this.syncFlights();
   }
 
-  /**
-   * Sync flights in real-time with Firestore, takes images from destination
-   */
   private syncFlights(): void {
     const flightCollection = collection(this.firestore, 'flights');
     onSnapshot(flightCollection, async (snapshot) => {
@@ -48,22 +45,8 @@ export class FlightService {
     return destinationSnapshot.docs.map((doc) => doc.data() as Destination);
   }
   
-  /**
-   * Add a new flight to Firestore
-   */
-  addFlight(flight: Flight): Promise<void> {
-    const flightCollection = collection(this.firestore, 'flights');
-    const flightDoc = doc(flightCollection, flight.flightNumber); 
-    return setDoc(flightDoc, { ...flight })
-      .then(() => {
-        console.log(`Flight ${flight.flightNumber} added successfully!`);
-      });
-  }
-  
 
-  /**
-   * Update an existing flight in Firestore
-   */
+
   updateFlight(flight: Flight): Promise<void> {
     const flightCollection = collection(this.firestore, 'flights');
     const flightDoc = doc(flightCollection, flight.flightNumber);
@@ -72,9 +55,7 @@ export class FlightService {
     });
   }
 
-  /**
-   * Delete a flight from Firestore
-   */
+
   deleteFlight(flightNumber: string): Promise<void> {
     const flightDoc = doc(this.firestore, 'flights', flightNumber);
     return deleteDoc(flightDoc).then(() => {
@@ -82,9 +63,7 @@ export class FlightService {
     });
   }
 
-  /**
-   * Get flight details by flight number
-   */
+
   getFlightByNumber(flightNumber: string): Promise<Flight | undefined> {
     const flightDoc = doc(this.firestore, 'flights', flightNumber);
     return getDoc(flightDoc).then((snapshot) =>
@@ -92,9 +71,6 @@ export class FlightService {
     );
   }
 
-  /**
-   * Get unique origins from Firestore
-   */
   getOrigins(): Promise<string[]> {
     const flightCollection = collection(this.firestore, 'flights');
     return getDocs(flightCollection)
@@ -104,9 +80,6 @@ export class FlightService {
       });
   }
 
-  /**
-   * Get unique destinations from Firestore
-   */
   getDestinations(): Promise<string[]> {
     const flightCollection = collection(this.firestore, 'flights');
     return getDocs(flightCollection)

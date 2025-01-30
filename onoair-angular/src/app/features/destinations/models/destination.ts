@@ -9,7 +9,4 @@ export class Destination {
       public image: string
     ) {}
   
-    updateCurrency(newCurrency: string): void {
-      this.currency = newCurrency;
-    }
   }

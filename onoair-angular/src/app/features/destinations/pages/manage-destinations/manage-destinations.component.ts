@@ -61,7 +61,7 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
     this.destinationService.syncDestinations();
     this.destinationService.destinations$.subscribe({
       next: (destinations) => {
-        this.dataSource.data = destinations; // Update the table with destinations
+        this.dataSource.data = destinations;
       },
       error: () => {
         alert('Failed to sync destinations.');

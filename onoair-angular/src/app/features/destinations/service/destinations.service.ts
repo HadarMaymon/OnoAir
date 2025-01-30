@@ -46,14 +46,13 @@ export class DestinationsService {
   public addDestination(destination: Destination): Promise<void> {
     const destinationCollection = collection(this.firestore, 'destinations').withConverter(destinationConverter);
     const destinationDoc = doc(destinationCollection, destination.IATA); // Use IATA as document ID
+  
     return setDoc(destinationDoc, destination).then(() => {
-      console.log(`Destination ${destination.destinationName} added successfully.`);
+      console.log(`Destination ${destination.destinationName} added/updated successfully.`);
     });
   }
+  
 
-  /**
-   * Update an existing destination in Firestore.
-   */
   public updateDestination(destination: Destination): Promise<void> {
     const destinationCollection = collection(this.firestore, 'destinations').withConverter(destinationConverter);
     const destinationDoc = doc(destinationCollection, destination.IATA); // Use IATA as document ID
@@ -62,9 +61,10 @@ export class DestinationsService {
     });
   }
 
-  /**
-   * Delete a destination from Firestore.
-   */
+
+  
+
+
   public deleteDestination(IATA: string): Promise<void> {
     const destinationDoc = doc(this.firestore, 'destinations', IATA).withConverter(destinationConverter);
     return deleteDoc(destinationDoc).then(() => {

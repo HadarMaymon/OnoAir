@@ -22,8 +22,9 @@ export const destinationConverter: FirestoreDataConverter<Destination> = {
       currency: string;
       image: string;
     };
+
     return new Destination(
-      data['destinationName'], // Access via index signature to comply with TypeScript rules
+      data['destinationName'], 
       data['airportName'],
       data['airportWebsite'],
       data['IATA'],

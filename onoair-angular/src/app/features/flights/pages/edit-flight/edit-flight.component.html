@@ -4,14 +4,16 @@
     <!-- Flight Number -->
       <mat-label>Flight Number</mat-label>
       <input
-        matInput
-        [(ngModel)]="flight.flightNumber"
-        name="flightNumber"
-        id="flightNumber"
-        placeholder="Enter flight number"
-        required
-        #flightNumber="ngModel"
-      />
+      matInput
+      [(ngModel)]="flight.flightNumber"
+      name="flightNumber"
+      id="flightNumber"
+      placeholder="Enter flight number"
+      required
+      (input)="onFlightNumberChange($event)"  
+      #flightNumber="ngModel"
+    />
+  
       <mat-error *ngIf="flightNumber.invalid && flightNumber.touched">Flight Number is required</mat-error>
 
     <!-- Origin -->
@@ -36,24 +38,25 @@
       <mat-error *ngIf="destinationControl.invalid && destinationControl.touched">Destination is required</mat-error>
     </mat-form-field>
 
-    <!-- Date -->
+    <!--Departure Date -->
     <mat-form-field class="form-field" appearance="outline">
       <mat-label>Departure Date</mat-label>
       <input
-        matInput
-        [matDatepicker]="picker"
-        [(ngModel)]="flight.date"
-        name="date"
-        id="date"
-        placeholder="Select departure date"
-        required
-        #date="ngModel"
-      />
+      matInput
+      [matDatepicker]="picker"
+      [(ngModel)]="flight.date"
+      name="date"
+      id="date"
+      placeholder="Select departure date"
+      required
+      [min]="minDate" 
+      (dateChange)="validateDates()" 
+      #date="ngModel" />
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
       <mat-error *ngIf="date.invalid && date.touched">Departure date is required</mat-error>
     </mat-form-field>
-
+    
     <!-- Departure Time -->
       <mat-label>Departure Time</mat-label>
       <input
@@ -68,51 +71,52 @@
       />
       <mat-error *ngIf="departureTime.invalid && departureTime.touched">Departure time is required</mat-error>
 
-    <!-- Duration -->
+      <!-- Duration (Automatically Calculated) -->
       <mat-label>Duration</mat-label>
       <input
         matInput
         [(ngModel)]="flight.duration"
         name="duration"
         id="duration"
-        placeholder="Enter duration (e.g., 2h 30m)"
-        required
-        #duration="ngModel"
+        placeholder="Calculated automatically"
+        readonly
       />
-      <mat-error *ngIf="duration.invalid && duration.touched">Duration is required</mat-error>
+      
 
     <!-- Arrival Date -->
     <mat-form-field class="form-field" appearance="outline">
       <mat-label>Arrival Date</mat-label>
       <input
-        matInput
-        [matDatepicker]="arrivalPicker"
-        [(ngModel)]="flight.arrivalDate"
-        name="arrivalDate"
-        id="arrivalDate"
-        placeholder="Select arrival date"
-        required
-        #arrivalDate="ngModel"
-      />
+      matInput
+      [matDatepicker]="arrivalPicker"
+      [(ngModel)]="flight.arrivalDate"
+      name="arrivalDate"
+      id="arrivalDate"
+      placeholder="Select arrival date"
+      required
+      [min]="flight.date"
+      (dateChange)="validateDates()"
+      #arrivalDate="ngModel"
+  >
       <mat-datepicker-toggle matSuffix [for]="arrivalPicker"></mat-datepicker-toggle>
       <mat-datepicker #arrivalPicker></mat-datepicker>
       <mat-error *ngIf="arrivalDate.invalid && arrivalDate.touched">Arrival date is required</mat-error>
     </mat-form-field>
-
+    
     <!-- Arrival Time -->
       <mat-label>Arrival Time</mat-label>
       <input
-        matInput
-        [(ngModel)]="flight.arrivalTime"
-        name="arrivalTime"
-        type="time"
-        id="arrivalTime"
-        placeholder="Enter arrival time"
-        required
-        #arrivalTime="ngModel"
-      />
+      matInput
+      [(ngModel)]="flight.arrivalTime"
+      name="arrivalTime"
+      type="time"
+      id="arrivalTime"
+      placeholder="Enter arrival time"
+      required
+      (change)="validateTimes()"
+      #arrivalTime="ngModel" />
       <mat-error *ngIf="arrivalTime.invalid && arrivalTime.touched">Arrival time is required</mat-error>
-
+      
     <!-- Price -->
       <mat-label>Price</mat-label>
       <input
@@ -156,6 +160,7 @@
     </div>
   </form>
 </div>
+
 
 <ng-template #loadingTemplate>
   <p>Loading flight details...</p>

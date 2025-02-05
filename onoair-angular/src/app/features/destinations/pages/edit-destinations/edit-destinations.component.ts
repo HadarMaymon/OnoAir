@@ -42,37 +42,41 @@ export class EditDestinationsComponent implements OnInit {
 
   ngOnInit(): void {
     this.originalIATA = this.route.snapshot.paramMap.get('IATA');
-
+  
     if (this.originalIATA) {
-      // Use .then to handle the promise
       this.destinationService.getDestinationByIATA(this.originalIATA)
         .then((data: Destination | undefined) => {
           if (data) {
+            console.log('📡 Destination Data:', data); // Debugging log
             this.initForm(data);
           } else {
             this.redirectToDestinationList();
           }
         })
-        .catch((error: any) => {
-          console.error('Error fetching destination:', error);
+        .catch((error) => {
+          console.error('⚠️ Error fetching destination:', error);
           this.redirectToDestinationList();
         });
     } else {
       this.redirectToDestinationList();
     }
   }
+  
+  
 
   initForm(destination: Destination): void {
     this.destinationForm = this.fb.group({
-      destinationName: [destination.destinationName, [Validators.required]],
-      airportName: [destination.airportName, [Validators.required]],
+      destinationName: [destination.destinationName, [Validators.required]],  
+      airportName: [destination.airportName, [Validators.required]],          
       airportWebsite: [destination.airportWebsite, [Validators.required, Validators.pattern(/https?:\/\/.+/)]],
-      IATA: [{ value: destination.IATA, disabled: true }], // IATA is immutable
+      IATA: [{ value: destination.IATA, disabled: true }],
       timeZone: [destination.timeZone, [Validators.required]],
       currency: [destination.currency, [Validators.required]],
       image: [destination.image, [Validators.required]],
     });
   }
+  
+  
 
   redirectToDestinationList(): void {
     alert('Destination not found. Redirecting to Manage Destinations.');
@@ -80,41 +84,59 @@ export class EditDestinationsComponent implements OnInit {
   }
 
   saveChanges(): void {
-    if (this.destinationForm.valid) {
-      const updatedDestination: Destination = {
-        ...this.destinationForm.value,
-        IATA: this.originalIATA, // Ensure the IATA remains unchanged
-      };
-
-      this.destinationService.updateDestination(updatedDestination).then(() => {
+    if (this.destinationForm.invalid) {
+      this.dialog.open(ConfirmDialogComponent, {
+        width: '350px',
+        data: {
+          title: 'Error',
+          message: 'Please fill in all required fields before saving.',
+          showConfirmButton: false,
+          showCloseButton: true,
+        },
+      });
+      return;
+    }
+  
+    const updatedDestination: Destination = {
+      ...this.destinationForm.getRawValue(),
+      IATA: this.originalIATA, 
+    };
+  
+    this.destinationService.updateDestination(updatedDestination)
+      .then(() => {
         const dialogRef = this.dialog.open(ConfirmDialogComponent, {
           width: '350px',
           data: {
             title: 'Success',
-            message: 'Changes saved successfully!',
-            showConfirmButton: false,
-            showCloseButton: true,
+            message: 'Destination updated successfully!',
           },
         });
-
+  
         dialogRef.afterClosed().subscribe(() => {
           this.router.navigate(['/manage-destinations']);
         });
-      }).catch(() => {
-        alert('Failed to save changes. Please try again.');
+      })
+      .catch((error) => {
+        this.dialog.open(ConfirmDialogComponent, {
+          width: '350px',
+          data: {
+            title: 'Error',
+            message: 'Failed to update destination. Please try again.',
+          },
+        });
+        console.error('Error updating destination:', error);
       });
-    }
   }
-
+    
   deleteDestination(): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
-      data: { name: this.destinationForm.get('destinationName')?.value },
+      data: { name: this.destinationForm.get('IATA')?.value },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result === 'yes') {
-        const IATA = this.originalIATA; // Use the original IATA code
+        const IATA = this.originalIATA;
         if (IATA) {
           this.destinationService.deleteDestination(IATA).then(() => {
             alert('Destination deleted successfully! Redirecting to Manage Destinations.');

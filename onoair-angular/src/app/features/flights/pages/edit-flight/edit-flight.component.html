@@ -71,17 +71,6 @@
       />
       <mat-error *ngIf="departureTime.invalid && departureTime.touched">Departure time is required</mat-error>
 
-      <!-- Duration (Automatically Calculated) -->
-      <mat-label>Duration</mat-label>
-      <input
-        matInput
-        [(ngModel)]="flight.duration"
-        name="duration"
-        id="duration"
-        placeholder="Calculated automatically"
-        readonly
-      />
-      
 
     <!-- Arrival Date -->
     <mat-form-field class="form-field" appearance="outline">
@@ -153,7 +142,7 @@
           mat-raised-button
           color="primary"
           type="submit"
-          [disabled]="!flightForm.dirty || flightForm.invalid"
+          [disabled]="!flightForm.pristine || flightForm.invalid"
         >
           Save Changes
         </button>

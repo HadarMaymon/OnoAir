@@ -78,23 +78,24 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
-
-  editDestination(destinationName: string): void {
-    this.router.navigate(['/edit-destination', destinationName]);
+  
+  editDestination(IATA: string): void {
+    this.router.navigate(['/edit-destination', IATA]);
   }
+  
 
   confirmDelete(destination: Destination): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
-      data: { type: 'delete', name: `destination ${destination.destinationName}` },
+      data: { type: 'delete', name: `destination ${destination.IATA}` },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result?.confirmed && result.action === 'delete') {
         this.destinationService.deleteDestination(destination.IATA).then(() => {
-          alert(`Destination ${destination.destinationName} deleted successfully.`);
+          alert(`Destination ${destination.IATA} deleted successfully.`);
         }).catch((error) => {
-          console.error(`Error deleting destination ${destination.destinationName}:`, error);
+          console.error(`Error deleting destination ${destination.IATA}:`, error);
           alert('Failed to delete destination. Please try again.');
         });
       }

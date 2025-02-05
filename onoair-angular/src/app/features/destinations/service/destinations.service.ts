@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { Firestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDocs, getDoc } from '@angular/fire/firestore';
+import { BehaviorSubject, Observable, map } from 'rxjs';
+import { Firestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDocs, getDoc, collectionData } from '@angular/fire/firestore';
 import { Destination } from '../models/destination';
 import { destinationConverter } from './converter/destination-converter';
 
@@ -15,9 +15,6 @@ export class DestinationsService {
     this.syncDestinations(); // Start real-time syncing
   }
 
-  /**
-   * Sync destinations from Firestore in real-time.
-   */
   public syncDestinations(): void {
     const destinationCollection = collection(this.firestore, 'destinations').withConverter(destinationConverter);
     onSnapshot(destinationCollection, (snapshot) => {
@@ -26,10 +23,7 @@ export class DestinationsService {
     });
   }
 
-
-  /**
-   * Get all destinations from Firestore.
-   */
+ 
   public getAllDestinations(): Promise<Destination[]> {
     const destinationCollection = collection(this.firestore, 'destinations').withConverter(destinationConverter);
     return getDocs(destinationCollection)
@@ -40,9 +34,14 @@ export class DestinationsService {
       });
   }
 
-  /**
-   * Add a new destination to Firestore.
-   */
+  getAllDestinationNames(): Observable<string[]> {
+    const destinationsRef = collection(this.firestore, 'destinations').withConverter(destinationConverter); // Get the 'destinations' collection reference with converter
+    return collectionData(destinationsRef).pipe(
+      map((destinations: Destination[]) => destinations.map((d) => d.destinationName))
+    );
+  }
+  
+
   public addDestination(destination: Destination): Promise<void> {
     const destinationCollection = collection(this.firestore, 'destinations').withConverter(destinationConverter);
     const destinationDoc = doc(destinationCollection, destination.IATA); // Use IATA as document ID

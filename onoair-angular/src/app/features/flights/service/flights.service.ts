@@ -1,6 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { Firestore, collection, doc, setDoc, getDocs, onSnapshot, getDoc, deleteDoc } from '@angular/fire/firestore';
+import {
+  Firestore,
+  collection,
+  doc,
+  setDoc,
+  getDocs,
+  onSnapshot,
+  getDoc,
+  deleteDoc,
+  query,
+  where,
+  orderBy,
+} from '@angular/fire/firestore';
 import { Flight } from '../model/flight';
 import { Destination } from '../../destinations/models/destination';
 
@@ -15,38 +27,53 @@ export class FlightService {
     this.syncFlights();
   }
 
-  private syncFlights(): void {
+  /**
+   * Syncs flights from Firestore and enriches them with destination images.
+   */
+  private async syncFlights(): Promise<void> {
     const flightCollection = collection(this.firestore, 'flights');
-    onSnapshot(flightCollection, async (snapshot) => {
+    const destinationCollection = collection(this.firestore, 'destinations');
+
+    // Fetch destinations once
+    const destinations = await this.getAllDestinations(destinationCollection);
+
+    // Sync flights in real-time
+    onSnapshot(flightCollection, (snapshot) => {
       const flights = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      }) as unknown as Flight);
-  
-      // Fetch all destinations to map images
-      const destinations = await this.getAllDestinations();
-  
-      // Add images to flights
+      })) as unknown as Flight[];
+
+      // Enrich flights with images
       flights.forEach((flight) => {
-        if (!flight.image || flight.image === '') {
-          const destination = destinations.find((d) => d.destinationName === flight.destination);
-          flight.image = destination?.image || 'https://via.placeholder.com/300'; // Default fallback image
-        }
+        const matchingDestination = destinations.find(
+          (d) =>
+            d.destinationName.trim().toLowerCase() ===
+            flight.destination.trim().toLowerCase()
+        );
+
+        flight.image =
+          matchingDestination?.image || 'https://via.placeholder.com/300';
       });
-  
-      // Update flightsSubject with enriched flight data
+
+      // Update BehaviorSubject
       this.flightsSubject.next(flights);
     });
   }
-  
-  private async getAllDestinations(): Promise<Destination[]> {
-    const destinationCollection = collection(this.firestore, 'destinations');
-    const destinationSnapshot = await getDocs(destinationCollection);
-    return destinationSnapshot.docs.map((doc) => doc.data() as Destination);
+
+  /**
+   * Fetches all destinations from Firestore.
+   */
+  private async getAllDestinations(
+    destinationCollection: any
+  ): Promise<Destination[]> {
+    const snapshot = await getDocs(destinationCollection);
+    return snapshot.docs.map((doc) => doc.data() as Destination);
   }
-  
 
-
+  /**
+   * Updates a flight in Firestore.
+   */
   updateFlight(flight: Flight): Promise<void> {
     const flightCollection = collection(this.firestore, 'flights');
     const flightDoc = doc(flightCollection, flight.flightNumber);
@@ -55,7 +82,9 @@ export class FlightService {
     });
   }
 
-
+  /**
+   * Deletes a flight from Firestore.
+   */
   deleteFlight(flightNumber: string): Promise<void> {
     const flightDoc = doc(this.firestore, 'flights', flightNumber);
     return deleteDoc(flightDoc).then(() => {
@@ -63,7 +92,9 @@ export class FlightService {
     });
   }
 
-
+  /**
+   * Fetches a flight by its number from Firestore.
+   */
   getFlightByNumber(flightNumber: string): Promise<Flight | undefined> {
     const flightDoc = doc(this.firestore, 'flights', flightNumber);
     return getDoc(flightDoc).then((snapshot) =>
@@ -71,21 +102,69 @@ export class FlightService {
     );
   }
 
+  /**
+   * Retrieves a list of unique flight origins.
+   */
   getOrigins(): Promise<string[]> {
     const flightCollection = collection(this.firestore, 'flights');
-    return getDocs(flightCollection)
-      .then((snapshot) => {
-        const origins = snapshot.docs.map((doc) => doc.data()['origin'] as string);
-        return Array.from(new Set(origins));
-      });
+    return getDocs(flightCollection).then((snapshot) => {
+      const origins = snapshot.docs.map(
+        (doc) => doc.data()['origin'] as string
+      );
+      return Array.from(new Set(origins));
+    });
   }
 
+  /**
+   * Retrieves a list of unique flight destinations.
+   */
   getDestinations(): Promise<string[]> {
     const flightCollection = collection(this.firestore, 'flights');
-    return getDocs(flightCollection)
-      .then((snapshot) => {
-        const destinations = snapshot.docs.map((doc) => doc.data()['destination'] as string);
-        return Array.from(new Set(destinations));
-      });
+    return getDocs(flightCollection).then((snapshot) => {
+      const destinations = snapshot.docs.map(
+        (doc) => doc.data()['destination'] as string
+      );
+      return Array.from(new Set(destinations));
+    });
   }
-}
+
+  /**
+   * Fetches flights within a specific date range.
+   */
+  getFlightsWithinDateRange(startDate: string, endDate: string): Observable<Flight[]> {
+    const flightsRef = collection(this.firestore, 'flights');
+    const flightsQuery = query(
+      flightsRef,
+      where('date', '>=', startDate),
+      where('date', '<=', endDate),
+      orderBy('date')
+    );
+  
+    return new Observable<Flight[]>((observer) => {
+      const unsubscribe = onSnapshot(
+        flightsQuery,
+        (snapshot) => {
+          const flights = snapshot.docs.map((doc) => {
+            const data = doc.data();
+            return {
+              id: doc.id,
+              ...(data as Omit<
+                Flight,
+                'updatePrice' | 'updateSeats' | 'assignDynamicDate'
+              >),
+              updatePrice: () => {},
+              updateSeats: () => {},
+              assignDynamicDate: () => {},
+            } as Flight;
+          });
+          observer.next(flights);
+        },
+        (error) => {
+          observer.error(error);
+        }
+      );
+  
+      return () => unsubscribe();
+    });
+  }
+  }

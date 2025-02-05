@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterLink, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
@@ -13,7 +13,6 @@ import { Flight } from '../../model/flight';
   styleUrls: ['./last-minute-flight.component.css'],
   standalone: true,
   imports: [
-    RouterLink,
     MatCardModule,
     MatButtonModule,
     CommonModule,
@@ -36,13 +35,21 @@ export class LastMinuteFlightComponent implements OnInit {
     const today = new Date();
     const oneWeekFromNow = new Date();
     oneWeekFromNow.setDate(today.getDate() + 7);
-
-    // Filter flights occurring within the next week
+  
+    console.log("Today:", today);
+    console.log("One Week From Now:", oneWeekFromNow);
+  
+    // Filter flights occurring within the next 7 days
     this.lastMinuteFlights = flights.filter((flight) => {
       const flightDate = this.parseDate(flight.date);
+      console.log(`Flight Date (${flight.date}):`, flightDate);
       return flightDate >= today && flightDate <= oneWeekFromNow;
     });
+  
+    console.log("Filtered Flights:", this.lastMinuteFlights);
   }
+  
+  
 
   bookFlight(flight: Flight): void {
     // Navigate to booking page with flight details
@@ -52,7 +59,8 @@ export class LastMinuteFlightComponent implements OnInit {
   }
 
   private parseDate(dateStr: string): Date {
-    const [day, month, year] = dateStr.split('/').map(Number);
-    return new Date(year, month - 1, day);
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day); 
   }
+  
 }

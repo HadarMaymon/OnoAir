@@ -148,16 +148,16 @@
       <mat-error *ngIf="availableSeats.invalid && availableSeats.touched">Available seats must be greater than 0</mat-error>
 
     <!-- Save Button -->
-    <div class="form-actions">
-      <button
-        mat-raised-button
-        color="primary"
-        type="submit"
-        [disabled]="flightForm.invalid"
-      >
-        Save Changes
-      </button>
-    </div>
+        <div class="form-actions">
+          <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="!flightForm.dirty || flightForm.invalid"
+        >
+          Save Changes
+        </button>
+        </div>
   </form>
 </div>
 

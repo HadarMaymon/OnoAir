@@ -62,7 +62,7 @@ export class DestinationsService {
   }
 
 
-  
+
 
 
   public deleteDestination(IATA: string): Promise<void> {

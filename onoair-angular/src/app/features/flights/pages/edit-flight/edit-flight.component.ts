@@ -141,12 +141,12 @@ export class EditFlightComponent implements OnInit {
       arrivalTime.setHours(arrHours, arrMinutes);
   
       if (arrivalTime <= departureTime) {
-        this.flight.arrivalTime = ''; // Reset invalid time
+        this.flight.arrivalTime = ''; 
       }
     }
-    this.calculateDuration(); // Always calculate after validation
+    this.calculateDuration();
   }
-  
+    
   
   
   calculateDuration(): void {

@@ -111,15 +111,22 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
   applyFilters(): void {
     const { from, to, departureDate, priceBudget, passengers } = this.filters;
   
+    // Get today's date in local time and reset to midnight
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time for comparison
+    today.setHours(0, 0, 0, 0);
   
     this.flightService.flights$.subscribe((flights) => {
       const filteredFlights = flights.filter((flight) => {
-        const flightDate = new Date(flight.date);
+        const [year, month, day] = flight.date.split('-').map(Number); 
+        const flightDate = new Date(year, month - 1, day); 
   
-        // Exclude past flights
+        console.log(
+          `Flight: ${flight.flightNumber}, Flight Date: ${flightDate.toLocaleDateString()}, Today: ${today.toLocaleDateString()}`
+        ); // Debugging
+  
+        // Ensure flight date is in the future
         if (flightDate < today) {
+          console.warn(`Filtering out past flight: ${flight.flightNumber}`);
           return false;
         }
   
@@ -127,7 +134,7 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
         const matchesFrom = !from || flight.origin === from;
         const matchesTo = !to || flight.destination === to;
         const matchesDeparture = !departureDate || flight.date === departureDate;
-        const matchesPrice = !priceBudget || flight.price <= priceBudget; // New price filter
+        const matchesPrice = !priceBudget || flight.price <= priceBudget;
         const matchesPassengers = !passengers || flight.availableSeats >= passengers;
   
         return matchesFrom && matchesTo && matchesDeparture && matchesPrice && matchesPassengers;
@@ -137,7 +144,7 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
     });
   }
   
-
+    
   bookFlight(flight: Flight): void {
     this.router.navigate(['/book-a-flight', flight.flightNumber]);
   }

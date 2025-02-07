@@ -57,8 +57,15 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
-  
+    
     <!-- Pagination -->
     <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
+    <div class="button-container">
+      <button mat-raised-button color="primary" [routerLink]="['/edit-destination']">
+        Add Destination
+      </button>
+    </div>
+    
   </div>
   

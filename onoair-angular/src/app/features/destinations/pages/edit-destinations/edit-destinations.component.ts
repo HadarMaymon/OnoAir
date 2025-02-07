@@ -44,6 +44,7 @@ export class EditDestinationsComponent implements OnInit {
     this.originalIATA = this.route.snapshot.paramMap.get('IATA');
   
     if (this.originalIATA) {
+      // Editing an existing destination
       this.destinationService.getDestinationByIATA(this.originalIATA)
         .then((data: Destination | undefined) => {
           if (data) {
@@ -58,7 +59,15 @@ export class EditDestinationsComponent implements OnInit {
           this.redirectToDestinationList();
         });
     } else {
-      this.redirectToDestinationList();
+      this.initForm({
+        destinationName: '',
+        airportName: '',
+        airportWebsite: '',
+        IATA: '',
+        timeZone: '',
+        currency: '',
+        image: ''
+      } as Destination);
     }
   }
   
@@ -69,12 +78,17 @@ export class EditDestinationsComponent implements OnInit {
       destinationName: [destination.destinationName, [Validators.required]],  
       airportName: [destination.airportName, [Validators.required]],          
       airportWebsite: [destination.airportWebsite, [Validators.required, Validators.pattern(/https?:\/\/.+/)]],
-      IATA: [{ value: destination.IATA, disabled: true }],
+      IATA: [destination.IATA, [Validators.required]], 
       timeZone: [destination.timeZone, [Validators.required]],
       currency: [destination.currency, [Validators.required]],
       image: [destination.image, [Validators.required]],
     });
+  
+    if (this.originalIATA) {
+      this.destinationForm.get('IATA')?.disable();
+    }
   }
+  
   
   
 
@@ -97,37 +111,52 @@ export class EditDestinationsComponent implements OnInit {
       return;
     }
   
-    const updatedDestination: Destination = {
-      ...this.destinationForm.getRawValue(),
-      IATA: this.originalIATA, 
-    };
+    const destinationData: Destination = this.destinationForm.getRawValue();
   
-    this.destinationService.updateDestination(updatedDestination)
-      .then(() => {
-        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-          width: '350px',
-          data: {
-            title: 'Success',
-            message: 'Destination updated successfully!',
-          },
+    if (this.originalIATA) {
+      // Updating an existing destination
+      this.destinationService.updateDestination(destinationData)
+        .then(() => {
+          this.showSuccessDialog('Destination updated successfully!');
+        })
+        .catch(() => {
+          this.showErrorDialog('Failed to update destination.');
         });
+    } else {
+      // Adding a new destination
+      if (!destinationData.IATA) {
+        this.showErrorDialog('IATA Code is required.');
+        return;
+      }
   
-        dialogRef.afterClosed().subscribe(() => {
-          this.router.navigate(['/manage-destinations']);
+      this.destinationService.addDestination(destinationData)
+        .then(() => {
+          this.showSuccessDialog('Destination added successfully!');
+        })
+        .catch(() => {
+          this.showErrorDialog('Failed to add destination.');
         });
-      })
-      .catch((error) => {
-        this.dialog.open(ConfirmDialogComponent, {
-          width: '350px',
-          data: {
-            title: 'Error',
-            message: 'Failed to update destination. Please try again.',
-          },
-        });
-        console.error('Error updating destination:', error);
-      });
+    }
   }
-    
+  
+  private showSuccessDialog(message: string): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '350px',
+      data: { title: 'Success', message },
+    });
+  
+    dialogRef.afterClosed().subscribe(() => {
+      this.router.navigate(['/manage-destinations']);
+    });
+  }
+  
+  private showErrorDialog(message: string): void {
+    this.dialog.open(ConfirmDialogComponent, {
+      width: '350px',
+      data: { title: 'Error', message },
+    });
+  }
+      
   deleteDestination(): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',

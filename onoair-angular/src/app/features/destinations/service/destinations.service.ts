@@ -44,12 +44,22 @@ export class DestinationsService {
   
 
   public addDestination(destination: Destination): Promise<void> {
+    if (!destination.IATA) {
+      console.error("⚠️ Error: IATA Code is required for adding a new destination.");
+      return Promise.reject("IATA Code is required");
+    }
+  
     const destinationCollection = collection(this.firestore, 'destinations').withConverter(destinationConverter);
     const destinationDoc = doc(destinationCollection, destination.IATA); // Use IATA as document ID
   
-    return setDoc(destinationDoc, destination).then(() => {
-      console.log(`Destination ${destination.destinationName} added/updated successfully.`);
-    });
+    return setDoc(destinationDoc, destination)
+      .then(() => {
+        console.log(`✅ Destination ${destination.destinationName} added successfully.`);
+      })
+      .catch((error) => {
+        console.error(`❌ Error adding destination:`, error);
+        throw error;
+      });
   }
   
 

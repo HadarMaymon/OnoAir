@@ -18,6 +18,14 @@ h1 {
     font-family: 'Arial', sans-serif;
 }
 
+.button-container {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    margin-top: 20px;
+  }
+  
+
 .search-bar {
     width: 100%;
     margin-bottom: 20px;

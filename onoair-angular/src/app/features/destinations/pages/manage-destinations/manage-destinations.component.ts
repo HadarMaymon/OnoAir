@@ -90,6 +90,7 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
       data: { type: 'delete', name: `destination ${destination.IATA}` },
     });
 
+
     dialogRef.afterClosed().subscribe((result) => {
       if (result?.confirmed && result.action === 'delete') {
         this.destinationService.deleteDestination(destination.IATA).then(() => {

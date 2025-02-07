@@ -10,11 +10,15 @@
       id="flightNumber"
       placeholder="Enter flight number"
       required
+      pattern="^[A-Z]{2}[0-9]{3}$"
       (input)="onFlightNumberChange($event)"  
+      (keypress)="validateFlightNumber($event)"
+
       #flightNumber="ngModel"
     />
   
-      <mat-error *ngIf="flightNumber.invalid && flightNumber.touched">Flight Number is required</mat-error>
+      <mat-error *ngIf="flightNumber.invalid && flightNumber.touched">  Flight Number must be in the format: **2 uppercase letters followed by 3 digits** (e.g., **ON123**).
+</mat-error>
 
     <!-- Origin -->
     <mat-form-field class="form-field" appearance="outline">
@@ -26,6 +30,7 @@
       </mat-select>
       <mat-error *ngIf="originControl.invalid && originControl.touched">Origin is required</mat-error>
     </mat-form-field>
+    
 
     <!-- Destination -->
     <mat-form-field class="form-field" appearance="outline">
@@ -50,7 +55,6 @@
       placeholder="Select departure date"
       required
       [min]="minDate" 
-      (dateChange)="validateDates()" 
       #date="ngModel" />
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
@@ -84,7 +88,6 @@
       placeholder="Select arrival date"
       required
       [min]="flight.date"
-      (dateChange)="validateDates()"
       #arrivalDate="ngModel"
   >
       <mat-datepicker-toggle matSuffix [for]="arrivalPicker"></mat-datepicker-toggle>
@@ -102,9 +105,10 @@
       id="arrivalTime"
       placeholder="Enter arrival time"
       required
-      (change)="validateTimes()"
       #arrivalTime="ngModel" />
       <mat-error *ngIf="arrivalTime.invalid && arrivalTime.touched">Arrival time is required</mat-error>
+
+
       
     <!-- Price -->
       <mat-label>Price</mat-label>
@@ -137,18 +141,11 @@
       <mat-error *ngIf="availableSeats.invalid && availableSeats.touched">Available seats must be greater than 0</mat-error>
 
     <!-- Save Button -->
-        <div class="form-actions">
-          <button
-          mat-raised-button
-          color="primary"
-          type="submit"
-          [disabled]="!flightForm.pristine || flightForm.invalid"
-        >
-          Save Changes
-        </button>
-        </div>
+    <button mat-button color="primary" [disabled]="flightForm.invalid" (click)="saveChanges(flightForm)">
+      Save Changes
+    </button>
   </form>
-</div>
+</div>    
 
 
 <ng-template #loadingTemplate>

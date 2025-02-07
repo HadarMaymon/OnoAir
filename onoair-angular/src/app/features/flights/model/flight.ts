@@ -5,7 +5,6 @@ export class Flight {
     public destination: string = '',
     public date: string = '',
     public departureTime: string = '',
-    public duration: string = '',
     public arrivalDate: string = '',
     public arrivalTime: string = '',
     public price: number = 0,

@@ -33,6 +33,7 @@ export class DestinationsService {
         return [];
       });
   }
+  
 
   getAllDestinationNames(): Observable<string[]> {
     const destinationsRef = collection(this.firestore, 'destinations').withConverter(destinationConverter); // Get the 'destinations' collection reference with converter

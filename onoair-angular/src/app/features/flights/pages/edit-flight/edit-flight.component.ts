@@ -56,32 +56,58 @@ export class EditFlightComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       const flightNumber = params.get('flightNumber');
-      if (!flightNumber) {
-        this.redirectToFlightList();
-        return;
-      }
-
-      // Reset form if flight number changes
-      if (this.flightNumber !== flightNumber) {
-        this.resetForm(flightNumber);
-      }
-
-      // Fetch origin and destination options from DestinationsService
+  
+      // Fetch all destinations
       this.destinationsService.getAllDestinations().then((destinations) => {
         const destinationNames = destinations.map((dest) => dest.destinationName); // Extract destination names
-        this.origin = destinationNames; // Populate origin dropdown
-        this.destination = destinationNames; // Populate destination dropdown
-      });
-
-      // Fetch the flight details
-      this.flightService.getFlightByNumber(flightNumber).then((flight) => {
-        if (flight) {
-          this.flight = flight;
+        this.origin = destinationNames;
+        this.destination = destinationNames;
+  
+        console.log('Fetched origin options:', this.origin); // Debug log
+        console.log('Fetched destination options:', this.destination); // Debug log
+  
+        if (flightNumber === 'new') {
+          this.resetForm('');
+          return;
         }
+  
+        if (!flightNumber) {
+          this.redirectToFlightList();
+          return;
+        }
+  
+        if (this.flightNumber !== flightNumber) {
+          this.resetForm(flightNumber);
+        }
+  
+        // Fetch flight details if editing an existing flight
+        this.flightService.getFlightByNumber(flightNumber).then((flight) => {
+          if (flight) {
+            // ✅ Convert the string date to a Date object before binding
+            flight.date = flight.date ? new Date(flight.date).toISOString().split('T')[0] : '';
+            flight.arrivalDate = flight.arrivalDate ? new Date(flight.arrivalDate).toISOString().split('T')[0] : '';
+            
+            this.flight = flight;
+            this.cdr.detectChanges(); // ✅ Ensure Angular detects changes
+          }
+        });
+        
       });
     });
   }
 
+  validateFlightNumber(event: KeyboardEvent): void {
+    const allowedPattern = /^[A-Za-z0-9]+$/;
+    const key = event.key;
+  
+    if (!allowedPattern.test(key) && key !== 'Backspace' && key !== 'Tab') {
+      event.preventDefault(); // Prevents invalid characters from being entered
+    }
+  }
+  
+        
+      
+  
   onFlightNumberChange(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     const newFlightNumber = inputElement.value.trim(); // Remove extra spaces
@@ -117,66 +143,21 @@ export class EditFlightComponent implements OnInit {
     });
   }
 
-  validateDates(): void {
-    if (this.flight?.date && this.flight?.arrivalDate) {
-      const departureDate = new Date(this.flight.date);
-      const arrivalDate = new Date(this.flight.arrivalDate);
-
-      if (arrivalDate < departureDate) {
-        this.flight.arrivalDate = ''; // Reset invalid date
-      }
-    }
-    this.calculateDuration(); // Always calculate after validation
-  }
-
-  validateTimes(): void {
-    if (this.flight?.departureTime && this.flight?.arrivalTime) {
-      const [depHours, depMinutes] = this.flight.departureTime.split(':').map(Number);
-      const [arrHours, arrMinutes] = this.flight.arrivalTime.split(':').map(Number);
-
-      const departureTime = new Date();
-      const arrivalTime = new Date();
-
-      departureTime.setHours(depHours, depMinutes);
-      arrivalTime.setHours(arrHours, arrMinutes);
-
-      if (arrivalTime <= departureTime) {
-        this.flight.arrivalTime = '';
-      }
-    }
-    this.calculateDuration();
-  }
-
-  calculateDuration(): void {
-    if (this.flight?.departureTime && this.flight?.arrivalTime && this.flight?.date && this.flight?.arrivalDate) {
-      const departureDateTime = new Date(`${this.flight.date}T${this.flight.departureTime}`);
-      const arrivalDateTime = new Date(`${this.flight.arrivalDate}T${this.flight.arrivalTime}`);
-
-      if (arrivalDateTime > departureDateTime) {
-        const diffMs = arrivalDateTime.getTime() - departureDateTime.getTime(); // Difference in milliseconds
-        const diffHours = Math.floor(diffMs / (1000 * 60 * 60)); // Convert to hours
-        const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60)); // Get remaining minutes
-
-        this.flight.duration = `${diffHours}h ${diffMinutes}m`;
-        this.cdr.detectChanges(); // Ensure UI updates
-      } else {
-        this.flight.duration = ''; // Reset duration if invalid
-      }
-    }
-  }
 
   saveChanges(flightForm: any): void {
     if (flightForm.invalid) {
-      this.dialog.open(ConfirmDialogComponent, {
-        width: '350px',
-        data: {
-          title: 'Error',
-          message: 'Please fill in all required fields before saving.',
-        },
-      });
+      if (!this.dialog.openDialogs.length) {  // Ensure no existing dialog is open
+        this.dialog.open(ConfirmDialogComponent, {
+          width: '350px',
+          data: {
+            title: 'Error',
+            message: 'Please fill in all required fields before saving.',
+          },
+        });
+      }
       return;
     }
-
+  
     if (this.flight) {
       // Format date and arrivalDate
       if (this.flight.date) {
@@ -185,37 +166,45 @@ export class EditFlightComponent implements OnInit {
       if (this.flight.arrivalDate) {
         this.flight.arrivalDate = new Date(this.flight.arrivalDate).toISOString().split('T')[0];
       }
-
-      // Call the service to update the flight
-      this.flightService.updateFlight(this.flight).then(() => {
-        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-          width: '350px',
-          data: {
-            title: 'Success',
-            message: 'Changes saved successfully!',
-          },
+  
+      // Prevent multiple calls by disabling the button temporarily (optional)
+      if (this.dialog.openDialogs.length === 0) {
+        this.flightService.updateFlight(this.flight).then(() => {
+          if (!this.dialog.openDialogs.length) { // Check if no dialog is open
+            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+              width: '350px',
+              data: {
+                title: 'Success',
+                message: 'Changes saved successfully!',
+              },
+            });
+  
+            dialogRef.afterClosed().subscribe(() => {
+              this.router.navigate(['/manage-flight']);
+            });
+          }
+        }).catch((error) => {
+          if (!this.dialog.openDialogs.length) { // Prevent duplicate error dialog
+            this.dialog.open(ConfirmDialogComponent, {
+              width: '350px',
+              data: {
+                title: 'Error',
+                message: 'Failed to save changes. Please try again.',
+              },
+            });
+          }
+          console.error('Error saving changes:', error);
         });
-
-        dialogRef.afterClosed().subscribe(() => {
-          this.router.navigate(['/manage-flight']);
-        });
-      }).catch((error) => {
-        this.dialog.open(ConfirmDialogComponent, {
-          width: '350px',
-          data: {
-            title: 'Error',
-            message: 'Failed to save changes. Please try again.',
-          },
-        });
-        console.error('Error saving changes:', error);
-      });
+      }
     }
   }
+  
+
+  
 
   resetForm(flightNumber: string): void {
     this.flight = new Flight(
       flightNumber,
-      '',
       '',
       '',
       '',
@@ -228,6 +217,15 @@ export class EditFlightComponent implements OnInit {
       false
     );
     this.flightNumber = flightNumber;
+  
+    if (!this.origin || !this.destination) {
+      this.destinationsService.getAllDestinations().then((destinations) => {
+        const destinationNames = destinations.map((dest) => dest.destinationName);
+        this.origin = destinationNames;
+        this.destination = destinationNames;
+      });
+    }
+  
     this.cdr.detectChanges();
-  }
+  }  
 }

@@ -8,7 +8,6 @@ export const flightConverter: FirestoreDataConverter<Flight> = {
     destination: flight.destination,
     date: flight.date,
     departureTime: flight.departureTime,
-    duration: flight.duration,
     price: flight.price,
     image: flight.image,
     availableSeats: flight.availableSeats,
@@ -22,7 +21,6 @@ export const flightConverter: FirestoreDataConverter<Flight> = {
       destination: string;
       date: string;
       departureTime: string;
-      duration: string;
       arrivalDate: string;
       arrivalTime: string;
       price: number;
@@ -37,7 +35,6 @@ export const flightConverter: FirestoreDataConverter<Flight> = {
       data.destination,
       data.date,
       data.departureTime,
-      data.duration,
       data.arrivalDate,
       data.arrivalTime,
       data.price,

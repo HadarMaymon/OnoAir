@@ -16,6 +16,14 @@ h1 {
   font-weight: 600;
 }
 
+
+.add-flight-button-container {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  margin-top: 20px; /* Optional spacing */
+}
+
+
 form {
   display: flex;
   flex-direction: column;

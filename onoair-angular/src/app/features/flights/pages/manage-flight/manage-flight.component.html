@@ -100,10 +100,22 @@
 
   <!-- Paginator -->
   <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
+  <!-- Add Flight Button -->
+  <div class="add-flight-button-container">
+    <button mat-fab color="primary" [routerLink]="['/edit-flight', 'new']" class="add-flight-button">
+      <mat-icon>add</mat-icon> Add New Flight
+    </button>
+  </div>
   
+      
+
   <p class="note">
     <strong>Note:</strong> Editing flight number will create a new entry in the database. If you wish to remove a flight, please click on the trash icon.
   </p>
+
+
+
   
 
 </div>

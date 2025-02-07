@@ -1,11 +1,15 @@
-<div class="my-bookings-container">
+<div class="loading-spinner" *ngIf="isLoading">
+  <p>Loading bookings...</p>
+</div>
+
+<div class="my-bookings-container" *ngIf="!isLoading">
   <div *ngFor="let section of bookingSections" class="booking-section">
     <h1>{{ section.title }}</h1>
 
     <div *ngIf="section.bookings.length > 0; else noBookings">
       <div *ngFor="let booking of section.bookings" class="booking-card">
         <img
-          [src]="booking.image"
+          [src]="booking.image || 'assets/images/default-destination.jpg'"
           alt="Image for {{ booking.destination }}"
           class="destination-image"
         />

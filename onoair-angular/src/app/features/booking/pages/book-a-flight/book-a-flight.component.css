@@ -1,67 +1,112 @@
-html, body {
-    height: 100%;
-    margin: 0;
-}
-
+/* Wrapper styles */
 .wrapper {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;  /* Full viewport height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
+/* Main content styles */
 .main-content {
-    flex: 1;  /* Push footer to the bottom */
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  max-width: 800px;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.book-flight-container {
-    max-width: 700px;
-    margin: 40px auto;
-    padding: 60px;
-    background-color: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    font-family: 'Poppins', sans-serif;
-    text-align: left;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+/* Heading styles */
+h1 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+  font-weight: 600;
 }
 
-.book-flight-container:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+/* Flight details styles */
+p {
+  font-size: 1rem;
+  color: #555;
+  margin: 10px 0;
+  text-align: center;
 }
 
-.book-flight-container h1 {
-    text-align: center;
-    font-size: 2.8rem;
-    margin-bottom: 30px;
-    color: #212121;
-    font-weight: 700;
+/* Form label styles */
+label {
+  font-size: 1rem;
+  color: #444;
+  font-weight: bold;
+  margin-top: 10px;
+  display: block;
 }
 
-.flight-details {
-    margin: 20px 0;
-    line-height: 2;
+/* Input styles */
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+  margin-bottom: 15px;
+  box-sizing: border-box;
 }
 
-.flight-details p {
+/* Input hover and focus effects */
+input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+/* Passenger section styles */
+h3 {
+  font-size: 1.2rem;
+  color: #333;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+/* Button styles */
+button {
+    position: relative;
+    margin: 0 auto; 
+    display: block;
+  
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 15px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  label,
+  input {
+    font-size: 0.9rem;
+  }
+
+  button {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
     font-size: 1.2rem;
-    margin: 12px 0;
-    color: #424242;
-}
+  }
 
-.flight-details strong {
-    color: #000000;
-    font-weight: 700;
-}
-
-.footer {
-    height: 80px;
-    background-color: #f8f8f8;
-    color: #555;
-    text-align: center;
-    line-height: 80px;
-    border-top: 1px solid #ddd;
+  button {
+    font-size: 0.8rem;
+  }
 }

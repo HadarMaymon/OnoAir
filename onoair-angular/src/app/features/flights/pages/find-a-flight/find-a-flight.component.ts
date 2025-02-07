@@ -64,7 +64,7 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
     from: '',
     to: '',
     departureDate: '',
-    returnDate: '',
+    priceBudget: null,
     passengers: null,
   };
 
@@ -109,15 +109,13 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
   }
 
   applyFilters(): void {
-    const { from, to, departureDate, returnDate, passengers } = this.filters;
+    const { from, to, departureDate, priceBudget, passengers } = this.filters;
   
-    // Get today's date without time for comparison
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset hours, minutes, seconds, and milliseconds
+    today.setHours(0, 0, 0, 0); // Reset time for comparison
   
     this.flightService.flights$.subscribe((flights) => {
       const filteredFlights = flights.filter((flight) => {
-        // Parse the flight date to compare with today
         const flightDate = new Date(flight.date);
   
         // Exclude past flights
@@ -125,20 +123,21 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
           return false;
         }
   
-        // Apply other filters
+        // Apply filters
         const matchesFrom = !from || flight.origin === from;
         const matchesTo = !to || flight.destination === to;
         const matchesDeparture = !departureDate || flight.date === departureDate;
-        const matchesReturn = !returnDate || flight.arrivalDate === returnDate;
+        const matchesPrice = !priceBudget || flight.price <= priceBudget; // New price filter
         const matchesPassengers = !passengers || flight.availableSeats >= passengers;
   
-        return matchesFrom && matchesTo && matchesDeparture && matchesReturn && matchesPassengers;
+        return matchesFrom && matchesTo && matchesDeparture && matchesPrice && matchesPassengers;
       });
   
       this.dataSource.data = filteredFlights;
     });
   }
   
+
   bookFlight(flight: Flight): void {
     this.router.navigate(['/book-a-flight', flight.flightNumber]);
   }

@@ -21,23 +21,35 @@ export class BookingsService {
    */
   syncBookingsWithImages(): void {
     const bookingCollection = collection(this.firestore, 'bookings').withConverter(bookingConverter);
-
+  
     onSnapshot(bookingCollection, async (snapshot) => {
-      const bookings = snapshot.docs.map((doc) => doc.data());
-
-      // Fetch destinations from Firestore
-      const destinations = await this.destinationsService.getAllDestinations();
-
-      // Map images to bookings
-      bookings.forEach((booking) => {
-        const destination = destinations.find((dest) => dest.destinationName === booking.destination);
-        booking.image = destination?.image || 'assets/images/default-destination.jpg'; // Fallback image
-      });
-
-      // Update the observable with enriched bookings
-      this.bookingsSubject.next(bookings);
+      try {
+        const bookings = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          if (!data.bookingId || !data.destination) {
+            console.warn('Skipping invalid booking document:', doc.id);
+            return null;
+          }
+          return data;
+        }).filter((booking) => booking !== null);
+  
+        // Fetch destinations from Firestore
+        const destinations = await this.destinationsService.getAllDestinations();
+  
+        // Map images to bookings
+        bookings.forEach((booking) => {
+          const destination = destinations.find((dest) => dest.destinationName === booking.destination);
+          booking.image = destination?.image || 'assets/images/default-destination.jpg'; // Fallback image
+        });
+  
+        // Update the observable with enriched bookings
+        this.bookingsSubject.next(bookings as Booking[]);
+      } catch (error) {
+        console.error('Error syncing bookings:', error);
+      }
     });
   }
+  
 
   /**
    * Get a specific booking by its ID.

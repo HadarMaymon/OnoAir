@@ -32,14 +32,12 @@
     </mat-form-field>
     
 
-    <!-- Return Date -->
+    <!-- Price Budget -->
     <mat-form-field appearance="outline">
-      <mat-label>Return</mat-label>
-      <input matInput [(ngModel)]="filters.returnDate" [matDatepicker]="picker2" [min]="filters.departureDate || today" placeholder="Return Date">
-      <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-      <mat-datepicker #picker2></mat-datepicker>
+      <mat-label>Price Budget</mat-label>
+      <input matInput type="number" [(ngModel)]="filters.priceBudget" placeholder="Enter max price (in $)">
     </mat-form-field>
-    
+
     <!-- Passengers -->
     <mat-form-field appearance="outline">
       <mat-label>Passengers</mat-label>

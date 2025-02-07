@@ -1,24 +1,42 @@
 <div class="wrapper">
-  <div class="main-content">
+    <div class="main-content">
       <div class="book-flight-container" *ngIf="flight; else notFound">
-          <h1>Booking Flight: {{ flight.flightNumber }}</h1>
-          <div class="flight-details">
-              <p><strong>Origin:</strong> {{ flight.origin }}</p>
-              <p><strong>Destination:</strong> {{ flight.destination }}</p>
-              <p><strong>Date:</strong> {{ flight.date }}</p>
-              <p><strong>Departure Time:</strong> {{ flight.departureTime }}</p>
-              <p><strong>Arrival Date:</strong> {{ flight.arrivalDate }}</p>
-              <p><strong>Arrival Time:</strong> {{ flight.arrivalTime }}</p>
-              <p><strong>Price:</strong> ${{ flight.price }}</p>
-              <p><strong>Available Seats:</strong> {{ flight.availableSeats }}</p>
-          </div>
-          <button mat-raised-button color="primary" class="confirm-button" (click)="confirmBooking()">
-              Book
-          </button>
+        <h1>Book a flight</h1>
+        <p>
+          <strong>Origin:</strong> {{ flight.origin }} Boarding: {{ flight.date }} {{ flight.departureTime }}
+        </p>
+        <p>
+          <strong>Destination:</strong> {{ flight.destination }} Landing: {{ flight.arrivalDate }} {{ flight.arrivalTime }}
+        </p>
+  
+        <!-- Number of Passengers -->
+        <label for="passengers">No of passengers:</label>
+        <input
+          id="passengers"
+          type="number"
+          [(ngModel)]="passengerCount"
+          (change)="updatePassengers()"
+          required
+          min="1"
+        />
+  
+        <!-- Passenger Form -->
+        <div *ngFor="let passenger of passengers; let i = index">
+          <h3>Passenger {{ i + 1 }}</h3>
+          <label for="name-{{ i }}">Name:</label>
+          <input id="name-{{ i }}" [(ngModel)]="passenger.name" required />
+  
+          <label for="id-{{ i }}">Passport ID:</label>
+          <input id="id-{{ i }}" [(ngModel)]="passenger.id" required />
+        </div>
+  
+        <!-- Save Button -->
+        <button mat-raised-button color="primary" (click)="saveBooking()">Save</button>
       </div>
-
+  
       <ng-template #notFound>
+        <p>Flight not found. Please return to the flight list.</p>
       </ng-template>
+    </div>
   </div>
-
-</div>
+  

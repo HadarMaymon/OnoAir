@@ -57,14 +57,18 @@ export class EditFlightComponent implements OnInit {
     this.route.paramMap.subscribe((params) => {
       const flightNumber = params.get('flightNumber');
   
+      const today = new Date();
+      today.setDate(today.getDate() + 1); // Move to tomorrow
+      this.minDate = today.toISOString().split('T')[0]; // Convert to YYYY-MM-DD format
+  
       // Fetch all destinations
       this.destinationsService.getAllDestinations().then((destinations) => {
         const destinationNames = destinations.map((dest) => dest.destinationName); // Extract destination names
         this.origin = destinationNames;
         this.destination = destinationNames;
   
-        console.log('Fetched origin options:', this.origin); // Debug log
-        console.log('Fetched destination options:', this.destination); // Debug log
+        console.log('Fetched origin options:', this.origin); 
+        console.log('Fetched destination options:', this.destination); 
   
         if (flightNumber === 'new') {
           this.resetForm('');
@@ -80,21 +84,28 @@ export class EditFlightComponent implements OnInit {
           this.resetForm(flightNumber);
         }
   
-        // Fetch flight details if editing an existing flight
         this.flightService.getFlightByNumber(flightNumber).then((flight) => {
           if (flight) {
-            // ✅ Convert the string date to a Date object before binding
-            flight.date = flight.date ? new Date(flight.date).toISOString().split('T')[0] : '';
-            flight.arrivalDate = flight.arrivalDate ? new Date(flight.arrivalDate).toISOString().split('T')[0] : '';
-            
+            if (flight.date) {
+              const date = new Date(flight.date);
+              date.setMinutes(date.getMinutes() - date.getTimezoneOffset()); 
+              flight.date = date.toISOString().split('T')[0]; 
+            }
+  
+            if (flight.arrivalDate) {
+              const arrivalDate = new Date(flight.arrivalDate);
+              arrivalDate.setMinutes(arrivalDate.getMinutes() - arrivalDate.getTimezoneOffset()); // Adjust for timezone
+              flight.arrivalDate = arrivalDate.toISOString().split('T')[0];
+            }
+  
             this.flight = flight;
             this.cdr.detectChanges(); // ✅ Ensure Angular detects changes
           }
         });
-        
       });
     });
   }
+  
 
   validateFlightNumber(event: KeyboardEvent): void {
     const allowedPattern = /^[A-Za-z0-9]+$/;
@@ -159,47 +170,48 @@ export class EditFlightComponent implements OnInit {
     }
   
     if (this.flight) {
-      // Format date and arrivalDate
+      // Fix date issue: Convert to local time zone before saving
       if (this.flight.date) {
-        this.flight.date = new Date(this.flight.date).toISOString().split('T')[0];
+        const selectedDate = new Date(this.flight.date);
+        selectedDate.setMinutes(selectedDate.getMinutes() - selectedDate.getTimezoneOffset()); // Adjust for local timezone
+        this.flight.date = selectedDate.toISOString().split('T')[0]; // Store in YYYY-MM-DD format
       }
+  
       if (this.flight.arrivalDate) {
-        this.flight.arrivalDate = new Date(this.flight.arrivalDate).toISOString().split('T')[0];
+        const arrivalDate = new Date(this.flight.arrivalDate);
+        arrivalDate.setMinutes(arrivalDate.getMinutes() - arrivalDate.getTimezoneOffset());
+        this.flight.arrivalDate = arrivalDate.toISOString().split('T')[0];
       }
   
-      // Prevent multiple calls by disabling the button temporarily (optional)
-      if (this.dialog.openDialogs.length === 0) {
-        this.flightService.updateFlight(this.flight).then(() => {
-          if (!this.dialog.openDialogs.length) { // Check if no dialog is open
-            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-              width: '350px',
-              data: {
-                title: 'Success',
-                message: 'Changes saved successfully!',
-              },
-            });
+      this.flightService.updateFlight(this.flight).then(() => {
+        if (!this.dialog.openDialogs.length) {
+          const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '350px',
+            data: {
+              title: 'Success',
+              message: 'Changes saved successfully!',
+            },
+          });
   
-            dialogRef.afterClosed().subscribe(() => {
-              this.router.navigate(['/manage-flight']);
-            });
-          }
-        }).catch((error) => {
-          if (!this.dialog.openDialogs.length) { // Prevent duplicate error dialog
-            this.dialog.open(ConfirmDialogComponent, {
-              width: '350px',
-              data: {
-                title: 'Error',
-                message: 'Failed to save changes. Please try again.',
-              },
-            });
-          }
-          console.error('Error saving changes:', error);
-        });
-      }
+          dialogRef.afterClosed().subscribe(() => {
+            this.router.navigate(['/manage-flight']);
+          });
+        }
+      }).catch((error) => {
+        if (!this.dialog.openDialogs.length) {
+          this.dialog.open(ConfirmDialogComponent, {
+            width: '350px',
+            data: {
+              title: 'Error',
+              message: 'Failed to save changes. Please try again.',
+            },
+          });
+        }
+        console.error('Error saving changes:', error);
+      });
     }
   }
   
-
   
 
   resetForm(flightNumber: string): void {

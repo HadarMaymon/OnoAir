@@ -9,7 +9,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatOption } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Firestore, collectionData, collection } from '@angular/fire/firestore'; 
+import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { Flight } from '../../model/flight';
 
@@ -19,13 +26,19 @@ import { Flight } from '../../model/flight';
   styleUrls: ['./find-a-flight.component.css'],
   standalone: true,
   imports: [
+    CommonModule,
+    FormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    CommonModule,
+    MatDatepickerModule,
+    MatNativeDateModule, 
+    MatOption,
+    MatSelectModule,
+
   ],
 })
 export class FindAFlightComponent implements OnInit, AfterViewInit {
@@ -44,13 +57,39 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
   ];
   dataSource!: MatTableDataSource<Flight>;
 
+  destinations$: Observable<any[]>; // Observable for destinations
+  destinationNames: string[] = []; // To store the extracted destination names
+
+  filters = {
+    from: '',
+    to: '',
+    departureDate: '',
+    returnDate: '',
+    passengers: null,
+  };
+
+  today: Date = new Date(); // Current date for min in date picker
+
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private flightService: FlightService, private router: Router) {}
+  constructor(
+    private flightService: FlightService,
+    private router: Router,
+    private firestore: Firestore // Firestore instance
+  ) {
+    // Fetch destinations from Firestore
+    const destinationsCollection = collection(this.firestore, 'destinations');
+    this.destinations$ = collectionData(destinationsCollection, { idField: 'id' });
+
+    // Extract destination names from the collection
+    this.destinations$.subscribe((destinations) => {
+      this.destinationNames = destinations.map((destination) => destination.destinationName).sort();
+    });
+  }
 
   ngOnInit(): void {
-    // Subscribe to real-time flights data
     this.flightService.flights$.subscribe((flights) => {
       this.dataSource = new MatTableDataSource(flights);
       if (this.paginator) {
@@ -66,31 +105,41 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
     if (this.dataSource) {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+    }
+  }
 
-      // Custom sorting logic for date fields
-      this.dataSource.sortingDataAccessor = (item, property) => {
-        if (property === 'date' || property === 'arrivalDate') {
-          return this.parseDate(item[property]);
+  applyFilters(): void {
+    const { from, to, departureDate, returnDate, passengers } = this.filters;
+  
+    // Get today's date without time for comparison
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset hours, minutes, seconds, and milliseconds
+  
+    this.flightService.flights$.subscribe((flights) => {
+      const filteredFlights = flights.filter((flight) => {
+        // Parse the flight date to compare with today
+        const flightDate = new Date(flight.date);
+  
+        // Exclude past flights
+        if (flightDate < today) {
+          return false;
         }
-        return (item as any)[property];
-      };
-    }
+  
+        // Apply other filters
+        const matchesFrom = !from || flight.origin === from;
+        const matchesTo = !to || flight.destination === to;
+        const matchesDeparture = !departureDate || flight.date === departureDate;
+        const matchesReturn = !returnDate || flight.arrivalDate === returnDate;
+        const matchesPassengers = !passengers || flight.availableSeats >= passengers;
+  
+        return matchesFrom && matchesTo && matchesDeparture && matchesReturn && matchesPassengers;
+      });
+  
+      this.dataSource.data = filteredFlights;
+    });
   }
-
-  applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    if (this.dataSource) {
-      this.dataSource.filter = filterValue.trim().toLowerCase();
-    }
-  }
-
+  
   bookFlight(flight: Flight): void {
-    // Navigate to booking page with the selected flight's number
     this.router.navigate(['/book-a-flight', flight.flightNumber]);
-  }
-
-  private parseDate(dateStr: string): number {
-    const [day, month, year] = dateStr.split('/').map(Number);
-    return new Date(year, month - 1, day).getTime();
   }
 }

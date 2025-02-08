@@ -12,6 +12,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
+import { DestinationStatus } from '../../models/destination-status.enum';
+import { MatOptionModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-edit-destinations',
@@ -25,12 +27,16 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatFormFieldModule,
     MatInputModule,
     MatDialogModule,
+    MatOptionModule,
   ],
   standalone: true,
 })
 export class EditDestinationsComponent implements OnInit {
   destinationForm!: FormGroup;
-  originalIATA: string | null = null; // Use IATA as a unique identifier
+  originalIATA: string | null = null; 
+
+
+  destinationStatus = DestinationStatus;
 
   constructor(
     private route: ActivatedRoute,
@@ -48,6 +54,13 @@ export class EditDestinationsComponent implements OnInit {
       this.destinationService.getDestinationByIATA(this.originalIATA)
         .then((data: Destination | undefined) => {
           if (data) {
+            // ✅ Ensure only active destinations can be edited
+            if (data.status !== DestinationStatus.Active) {
+              console.warn(`Filtering out inactive destination: ${data.destinationName}`);
+              this.redirectToDestinationList();
+              return;
+            }
+  
             console.log('📡 Destination Data:', data); // Debugging log
             this.initForm(data);
           } else {
@@ -66,12 +79,12 @@ export class EditDestinationsComponent implements OnInit {
         IATA: '',
         timeZone: '',
         currency: '',
-        image: ''
+        image: '',
+        status: DestinationStatus.Active, 
       } as Destination);
     }
   }
-  
-  
+    
 
   initForm(destination: Destination): void {
     this.destinationForm = this.fb.group({
@@ -82,6 +95,7 @@ export class EditDestinationsComponent implements OnInit {
       timeZone: [destination.timeZone, [Validators.required]],
       currency: [destination.currency, [Validators.required]],
       image: [destination.image, [Validators.required]],
+      status: [destination.status, [Validators.required]],
     });
   
     if (this.originalIATA) {
@@ -113,8 +127,13 @@ export class EditDestinationsComponent implements OnInit {
   
     const destinationData: Destination = this.destinationForm.getRawValue();
   
+    // ✅ Ensure only Active destinations can be updated
+    if (destinationData.status !== DestinationStatus.Active) {
+      this.showErrorDialog('Only active destinations can be updated.');
+      return;
+    }
+  
     if (this.originalIATA) {
-      // Updating an existing destination
       this.destinationService.updateDestination(destinationData)
         .then(() => {
           this.showSuccessDialog('Destination updated successfully!');
@@ -123,7 +142,6 @@ export class EditDestinationsComponent implements OnInit {
           this.showErrorDialog('Failed to update destination.');
         });
     } else {
-      // Adding a new destination
       if (!destinationData.IATA) {
         this.showErrorDialog('IATA Code is required.');
         return;
@@ -138,7 +156,7 @@ export class EditDestinationsComponent implements OnInit {
         });
     }
   }
-  
+    
   private showSuccessDialog(message: string): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { Firestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDocs, getDoc, collectionData } from '@angular/fire/firestore';
 import { Destination } from '../models/destination';
+import { DestinationStatus } from '../models/destination-status.enum'; // Import the enum
 import { destinationConverter } from './converter/destination-converter';
 
 @Injectable({
@@ -15,43 +16,67 @@ export class DestinationsService {
     this.syncDestinations(); // Start real-time syncing
   }
 
+  /**
+   * Sync destinations from Firestore in real-time, only including active destinations.
+   */
   public syncDestinations(): void {
     const destinationCollection = collection(this.firestore, 'destinations').withConverter(destinationConverter);
     onSnapshot(destinationCollection, (snapshot) => {
-      const destinations = snapshot.docs.map((doc) => doc.data());
+      const destinations = snapshot.docs
+        .map((doc) => doc.data())
+        .filter((destination) => destination.status === DestinationStatus.Active); // Only active destinations
       this.destinationsSubject.next(destinations);
     });
   }
 
- 
+  /**
+   * Fetch all active destinations from Firestore.
+   */
   public getAllDestinations(): Promise<Destination[]> {
     const destinationCollection = collection(this.firestore, 'destinations').withConverter(destinationConverter);
     return getDocs(destinationCollection)
-      .then((snapshot) => snapshot.docs.map((doc) => doc.data()))
+      .then((snapshot) =>
+        snapshot.docs
+          .map((doc) => doc.data())
+          .filter((destination) => destination.status === DestinationStatus.Active) // Only active destinations
+      )
       .catch((error) => {
         console.error('Error fetching all destinations:', error);
         return [];
       });
   }
-  
 
-  getAllDestinationNames(): Observable<string[]> {
-    const destinationsRef = collection(this.firestore, 'destinations').withConverter(destinationConverter); // Get the 'destinations' collection reference with converter
+  /**
+   * Fetch names of all active destinations.
+   */
+  public getAllDestinationNames(): Observable<string[]> {
+    const destinationsRef = collection(this.firestore, 'destinations').withConverter(destinationConverter);
     return collectionData(destinationsRef).pipe(
-      map((destinations: Destination[]) => destinations.map((d) => d.destinationName))
+      map((destinations: Destination[]) =>
+        destinations
+          .filter((destination) => destination.status === DestinationStatus.Active) // Only active destinations
+          .map((d) => d.destinationName)
+      )
     );
   }
-  
 
+  /**
+   * Add a new destination to Firestore.
+   */
   public addDestination(destination: Destination): Promise<void> {
     if (!destination.IATA) {
-      console.error("⚠️ Error: IATA Code is required for adding a new destination.");
-      return Promise.reject("IATA Code is required");
+      console.error('⚠️ Error: IATA Code is required for adding a new destination.');
+      return Promise.reject('IATA Code is required');
     }
-  
+
+    if (!destination.status) {
+      console.error('⚠️ Error: Status is required for adding a new destination.');
+      return Promise.reject('Status is required');
+    }
+
     const destinationCollection = collection(this.firestore, 'destinations').withConverter(destinationConverter);
     const destinationDoc = doc(destinationCollection, destination.IATA); // Use IATA as document ID
-  
+
     return setDoc(destinationDoc, destination)
       .then(() => {
         console.log(`✅ Destination ${destination.destinationName} added successfully.`);
@@ -61,9 +86,16 @@ export class DestinationsService {
         throw error;
       });
   }
-  
 
+  /**
+   * Update an existing destination in Firestore.
+   */
   public updateDestination(destination: Destination): Promise<void> {
+    if (!destination.status) {
+      console.error('⚠️ Error: Status is required for updating a destination.');
+      return Promise.reject('Status is required');
+    }
+
     const destinationCollection = collection(this.firestore, 'destinations').withConverter(destinationConverter);
     const destinationDoc = doc(destinationCollection, destination.IATA); // Use IATA as document ID
     return setDoc(destinationDoc, destination).then(() => {
@@ -71,10 +103,9 @@ export class DestinationsService {
     });
   }
 
-
-
-
-
+  /**
+   * Delete a destination from Firestore.
+   */
   public deleteDestination(IATA: string): Promise<void> {
     const destinationDoc = doc(this.firestore, 'destinations', IATA).withConverter(destinationConverter);
     return deleteDoc(destinationDoc).then(() => {
@@ -90,7 +121,12 @@ export class DestinationsService {
     return getDoc(destinationDoc)
       .then((snapshot) => {
         if (snapshot.exists()) {
-          return snapshot.data();
+          const destination = snapshot.data();
+          if (destination.status !== DestinationStatus.Active) {
+            console.warn(`Destination with IATA ${IATA} is not active.`);
+            return undefined;
+          }
+          return destination;
         } else {
           console.warn(`Destination with IATA ${IATA} not found.`);
           return undefined;
@@ -100,5 +136,5 @@ export class DestinationsService {
         console.error(`Error fetching destination with IATA ${IATA}:`, error);
         return undefined;
       });
-    }  
+  }
 }

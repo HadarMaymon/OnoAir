@@ -1,3 +1,5 @@
+import { DestinationStatus } from '../../destinations/models/destination-status.enum';
+
 export class Destination {
     constructor(
       public destinationName: string,
@@ -6,7 +8,9 @@ export class Destination {
       public IATA: string,
       public timeZone: string,
       public currency: string,
-      public image: string
+      public image: string,
+      public status: DestinationStatus = DestinationStatus.Active
+
     ) {}
   
   }

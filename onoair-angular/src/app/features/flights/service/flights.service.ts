@@ -15,6 +15,7 @@ import {
 } from '@angular/fire/firestore';
 import { Flight } from '../model/flight';
 import { Destination } from '../../destinations/models/destination';
+import { FlightStatus } from '../model/flight-status.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -27,23 +28,38 @@ export class FlightService {
     this.syncFlights();
   }
 
+
   /**
    * Syncs flights from Firestore and enriches them with destination images.
    */
   private async syncFlights(): Promise<void> {
     const flightCollection = collection(this.firestore, 'flights');
     const destinationCollection = collection(this.firestore, 'destinations');
-
+  
     // Fetch destinations once
     const destinations = await this.getAllDestinations(destinationCollection);
-
+  
     // Sync flights in real-time
     onSnapshot(flightCollection, (snapshot) => {
-      const flights = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as unknown as Flight[];
-
+      const flights: Flight[] = snapshot.docs.map((doc) => {
+        const data = doc.data();
+  
+        return new Flight(
+          data['flightNumber'] || '', // Use index signature
+          data['origin'] || '',
+          data['destination'] || '',
+          data['date'] || '',
+          data['departureTime'] || '',
+          data['arrivalDate'] || '',
+          data['arrivalTime'] || '',
+          data['price'] || 0,
+          data['image'] || 'https://via.placeholder.com/300',
+          data['availableSeats'] || 0,
+          data['isDynamicDate'] || false,
+          (data['status'] as FlightStatus) || FlightStatus.Active // Convert status properly
+        );
+      });
+  
       // Enrich flights with images
       flights.forEach((flight) => {
         const matchingDestination = destinations.find(
@@ -51,15 +67,17 @@ export class FlightService {
             d.destinationName.trim().toLowerCase() ===
             flight.destination.trim().toLowerCase()
         );
-
+  
         flight.image =
           matchingDestination?.image || 'https://via.placeholder.com/300';
       });
-
+  
       // Update BehaviorSubject
       this.flightsSubject.next(flights);
     });
   }
+  
+
 
   /**
    * Fetches all destinations from Firestore.
@@ -77,10 +95,14 @@ export class FlightService {
   updateFlight(flight: Flight): Promise<void> {
     const flightCollection = collection(this.firestore, 'flights');
     const flightDoc = doc(flightCollection, flight.flightNumber);
-    return setDoc(flightDoc, { ...flight }).then(() => {
+    return setDoc(flightDoc, { 
+      ...flight, 
+      status: flight.status as FlightStatus // Ensure the status is saved as an enum
+    }).then(() => {
       console.log(`Flight ${flight.flightNumber} updated successfully!`);
     });
   }
+  
 
   /**
    * Deletes a flight from Firestore.

@@ -9,7 +9,7 @@ import { Passenger } from '../../destinations/models/passenger';
       public numberOfPassengers: number,
       public passengers: Passenger[],
       public image: string = '',
-      public isDynamicDate: boolean
+      public isDynamicDate: boolean,
     ) {}
   
     updateBoardingTime(time: string) {

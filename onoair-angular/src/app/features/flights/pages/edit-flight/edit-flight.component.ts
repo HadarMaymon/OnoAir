@@ -17,6 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { DestinationsService } from '../../../destinations/service/destinations.service';
 import { ChangeDetectorRef } from '@angular/core';
+import { FlightStatus } from '../../model/flight-status.enum';
 
 @Component({
   selector: 'app-edit-flight',
@@ -42,7 +43,10 @@ export class EditFlightComponent implements OnInit {
   flightNumber: string | null = null;
   origin: string[] = [];
   destination: string[] = [];
-  minDate: string = new Date().toISOString().split('T')[0]; // Today's date in ISO format
+  minDate: string = new Date().toISOString().split('T')[0]; 
+
+  FlightStatus = FlightStatus;
+
 
   constructor(
     private route: ActivatedRoute,
@@ -52,6 +56,7 @@ export class EditFlightComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private destinationsService: DestinationsService
   ) {}
+
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
@@ -96,6 +101,8 @@ export class EditFlightComponent implements OnInit {
               const arrivalDate = new Date(flight.arrivalDate);
               arrivalDate.setMinutes(arrivalDate.getMinutes() - arrivalDate.getTimezoneOffset()); // Adjust for timezone
               flight.arrivalDate = arrivalDate.toISOString().split('T')[0];
+              flight.status = flight.status as FlightStatus || FlightStatus.Active; // ✅ Ensure enum usage
+
             }
   
             this.flight = flight;
@@ -226,7 +233,8 @@ export class EditFlightComponent implements OnInit {
       0,
       '',
       0,
-      false
+      false,
+      FlightStatus.Active 
     );
     this.flightNumber = flightNumber;
   

@@ -47,6 +47,7 @@ export class ManageFlightComponent implements OnInit, AfterViewInit {
     'arrivalTime',
     'price',
     'availableSeats',
+    'status',
     'actions',
   ];
   dataSource!: MatTableDataSource<Flight>;

@@ -10,6 +10,7 @@ export const destinationConverter: FirestoreDataConverter<Destination> = {
     timeZone: destination.timeZone,
     currency: destination.currency,
     image: destination.image,
+    
   }),
 
   fromFirestore: (snapshot: QueryDocumentSnapshot): Destination => {

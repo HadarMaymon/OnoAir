@@ -133,6 +133,17 @@
       />
       <mat-error *ngIf="availableSeats.invalid && availableSeats.touched">Seats must be greater than 0</mat-error>
 
+        <!-- Flight Status -->
+      <mat-form-field class="form-field" appearance="outline">
+        <mat-label>Flight Status</mat-label>
+        <mat-select [(ngModel)]="flight.status" name="status" required>
+          <mat-option [value]="FlightStatus.Active">Active</mat-option>
+          <mat-option [value]="FlightStatus.Canceled">Canceled</mat-option>
+        </mat-select>
+        <mat-error *ngIf="!flight.status">Status is required</mat-error>
+      </mat-form-field>
+
+
     <!-- Save Button -->
     <button mat-raised-button color="primary" [disabled]="flightForm.invalid" type="submit">
       Save Changes

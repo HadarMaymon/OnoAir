@@ -1,6 +1,6 @@
 <div class="wrapper">
     <div class="main-content">
-        <h1>Edit Destination</h1>
+        <h1>Edit Destination </h1>
         <form *ngIf="destinationForm" [formGroup]="destinationForm" (ngSubmit)="saveChanges()">
 
             <mat-form-field appearance="outline">
@@ -63,6 +63,10 @@
                 Image URL is required
               </mat-error>
             </mat-form-field>
+
+
+
+
           
             <button mat-raised-button color="primary" type="submit" [disabled]="destinationForm.invalid">
               Save Changes

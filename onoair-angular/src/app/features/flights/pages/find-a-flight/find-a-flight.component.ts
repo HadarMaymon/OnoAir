@@ -19,7 +19,9 @@ import { Firestore, collectionData, collection } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { Flight } from '../../model/flight';
+import { FlightStatus
 
+ } from '../../model/flight-status.enum';
 @Component({
   selector: 'app-find-a-flight',
   templateUrl: './find-a-flight.component.html',
@@ -89,18 +91,22 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngOnInit(): void {
-    this.flightService.flights$.subscribe((flights) => {
-      this.dataSource = new MatTableDataSource(flights);
-      if (this.paginator) {
-        this.dataSource.paginator = this.paginator;
-      }
-      if (this.sort) {
-        this.dataSource.sort = this.sort;
-      }
-    });
-  }
-
+    ngOnInit(): void {
+      this.flightService.flights$.subscribe((flights) => {
+        // ✅ Filter only Active flights
+        const activeFlights = flights.filter(flight => flight.status === FlightStatus.Active);
+    
+        this.dataSource = new MatTableDataSource(activeFlights);
+        
+        if (this.paginator) {
+          this.dataSource.paginator = this.paginator;
+        }
+        if (this.sort) {
+          this.dataSource.sort = this.sort;
+        }
+      });
+    }
+  
   ngAfterViewInit(): void {
     if (this.dataSource) {
       this.dataSource.paginator = this.paginator;
@@ -111,26 +117,36 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
   applyFilters(): void {
     const { from, to, departureDate, priceBudget, passengers } = this.filters;
   
-    // Get today's date in local time and reset to midnight
+    // Get today's date in local time (set to midnight for accurate comparison)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
   
     this.flightService.flights$.subscribe((flights) => {
       const filteredFlights = flights.filter((flight) => {
-        const [year, month, day] = flight.date.split('-').map(Number); 
-        const flightDate = new Date(year, month - 1, day); 
+        if (!flight.date) return false; // Skip flights with missing date
+  
+        // ✅ Convert flight.date from string to Date object
+        const [year, month, day] = flight.date.split('-').map(Number);
+        const flightDate = new Date(year, month - 1, day);
+        flightDate.setHours(0, 0, 0, 0); // Ensure same time for comparison
   
         console.log(
           `Flight: ${flight.flightNumber}, Flight Date: ${flightDate.toLocaleDateString()}, Today: ${today.toLocaleDateString()}`
         ); // Debugging
   
-        // Ensure flight date is in the future
+        // ✅ Ensure flight is in the future or today
         if (flightDate < today) {
           console.warn(`Filtering out past flight: ${flight.flightNumber}`);
           return false;
         }
   
-        // Apply filters
+        // ✅ Ensure flight is Active
+        if (flight.status !== FlightStatus.Active) {
+          console.warn(`Filtering out inactive flight: ${flight.flightNumber}`);
+          return false;
+        }
+  
+        // ✅ Apply filters
         const matchesFrom = !from || flight.origin === from;
         const matchesTo = !to || flight.destination === to;
         const matchesDeparture = !departureDate || flight.date === departureDate;
@@ -143,6 +159,7 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
       this.dataSource.data = filteredFlights;
     });
   }
+  
   
     
   bookFlight(flight: Flight): void {

@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, doc, setDoc, onSnapshot, getDoc } from '@angular/fire/firestore';
+import { Firestore, collection, doc, setDoc, onSnapshot, getDoc, updateDoc } from '@angular/fire/firestore';
 import { BehaviorSubject } from 'rxjs';
 import { Booking } from '../models/booking';
 import { bookingConverter } from './converters/booking-converter';
 import { DestinationsService } from '../../destinations/service/destinations.service';
+import { BookingStatus } from '../models/booking-status.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -75,14 +76,30 @@ export class BookingsService {
     });
   }
 
-  /**
-   * Update an existing booking in Firestore.
-   */
-  updateBooking(booking: Booking): Promise<void> {
-    const bookingCollection = collection(this.firestore, 'bookings').withConverter(bookingConverter);
-    const bookingDoc = doc(bookingCollection, booking.bookingId);
-    return setDoc(bookingDoc, booking).then(() => {
-      console.log(`Booking ${booking.bookingId} updated successfully.`);
-    });
+/**
+ * Update an existing booking in Firestore.
+ */
+updateBooking(booking: Booking): Promise<void> {
+  const bookingCollection = collection(this.firestore, 'bookings').withConverter(bookingConverter);
+  const bookingDoc = doc(bookingCollection, booking.bookingId);
+  return setDoc(bookingDoc, booking).then(() => {
+    console.log(`Booking ${booking.bookingId} updated successfully.`);
+  });
+}
+
+/**
+ * Cancel a booking by setting its status to "Canceled".
+ */
+cancelBooking(bookingId: string): Promise<void> {
+    const bookingDoc = doc(this.firestore, `bookings/${bookingId}`);
+    return updateDoc(bookingDoc, { status: BookingStatus.Canceled })
+      .then(() => {
+        console.log(`✅ Booking ${bookingId} canceled successfully.`);
+      })
+      .catch((error) => {
+        console.error(`❌ Error canceling booking ${bookingId}:`, error);
+        throw error;
+      });
   }
+  
 }

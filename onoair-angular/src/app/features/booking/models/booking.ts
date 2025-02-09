@@ -1,4 +1,7 @@
 import { Passenger } from '../../destinations/models/passenger';
+import { BookingStatus
+
+ } from './booking-status.enum';
   export class Booking {
     constructor(
       public bookingId: string,
@@ -10,6 +13,7 @@ import { Passenger } from '../../destinations/models/passenger';
       public passengers: Passenger[],
       public image: string = '',
       public isDynamicDate: boolean,
+      public status: BookingStatus
     ) {}
   
     updateBoardingTime(time: string) {

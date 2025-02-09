@@ -122,7 +122,7 @@ export class BookAFlightComponent implements OnInit {
             }
           } while (true);
   
-          // Ensure flight data is merged correctly
+          // Prepare the booking data
           const bookingData = {
             bookingId: bookingId, // Custom booking ID
             id: bookingId, // Ensure document "id" field matches bookingId
@@ -137,6 +137,7 @@ export class BookAFlightComponent implements OnInit {
             })),
             image: '', // Image will be fetched
             isDynamicDate: true,
+            status: 'Active', // ✅ Set the default status to Active
           };
   
           // Fetch the destination image if available
@@ -164,6 +165,7 @@ export class BookAFlightComponent implements OnInit {
       alert('Please fill in all passenger details.');
     }
   }
+  
   
     redirectToFlightList(): void {
     alert('Flight not found. Redirecting to Find A Flight.');

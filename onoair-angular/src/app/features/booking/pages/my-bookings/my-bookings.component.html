@@ -3,9 +3,11 @@
 </div>
 
 <div class="my-bookings-container" *ngIf="!isLoading">
+  <!-- Iterate through booking sections (e.g., Upcoming and Previous) -->
   <div *ngFor="let section of bookingSections" class="booking-section">
     <h1>{{ section.title }}</h1>
 
+    <!-- Show bookings if available, otherwise fallback to 'noBookings' -->
     <div *ngIf="section.bookings.length > 0; else noBookings">
       <div *ngFor="let booking of section.bookings" class="booking-card">
         <img
@@ -19,13 +21,33 @@
           <p><strong>Destination:</strong> {{ booking.destination }}</p>
           <p><strong>Landing:</strong> {{ booking.landing }}</p>
           <p><strong>No. of Passengers:</strong> {{ booking.passengers.length }}</p>
-          <button mat-raised-button color="primary" (click)="viewBooking(booking.bookingId)">
+          <p><strong>Status:</strong> 
+            <span [ngClass]="{'active-status': booking.status === bookingStatus.Active, 'canceled-status': booking.status === bookingStatus.Canceled}">
+              {{ booking.status }}
+            </span>
+          </p>
+
+          <!-- View Booking Button -->
+          <button 
+            mat-raised-button 
+            color="primary" 
+            (click)="viewBooking(booking.bookingId)">
             View Details
+          </button>
+
+          <!-- Cancel Button (only for Active bookings) -->
+          <button 
+            mat-raised-button 
+            color="warn" 
+            *ngIf="booking.status === bookingStatus.Active" 
+            (click)="cancelBooking(booking.bookingId)">
+            Cancel
           </button>
         </div>
       </div>
     </div>
 
+    <!-- Fallback template for no bookings -->
     <ng-template #noBookings>
       <p>No {{ section.title.toLowerCase() }} bookings available.</p>
     </ng-template>

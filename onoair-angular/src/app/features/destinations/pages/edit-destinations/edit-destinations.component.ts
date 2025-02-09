@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DestinationsService } from '../../service/destinations.service';
 import { CommonModule } from '@angular/common';
@@ -34,40 +34,78 @@ import { MatSelectModule } from '@angular/material/select';
   ],
   standalone: true,
 })
-export class EditDestinationsComponent implements OnInit {
-  destinationForm!: FormGroup;
-  originalIATA: string | null = null; 
-  destinationStatus = DestinationStatus;
 
-  constructor(
-    private route: ActivatedRoute,
-    private destinationService: DestinationsService,
-    private fb: FormBuilder,
-    private router: Router,
-    private dialog: MatDialog
-  ) {}
-
-  ngOnInit(): void {
-    this.originalIATA = this.route.snapshot.paramMap.get('IATA');
+  export class EditDestinationsComponent implements OnInit {
+    @Input() destination?: Destination; // 👈 Parent can still pass data
+    destinationForm!: FormGroup;
+    destinationStatus = DestinationStatus;
+    originalIATA: string | null = null;
+    isEditMode = false;
   
-    if (this.originalIATA) {
-      // Fetch the destination by IATA code
-      this.destinationService.getDestinationByIATA(this.originalIATA)
-        .then((data: Destination | undefined) => {
-          if (data) {
-            console.log('📡 Destination Data:', data); // Debugging log
-            this.initForm(data); // ✅ Initialize the form for any valid destination
-          } else {
-            this.redirectToDestinationList(); // Redirect if destination does not exist
-          }
-        })
-        .catch((error) => {
-          console.error('⚠️ Error fetching destination:', error);
-          this.redirectToDestinationList(); // Handle fetch errors
-        });
-    } else {
-      // Initialize a blank form for creating a new destination
-      this.initForm({
+    constructor(
+      private route: ActivatedRoute,
+      private fb: FormBuilder,
+      private destinationService: DestinationsService,
+      private router: Router,
+      private dialog: MatDialog
+    ) {}
+  
+    ngOnInit(): void {
+      this.originalIATA = this.route.snapshot.paramMap.get('IATA');
+  
+      if (!this.destination) {
+        // 👇 If @Input() is not provided, use the navigation state
+        this.destination = history.state.destination;
+      }
+  
+      if (this.originalIATA) {
+        this.isEditMode = true;
+        if (this.destination) {
+          console.log('📡 Using @Input() Destination:', this.destination);
+          this.initForm(this.destination);
+        } else {
+          console.log('📡 Fetching Destination from Firestore:', this.originalIATA);
+          this.fetchDestination(this.originalIATA);
+        }
+      } else {
+        console.log('🆕 Creating New Destination');
+        this.initForm(this.getEmptyDestination());
+      }
+    }
+  
+    private fetchDestination(IATA: string): void {
+      this.destinationService.getDestinationByIATA(IATA).then((data) => {
+        if (data) {
+          console.log(' Destination Fetched:', data);
+          this.initForm(data);
+        } else {
+          console.log('Destination not found, redirecting...');
+          this.router.navigate(['/manage-destinations']);
+        }
+      }).catch((error) => {
+        console.error('⚠️ Error fetching destination:', error);
+      });
+    }
+  
+    private initForm(destination: Destination): void {
+      this.destinationForm = this.fb.group({
+        destinationName: [destination.destinationName, [Validators.required]],
+        airportName: [destination.airportName, [Validators.required]],
+        airportWebsite: [destination.airportWebsite, [Validators.required, Validators.pattern(/https?:\/\/.+/)]],
+        IATA: [destination.IATA, [Validators.required]],
+        timeZone: [destination.timeZone, [Validators.required]],
+        currency: [destination.currency, [Validators.required]],
+        image: [destination.image, [Validators.required]],
+        status: [destination.status, [Validators.required]],
+      });
+  
+      if (this.isEditMode) {
+        this.destinationForm.get('IATA')?.disable();
+      }
+    }
+  
+    private getEmptyDestination(): Destination {
+      return {
         destinationName: '',
         airportName: '',
         airportWebsite: '',
@@ -75,119 +113,47 @@ export class EditDestinationsComponent implements OnInit {
         timeZone: '',
         currency: '',
         image: '',
-        status: DestinationStatus.Active, // Default to Active for new destinations
-      } as Destination);
-    }
-  }
-  
-      
-
-  initForm(destination: Destination): void {
-    this.destinationForm = this.fb.group({
-      destinationName: [destination.destinationName, [Validators.required]],  
-      airportName: [destination.airportName, [Validators.required]],          
-      airportWebsite: [destination.airportWebsite, [Validators.required, Validators.pattern(/https?:\/\/.+/)]],
-      IATA: [destination.IATA, [Validators.required]], 
-      timeZone: [destination.timeZone, [Validators.required]],
-      currency: [destination.currency, [Validators.required]],
-      image: [destination.image, [Validators.required]],
-      status: [destination.status, [Validators.required]],
-    });
-  
-    if (this.originalIATA) {
-      this.destinationForm.get('IATA')?.disable();
-    }
-  }
-  
-  
-  
-
-  redirectToDestinationList(): void {
-    alert('Destination not found. Redirecting to Manage Destinations.');
-    this.router.navigate(['/manage-destinations']);
-  }
-
-  saveChanges(): void {
-    if (this.destinationForm.invalid) {
-      this.dialog.open(ConfirmDialogComponent, {
-        width: '350px',
-        data: {
-          title: 'Error',
-          message: 'Please fill in all required fields before saving.',
-          showConfirmButton: false,
-          showCloseButton: true,
-        },
-      });
-      return;
+        status: DestinationStatus.Active,
+      };
     }
   
-    const destinationData: Destination = {
-      ...this.destinationForm.getRawValue(),
-      IATA: this.destinationForm.get('IATA')?.value, 
-    };
-    
-    if (this.originalIATA) {
-      // Update existing destination
-      this.destinationService.updateDestination(destinationData)
-        .then(() => {
-          this.showSuccessDialog('Destination updated successfully!');
-        })
-        .catch(() => {
-          this.showErrorDialog('Failed to update destination.');
+    saveChanges(): void {
+      if (this.destinationForm.invalid) {
+        this.dialog.open(ConfirmDialogComponent, {
+          width: '350px',
+          data: { title: 'Error', message: 'Please fill in all required fields.' },
         });
-    } else {
-      // Add new destination
-      if (!destinationData.IATA) {
-        this.showErrorDialog('IATA Code is required.');
         return;
       }
   
-      this.destinationService.addDestination(destinationData)
-        .then(() => {
-          this.showSuccessDialog('Destination added successfully!');
-        })
-        .catch(() => {
-          this.showErrorDialog('Failed to add destination.');
-        });
+      const destinationData: Destination = {
+        ...this.destinationForm.getRawValue(),
+        IATA: this.originalIATA || this.destinationForm.get('IATA')?.value,
+      };
+  
+      if (this.isEditMode) {
+        this.updateDestination(destinationData);
+      } else {
+        this.addDestination(destinationData);
+      }
+    }
+  
+    private updateDestination(destination: Destination): void {
+      this.destinationService.updateDestination(destination).then(() => {
+        console.log('✅ Destination updated:', destination);
+        this.router.navigate(['/manage-destinations']);
+      }).catch((error) => {
+        console.error('❌ Error updating destination:', error);
+      });
+    }
+  
+    private addDestination(destination: Destination): void {
+      this.destinationService.addDestination(destination).then(() => {
+        console.log('✅ Destination added:', destination);
+        this.router.navigate(['/manage-destinations']);
+      }).catch((error) => {
+        console.error('❌ Error adding destination:', error);
+      });
     }
   }
-      
-  private showSuccessDialog(message: string): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '350px',
-      data: { title: 'Success', message },
-    });
   
-    dialogRef.afterClosed().subscribe(() => {
-      this.router.navigate(['/manage-destinations']);
-    });
-  }
-  
-  private showErrorDialog(message: string): void {
-    this.dialog.open(ConfirmDialogComponent, {
-      width: '350px',
-      data: { title: 'Error', message },
-    });
-  }
-      
-  deleteDestination(): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '350px',
-      data: { name: this.destinationForm.get('IATA')?.value },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'yes') {
-        const IATA = this.originalIATA;
-        if (IATA) {
-          this.destinationService.deleteDestination(IATA).then(() => {
-            alert('Destination deleted successfully! Redirecting to Manage Destinations.');
-            this.router.navigate(['/manage-destinations']);
-          }).catch(() => {
-            alert('Failed to delete destination. Please try again.');
-          });
-        }
-      }
-    });
-  }
-}

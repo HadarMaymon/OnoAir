@@ -18,6 +18,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component';
 import { DestinationStatus } from '../../models/destination-status.enum';
 import { ChangeDetectorRef } from '@angular/core';
+import { EditDestinationsComponent } from '../edit-destinations/edit-destinations.component';
 
 @Component({
   selector: 'app-manage-destinations',
@@ -36,6 +37,7 @@ import { ChangeDetectorRef } from '@angular/core';
     MatSort,
     MatPaginator,
     MatIconModule,
+    EditDestinationsComponent
   ],
 })
 export class ManageDestinationComponent implements OnInit, AfterViewInit {
@@ -53,6 +55,8 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  selectedDestination: Destination | null = null; // Store selected destination
+
   constructor(
     private destinationService: DestinationsService,
     private router: Router,
@@ -64,11 +68,7 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
     this.destinationService.syncDestinations();
     this.destinationService.destinations$.subscribe({
       next: (destinations) => {
-        console.log('Fetched Destinations:', destinations);
-        destinations.forEach(dest => console.log(`Destination: ${dest.destinationName}, Status: ${dest.status}`));
-        
         this.dataSource.data = destinations;
-        this.cdr.detectChanges(); // ✅ Force UI update to show status
       },
       error: () => {
         alert('Failed to sync destinations.');
@@ -81,40 +81,26 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
-  /**
-   * Convert status enum to user-friendly text.
-   */
-  getStatusLabel(status: DestinationStatus): string {
-    const statusLabels: Record<DestinationStatus, string> = {
-      [DestinationStatus.Active]: 'Active',
-      [DestinationStatus.Canceled]: 'Canceled',
-    };
-
-    return statusLabels[status] || 'Unknown'; // Default fallback
-  }
-
-  /**
-   * Apply filter to table based on search input.
-   */
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   /**
-   * Navigate to the edit destination page with the given IATA code.
+   * Opens the edit form with the selected destination
    */
-  editDestination(IATA: string): void {
-    this.router.navigate(['/edit-destination', IATA]);
+  editDestination(destination: Destination): void {
+    this.router.navigate(['/edit-destinations', destination.IATA], {
+      state: { destination }, 
+    });
   }
-
-  /**
-   * Navigate to the add destination form (empty form).
-   */
+  
   addDestination(): void {
-    this.router.navigate(['/edit-destination']);
+    this.router.navigate(['/edit-destinations'], {
+      state: { destination: null }, 
+    });
   }
-
+  
   /**
    * Confirm and delete a destination.
    */

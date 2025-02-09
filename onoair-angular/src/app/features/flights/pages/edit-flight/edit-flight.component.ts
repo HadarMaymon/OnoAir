@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {  Router } from '@angular/router';
 import { FlightService } from '../../service/flights.service';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';

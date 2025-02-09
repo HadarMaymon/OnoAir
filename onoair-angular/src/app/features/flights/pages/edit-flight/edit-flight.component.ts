@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FlightService } from '../../service/flights.service';
 import { CommonModule } from '@angular/common';
@@ -39,17 +39,16 @@ import { FlightStatus } from '../../model/flight-status.enum';
   ],
 })
 export class EditFlightComponent implements OnInit {
+  
+  @Input() flightNumber: string | null = null;
   flight: Flight | undefined;
-  flightNumber: string | null = null;
   origin: string[] = [];
   destination: string[] = [];
   minDate: string = new Date().toISOString().split('T')[0]; 
 
   FlightStatus = FlightStatus;
 
-
   constructor(
-    private route: ActivatedRoute,
     private flightService: FlightService,
     private router: Router,
     private dialog: MatDialog,
@@ -57,58 +56,48 @@ export class EditFlightComponent implements OnInit {
     private destinationsService: DestinationsService
   ) {}
 
-
   ngOnInit(): void {
-    this.route.paramMap.subscribe((params) => {
-      const flightNumber = params.get('flightNumber');
-  
-      const today = new Date();
-      today.setDate(today.getDate() + 1); // Move to tomorrow
-      this.minDate = today.toISOString().split('T')[0]; // Convert to YYYY-MM-DD format
-  
-      // Fetch all destinations
-      this.destinationsService.getAllDestinations().then((destinations) => {
-        const destinationNames = destinations.map((dest) => dest.destinationName); // Extract destination names
-        this.origin = destinationNames;
-        this.destination = destinationNames;
-  
-        console.log('Fetched origin options:', this.origin); 
-        console.log('Fetched destination options:', this.destination); 
-  
-        if (flightNumber === 'new') {
-          this.resetForm('');
-          return;
-        }
-  
-        if (!flightNumber) {
-          this.redirectToFlightList();
-          return;
-        }
-  
-        if (this.flightNumber !== flightNumber) {
-          this.resetForm(flightNumber);
-        }
-  
-        this.flightService.getFlightByNumber(flightNumber).then((flight) => {
-          if (flight) {
-            if (flight.date) {
-              const date = new Date(flight.date);
-              date.setMinutes(date.getMinutes() - date.getTimezoneOffset()); 
-              flight.date = date.toISOString().split('T')[0]; 
-            }
-  
-            if (flight.arrivalDate) {
-              const arrivalDate = new Date(flight.arrivalDate);
-              arrivalDate.setMinutes(arrivalDate.getMinutes() - arrivalDate.getTimezoneOffset()); // Adjust for timezone
-              flight.arrivalDate = arrivalDate.toISOString().split('T')[0];
-              flight.status = flight.status as FlightStatus || FlightStatus.Active; // ✅ Ensure enum usage
+    const today = new Date();
+    today.setDate(today.getDate() + 1);
+    this.minDate = today.toISOString().split('T')[0];
 
-            }
-  
-            this.flight = flight;
-            this.cdr.detectChanges(); // ✅ Ensure Angular detects changes
+    // Fetch all destinations
+    this.destinationsService.getAllDestinations().then((destinations) => {
+      const destinationNames = destinations.map((dest) => dest.destinationName);
+      this.origin = destinationNames;
+      this.destination = destinationNames;
+
+      console.log('Fetched origin options:', this.origin); 
+      console.log('Fetched destination options:', this.destination); 
+
+      if (!this.flightNumber) {
+        this.redirectToFlightList();
+        return;
+      }
+
+      if (this.flightNumber === 'new') {
+        this.resetForm('');
+        return;
+      }
+
+      this.flightService.getFlightByNumber(this.flightNumber).then((flight) => {
+        if (flight) {
+          if (flight.date) {
+            const date = new Date(flight.date);
+            date.setMinutes(date.getMinutes() - date.getTimezoneOffset()); 
+            flight.date = date.toISOString().split('T')[0]; 
           }
-        });
+
+          if (flight.arrivalDate) {
+            const arrivalDate = new Date(flight.arrivalDate);
+            arrivalDate.setMinutes(arrivalDate.getMinutes() - arrivalDate.getTimezoneOffset()); 
+            flight.arrivalDate = arrivalDate.toISOString().split('T')[0];
+            flight.status = flight.status as FlightStatus || FlightStatus.Active;
+          }
+
+          this.flight = flight;
+          this.cdr.detectChanges();
+        }
       });
     });
   }

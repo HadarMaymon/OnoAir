@@ -90,7 +90,7 @@
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef>Actions</th>
       <td mat-cell *matCellDef="let flight">
-        <button mat-icon-button color="primary" [routerLink]="['/edit-flight', flight.flightNumber]">
+        <button mat-icon-button color="primary" (click)="editFlight(flight.flightNumber)">
           <mat-icon>edit</mat-icon>
         </button>
         <button mat-icon-button color="warn" (click)="confirmDelete(flight)">
@@ -109,12 +109,10 @@
 
   <!-- Add Flight Button -->
   <div class="add-flight-button-container">
-    <button mat-fab color="primary" [routerLink]="['/edit-flight', 'new']" class="add-flight-button">
+    <button mat-fab color="primary" (click)="editFlight('new')" class="add-flight-button">
       <mat-icon>add</mat-icon> Add New Flight
     </button>
   </div>
-  
-      
 
   <p class="note">
     <strong>Note:</strong> Editing flight number will create a new entry in the database. If you wish to remove a flight, please click on the trash icon.
@@ -123,8 +121,7 @@
     <strong>Note:</strong> Canceled flights will not be displayed in the find a flight section.
   </p>
 
-
-
-  
+  <!-- ✨ Flight Edit Component ✨ -->
+  <app-edit-flight *ngIf="selectedFlightNumber" [flightNumber]="selectedFlightNumber"></app-edit-flight>
 
 </div>

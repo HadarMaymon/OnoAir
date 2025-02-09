@@ -11,11 +11,12 @@ import { MatTableModule } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { FlightService } from '../../service/flights.service';
 import { MatSortModule } from '@angular/material/sort';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { Flight } from '../../model/flight';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component';
+import { EditFlightComponent } from '../edit-flight/edit-flight.component';
 
 @Component({
   selector: 'app-manage-flight',
@@ -25,18 +26,21 @@ import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confir
   imports: [
     MatTableModule,
     MatPaginatorModule,
-    MatSort,
+    MatSortModule,
     MatIconModule,
     MatButtonModule,
     MatInputModule,
     FormsModule,
     CommonModule,
-    MatSortModule,
     RouterModule,
-    MatDialogModule
+    MatDialogModule,
+    RouterModule,
+    EditFlightComponent, // Import the EditFlightComponent
   ],
 })
 export class ManageFlightComponent implements OnInit, AfterViewInit {
+  selectedFlightNumber: string | null = null; // Holds the flight number to edit
+
   displayedColumns: string[] = [
     'flightNumber',
     'origin',
@@ -50,15 +54,16 @@ export class ManageFlightComponent implements OnInit, AfterViewInit {
     'status',
     'actions',
   ];
+  
   dataSource!: MatTableDataSource<Flight>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private flightService: FlightService, private dialog: MatDialog) {}
+  constructor(private flightService: FlightService, private dialog: MatDialog, private router: Router) {}
 
   ngOnInit(): void {
-    // Subscribe to the real-time flights observable
+    // Load flights into the table
     this.flightService.flights$.subscribe((flights) => {
       this.dataSource = new MatTableDataSource(flights);
       this.dataSource.paginator = this.paginator;
@@ -85,26 +90,10 @@ export class ManageFlightComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  editFlight(flight: Flight): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '350px',
-      data: {
-        type: 'edit',
-        name: `flight ${flight.flightNumber} to ${flight.destination}`,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result?.confirmed && result.action === 'edit') {
-        // Update the flight details in Firestore
-        this.flightService.updateFlight(flight).then(() => {
-          alert(`Flight ${flight.flightNumber} updated successfully.`);
-        }).catch((error) => {
-          console.error(`Error updating flight ${flight.flightNumber}:`, error);
-          alert('Failed to update flight. Please try again.');
-        });
-      }
-    });
+  /** ✅ Updated: Open the EditFlightComponent instead of a confirmation dialog */
+  editFlight(flightNumber: string): void {
+    this.selectedFlightNumber = flightNumber; // Set the flight number for editing
+    this.router.navigate(['../edit-flight', flightNumber]); // Navigate to the edit page
   }
 
   confirmDelete(flight: Flight): void {

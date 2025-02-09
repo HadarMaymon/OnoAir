@@ -1,84 +1,84 @@
 <div class="wrapper">
-    <div class="main-content">
-        <h1>Edit Destination: {{ destinationForm.get('destinationName')?.value }}</h1>
-        <form *ngIf="destinationForm" [formGroup]="destinationForm" (ngSubmit)="saveChanges()">
+  <div class="main-content">
+      <h1>Edit Destination: {{ destinationForm.get('destinationName')?.value }}</h1>
+      <form *ngIf="destinationForm" [formGroup]="destinationForm" (ngSubmit)="saveChanges()">
 
-            <mat-form-field appearance="outline">
-                <mat-label>Destination Name</mat-label>
-                <input matInput formControlName="destinationName" placeholder="Enter destination name" />
-                <mat-error *ngIf="destinationForm.get('destinationName')?.hasError('required')">
-                  Destination Name is required
-                </mat-error>
-              </mat-form-field>
-              
-              
-          
-            <mat-form-field appearance="outline">
-              <mat-label>Airport Name</mat-label>
-              <input matInput formControlName="airportName" placeholder="Enter airport name" />
-              <mat-error *ngIf="destinationForm.get('airportName')?.hasError('required')">
-                Airport Name is required
+          <mat-form-field appearance="outline">
+              <mat-label>Destination Name</mat-label>
+              <input matInput formControlName="destinationName" placeholder="Enter destination name" />
+              <mat-error *ngIf="destinationForm.get('destinationName')?.hasError('required')">
+                Destination Name is required
               </mat-error>
             </mat-form-field>
-          
-            <mat-form-field appearance="outline">
-              <mat-label>Airport Website</mat-label>
-              <input matInput formControlName="airportWebsite" placeholder="Enter airport website" />
-              <mat-error *ngIf="destinationForm.get('airportWebsite')?.hasError('required')">
-                Airport Website is required
-              </mat-error>
-              <mat-error *ngIf="destinationForm.get('airportWebsite')?.hasError('pattern')">
-                Please enter a valid URL (e.g., https://onoair.com)
-              </mat-error>
-            </mat-form-field>
+            
+            
+        
+          <mat-form-field appearance="outline">
+            <mat-label>Airport Name</mat-label>
+            <input matInput formControlName="airportName" placeholder="Enter airport name" />
+            <mat-error *ngIf="destinationForm.get('airportName')?.hasError('required')">
+              Airport Name is required
+            </mat-error>
+          </mat-form-field>
+        
+          <mat-form-field appearance="outline">
+            <mat-label>Airport Website</mat-label>
+            <input matInput formControlName="airportWebsite" placeholder="Enter airport website" />
+            <mat-error *ngIf="destinationForm.get('airportWebsite')?.hasError('required')">
+              Airport Website is required
+            </mat-error>
+            <mat-error *ngIf="destinationForm.get('airportWebsite')?.hasError('pattern')">
+              Please enter a valid URL (e.g., https://onoair.com)
+            </mat-error>
+          </mat-form-field>
 
-            <mat-form-field appearance="outline">
-                <mat-label>Currency</mat-label>
-                <input matInput formControlName="currency" placeholder="Enter currency"/>
-                <mat-error *ngIf="destinationForm.get('currency')?.hasError('required')">
-                  Currency is required
-                </mat-error>
-              </mat-form-field>
-          
-            <mat-form-field appearance="outline">
-              <mat-label>IATA Code</mat-label>
-              <input matInput formControlName="IATA" placeholder="Enter IATA"/>
-              <mat-error *ngIf="destinationForm.get('IATA')?.hasError('required')">
-                IATA is required
+          <mat-form-field appearance="outline">
+              <mat-label>Currency</mat-label>
+              <input matInput formControlName="currency" placeholder="Enter currency"/>
+              <mat-error *ngIf="destinationForm.get('currency')?.hasError('required')">
+                Currency is required
               </mat-error>
             </mat-form-field>
-          
-            <mat-form-field appearance="outline">
-              <mat-label>Time Zone</mat-label>
-              <input matInput formControlName="timeZone" placeholder="Enter time zone"/>
-              <mat-error *ngIf="destinationForm.get('timeZone')?.hasError('required')">
-                Time Zone is required
-              </mat-error>
-            </mat-form-field>
-          
-            <mat-form-field appearance="outline">
-              <mat-label>Image URL</mat-label>
-              <input matInput formControlName="image" placeholder="Enter image URL" />
-              <mat-error *ngIf="destinationForm.get('image')?.hasError('required')">
-                Image URL is required
-              </mat-error>
-            </mat-form-field>
+        
+          <mat-form-field appearance="outline">
+            <mat-label>IATA Code</mat-label>
+            <input matInput formControlName="IATA" placeholder="Enter IATA"/>
+            <mat-error *ngIf="destinationForm.get('IATA')?.hasError('required')">
+              IATA is required
+            </mat-error>
+          </mat-form-field>
+        
+          <mat-form-field appearance="outline">
+            <mat-label>Time Zone</mat-label>
+            <input matInput formControlName="timeZone" placeholder="Enter time zone"/>
+            <mat-error *ngIf="destinationForm.get('timeZone')?.hasError('required')">
+              Time Zone is required
+            </mat-error>
+          </mat-form-field>
+        
+          <mat-form-field appearance="outline">
+            <mat-label>Image URL</mat-label>
+            <input matInput formControlName="image" placeholder="Enter image URL" />
+            <mat-error *ngIf="destinationForm.get('image')?.hasError('required')">
+              Image URL is required
+            </mat-error>
+          </mat-form-field>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Destination Status</mat-label>
-              <mat-select formControlName="status">
-                <mat-option [value]="destinationStatus.Active">Active</mat-option>
-                <mat-option [value]="destinationStatus.Canceled">Canceled</mat-option>
-              </mat-select>
-              <mat-error *ngIf="destinationForm.get('status')?.hasError('required')">
-                Status is required
-              </mat-error>
-            </mat-form-field>            
+          <mat-form-field appearance="outline">
+            <mat-label>Destination Status</mat-label>
+            <mat-select formControlName="status">
+              <mat-option [value]="destinationStatus.Active">Active</mat-option>
+              <mat-option [value]="destinationStatus.Canceled">Canceled</mat-option>
+            </mat-select>
+            <mat-error *ngIf="destinationForm.get('status')?.hasError('required')">
+              Status is required
+            </mat-error>
+          </mat-form-field>            
 
-          
-            <button mat-raised-button color="primary" type="submit" [disabled]="destinationForm.invalid">              Save Changes
-            </button>
-          </form>          
-          
-    </div>
+        
+          <button mat-raised-button color="primary" type="submit" [disabled]="destinationForm.invalid">              Save Changes
+          </button>
+        </form>          
+        
+  </div>
 </div>

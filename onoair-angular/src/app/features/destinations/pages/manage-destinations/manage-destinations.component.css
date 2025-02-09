@@ -51,6 +51,11 @@ table {
     color: #333;
 }
 
+.mat-column-status {
+    width: 15%;
+}
+
+
 .mat-header-cell,
 .mat-cell {
     font-size: 15px;

@@ -67,7 +67,7 @@
             <mat-form-field appearance="outline">
               <mat-label>Destination Status</mat-label>
               <mat-select formControlName="status">
-                <mat-option [value]="destinationStatus.Active">Activated</mat-option>
+                <mat-option [value]="destinationStatus.Active">Active</mat-option>
                 <mat-option [value]="destinationStatus.Canceled">Canceled</mat-option>
               </mat-select>
               <mat-error *ngIf="destinationForm.get('status')?.hasError('required')">
@@ -76,8 +76,7 @@
             </mat-form-field>            
 
           
-            <button mat-raised-button color="primary" type="submit" [disabled]="destinationForm.invalid">
-              Save Changes
+            <button mat-raised-button color="primary" type="submit" [disabled]="destinationForm.invalid">              Save Changes
             </button>
           </form>          
           

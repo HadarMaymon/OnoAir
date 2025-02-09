@@ -51,28 +51,22 @@ export class EditDestinationsComponent implements OnInit {
     this.originalIATA = this.route.snapshot.paramMap.get('IATA');
   
     if (this.originalIATA) {
-      // Editing an existing destination
+      // Fetch the destination by IATA code
       this.destinationService.getDestinationByIATA(this.originalIATA)
         .then((data: Destination | undefined) => {
           if (data) {
-            // ✅ Ensure only active destinations can be edited
-            if (data.status !== DestinationStatus.Active) {
-              console.warn(`Filtering out inactive destination: ${data.destinationName}`);
-              this.redirectToDestinationList();
-              return;
-            }
-  
             console.log('📡 Destination Data:', data); // Debugging log
-            this.initForm(data);
+            this.initForm(data); // ✅ Initialize the form for any valid destination
           } else {
-            this.redirectToDestinationList();
+            this.redirectToDestinationList(); // Redirect if destination does not exist
           }
         })
         .catch((error) => {
           console.error('⚠️ Error fetching destination:', error);
-          this.redirectToDestinationList();
+          this.redirectToDestinationList(); // Handle fetch errors
         });
     } else {
+      // Initialize a blank form for creating a new destination
       this.initForm({
         destinationName: '',
         airportName: '',
@@ -81,11 +75,12 @@ export class EditDestinationsComponent implements OnInit {
         timeZone: '',
         currency: '',
         image: '',
-        status: DestinationStatus.Active, 
+        status: DestinationStatus.Active, // Default to Active for new destinations
       } as Destination);
     }
   }
-    
+  
+      
 
   initForm(destination: Destination): void {
     this.destinationForm = this.fb.group({
@@ -126,15 +121,13 @@ export class EditDestinationsComponent implements OnInit {
       return;
     }
   
-    const destinationData: Destination = this.destinationForm.getRawValue();
-  
-    // ✅ Ensure only Active destinations can be updated
-    if (destinationData.status !== DestinationStatus.Active) {
-      this.showErrorDialog('Only active destinations can be updated.');
-      return;
-    }
+    const destinationData: Destination = {
+      ...this.destinationForm.getRawValue(),
+      IATA: this.originalIATA!, // Preserve original IATA
+    };
   
     if (this.originalIATA) {
+      // Update existing destination
       this.destinationService.updateDestination(destinationData)
         .then(() => {
           this.showSuccessDialog('Destination updated successfully!');
@@ -143,6 +136,7 @@ export class EditDestinationsComponent implements OnInit {
           this.showErrorDialog('Failed to update destination.');
         });
     } else {
+      // Add new destination
       if (!destinationData.IATA) {
         this.showErrorDialog('IATA Code is required.');
         return;
@@ -157,7 +151,7 @@ export class EditDestinationsComponent implements OnInit {
         });
     }
   }
-    
+      
   private showSuccessDialog(message: string): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',

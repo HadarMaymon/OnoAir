@@ -23,7 +23,7 @@ export const destinationConverter: FirestoreDataConverter<Destination> = {
       timeZone: string;
       currency: string;
       image: string;
-      status: string; // ✅ Ensure status is retrieved as a string
+      status: DestinationStatus;
     };
 
     return new Destination(
@@ -34,7 +34,7 @@ export const destinationConverter: FirestoreDataConverter<Destination> = {
       data['timeZone'],
       data['currency'],
       data['image'],
-      data['status'] as DestinationStatus || DestinationStatus.Active 
+      data['status'] as DestinationStatus
     );
   },
 };

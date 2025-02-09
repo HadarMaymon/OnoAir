@@ -22,11 +22,9 @@ export class DestinationsService {
   public syncDestinations(): void {
     const destinationCollection = collection(this.firestore, 'destinations').withConverter(destinationConverter);
     onSnapshot(destinationCollection, (snapshot) => {
-      const destinations = snapshot.docs
-        .map((doc) => doc.data())
-        .filter((destination) => destination.status === DestinationStatus.Active); // Only active destinations
+      const destinations = snapshot.docs.map((doc) => doc.data()); // ✅ Remove filtering
       this.destinationsSubject.next(destinations);
-    });
+    });    
   }
 
   /**
@@ -90,18 +88,26 @@ export class DestinationsService {
   /**
    * Update an existing destination in Firestore.
    */
-  public updateDestination(destination: Destination): Promise<void> {
-    if (!destination.status) {
-      console.error('⚠️ Error: Status is required for updating a destination.');
-      return Promise.reject('Status is required');
-    }
-
-    const destinationCollection = collection(this.firestore, 'destinations').withConverter(destinationConverter);
-    const destinationDoc = doc(destinationCollection, destination.IATA); // Use IATA as document ID
-    return setDoc(destinationDoc, destination).then(() => {
-      console.log(`Destination ${destination.destinationName} updated successfully.`);
-    });
+/**
+ * Update an existing destination in Firestore, ensuring status is updated.
+ */
+public updateDestination(destination: Destination): Promise<void> {
+  if (!destination.IATA) {
+    console.error('⚠️ Error: IATA Code is required for updating a destination.');
+    return Promise.reject('IATA Code is required');
   }
+
+  const destinationDoc = doc(this.firestore, 'destinations', destination.IATA).withConverter(destinationConverter);
+
+  return setDoc(destinationDoc, { ...destination }, { merge: true }) // Ensure it updates only provided fields
+    .then(() => console.log(`✔️ Destination ${destination.destinationName} updated successfully in Firestore`))
+    .catch(error => {
+      console.error('⚠️ Firestore update failed:', error);
+      throw error;
+    });
+}
+
+
 
   /**
    * Delete a destination from Firestore.
@@ -122,11 +128,8 @@ export class DestinationsService {
       .then((snapshot) => {
         if (snapshot.exists()) {
           const destination = snapshot.data();
-          if (destination.status !== DestinationStatus.Active) {
-            console.warn(`Destination with IATA ${IATA} is not active.`);
-            return undefined;
-          }
-          return destination;
+          console.log(`📡 Destination fetched:`, destination); // Debugging log
+          return destination; // ✅ Return destination regardless of status
         } else {
           console.warn(`Destination with IATA ${IATA} not found.`);
           return undefined;
@@ -137,4 +140,4 @@ export class DestinationsService {
         return undefined;
       });
   }
-}
+}  

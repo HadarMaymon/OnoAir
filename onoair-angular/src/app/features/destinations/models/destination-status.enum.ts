@@ -1,5 +1,4 @@
 export enum DestinationStatus {
-    Active = 'Activated',
-    Canceled = 'Canceled',
-  }
-  
+  Active = 'Active',
+  Canceled = 'Canceled',
+}

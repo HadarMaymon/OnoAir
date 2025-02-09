@@ -1,6 +1,6 @@
 <div class="wrapper">
     <div class="main-content">
-        <h1>Edit Destination </h1>
+        <h1>Edit Destination: {{ destinationForm.get('destinationName')?.value }}</h1>
         <form *ngIf="destinationForm" [formGroup]="destinationForm" (ngSubmit)="saveChanges()">
 
             <mat-form-field appearance="outline">
@@ -64,8 +64,16 @@
               </mat-error>
             </mat-form-field>
 
-
-
+            <mat-form-field appearance="outline">
+              <mat-label>Destination Status</mat-label>
+              <mat-select formControlName="status">
+                <mat-option [value]="destinationStatus.Active">Activated</mat-option>
+                <mat-option [value]="destinationStatus.Canceled">Canceled</mat-option>
+              </mat-select>
+              <mat-error *ngIf="destinationForm.get('status')?.hasError('required')">
+                Status is required
+              </mat-error>
+            </mat-form-field>            
 
           
             <button mat-raised-button color="primary" type="submit" [disabled]="destinationForm.invalid">

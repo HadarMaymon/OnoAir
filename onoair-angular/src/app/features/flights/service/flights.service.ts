@@ -56,7 +56,7 @@ export class FlightService {
           data['image'] || 'https://via.placeholder.com/300',
           data['availableSeats'] || 0,
           data['isDynamicDate'] || false,
-          (data['status'] as FlightStatus) || FlightStatus.Active // Convert status properly
+          (data['status'] as FlightStatus) || FlightStatus.Active 
         );
       });
   

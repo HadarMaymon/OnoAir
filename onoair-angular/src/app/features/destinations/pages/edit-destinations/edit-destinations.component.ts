@@ -14,6 +14,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DestinationStatus } from '../../models/destination-status.enum';
 import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+
 
 @Component({
   selector: 'app-edit-destinations',
@@ -28,14 +30,13 @@ import { MatOptionModule } from '@angular/material/core';
     MatInputModule,
     MatDialogModule,
     MatOptionModule,
+    MatSelectModule
   ],
   standalone: true,
 })
 export class EditDestinationsComponent implements OnInit {
   destinationForm!: FormGroup;
   originalIATA: string | null = null; 
-
-
   destinationStatus = DestinationStatus;
 
   constructor(

@@ -85,9 +85,6 @@ export class DestinationsService {
       });
   }
 
-  /**
-   * Update an existing destination in Firestore.
-   */
 /**
  * Update an existing destination in Firestore, ensuring status is updated.
  */

@@ -123,9 +123,9 @@ export class EditDestinationsComponent implements OnInit {
   
     const destinationData: Destination = {
       ...this.destinationForm.getRawValue(),
-      IATA: this.originalIATA!, // Preserve original IATA
+      IATA: this.destinationForm.get('IATA')?.value, 
     };
-  
+    
     if (this.originalIATA) {
       // Update existing destination
       this.destinationService.updateDestination(destinationData)

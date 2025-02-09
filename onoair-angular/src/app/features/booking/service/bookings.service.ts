@@ -71,11 +71,13 @@ export class BookingsService {
   addBooking(booking: Booking): Promise<void> {
     const bookingCollection = collection(this.firestore, 'bookings').withConverter(bookingConverter);
     const bookingDoc = doc(bookingCollection, booking.bookingId);
-    return setDoc(bookingDoc, booking).then(() => {
+  
+    // 🔥 Ensure flightNumber is saved
+    return setDoc(bookingDoc, { ...booking, flightNumber: booking.flightNumber, updateBoardingTime: booking.updateBoardingTime, updateLandingTime: booking.updateLandingTime }).then(() => {
       console.log(`Booking ${booking.bookingId} added successfully.`);
     });
   }
-
+  
 /**
  * Update an existing booking in Firestore.
  */
@@ -90,16 +92,18 @@ updateBooking(booking: Booking): Promise<void> {
 /**
  * Cancel a booking by setting its status to "Canceled".
  */
-cancelBooking(bookingId: string): Promise<void> {
-    const bookingDoc = doc(this.firestore, `bookings/${bookingId}`);
-    return updateDoc(bookingDoc, { status: BookingStatus.Canceled })
-      .then(() => {
-        console.log(`✅ Booking ${bookingId} canceled successfully.`);
-      })
-      .catch((error) => {
-        console.error(`❌ Error canceling booking ${bookingId}:`, error);
-        throw error;
-      });
-  }
+updateBookingStatus(bookingId: string, newStatus: BookingStatus): Promise<void> {
+  const bookingDoc = doc(this.firestore, `bookings/${bookingId}`);
+  
+  return updateDoc(bookingDoc, { status: newStatus })
+    .then(() => {
+      console.log(`✅ Booking ${bookingId} updated to ${newStatus}`);
+    })
+    .catch((error) => {
+      console.error(`❌ Error updating booking ${bookingId} to ${newStatus}:`, error);
+      throw error;
+    });
+}
+
   
 }

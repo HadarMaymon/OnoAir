@@ -27,15 +27,16 @@ import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confir
 export class BookAFlightComponent implements OnInit {
   flight: Flight | null = null;
   passengerCount: number = 1; // Default number of passengers
-  passengers: { name: string; id: string }[] = []; // Array to hold passenger details
-  destinationImage: string = ''; // Destination image URL
+  passengers: { name: string; id: string }[] = [];
+  errors: { name?: string; id?: string; duplicateId?: string }[] = []; // ✅ Add errors array
+  destinationImage: string = '';
 
   constructor(
     private route: ActivatedRoute,
     private flightService: FlightService,
     private router: Router,
     private firestore: Firestore,
-    private dialog: MatDialog,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -46,7 +47,7 @@ export class BookAFlightComponent implements OnInit {
         .then((data) => {
           if (data) {
             this.flight = data;
-            this.fetchDestinationImage(this.flight.destination); // Fetch the destination image
+            this.fetchDestinationImage(this.flight.destination);
           } else {
             this.redirectToFlightList();
           }
@@ -56,21 +57,47 @@ export class BookAFlightComponent implements OnInit {
         });
     }
 
-    // Initialize the passenger form
     this.updatePassengers();
   }
 
   updatePassengers(): void {
-    // Reset the passengers array based on the selected passenger count
     this.passengers = Array.from({ length: this.passengerCount }, () => ({
       name: '',
-      id: '', // Changed from passportId to id
+      id: '',
     }));
+    this.errors = Array(this.passengerCount).fill({});
+  }
+
+  validatePassenger(index: number): void {
+    const passenger = this.passengers[index];
+    this.errors[index] = {};
+
+    // Validate Name (First and Last name only)
+    const nameRegex = /^[A-Za-z]+ [A-Za-z]+$/;
+    if (!nameRegex.test(passenger.name)) {
+      this.errors[index].name = 'Enter first and last name (letters only)';
+    }
+
+    // Validate ID (Exactly 9 digits)
+    const idRegex = /^[0-9]{9}$/;
+    if (!idRegex.test(passenger.id)) {
+      this.errors[index].id = 'ID must be exactly 9 digits';
+    }
+
+    // Check for duplicate IDs
+    const idCounts = this.passengers.map(p => p.id).filter(id => id);
+    if (idCounts.filter(id => id === passenger.id).length > 1) {
+      this.errors[index].duplicateId = 'Duplicate Passport ID found';
+    }
+  }
+
+  hasErrors(): boolean {
+    return this.errors.some(error => Object.keys(error).length > 0);
   }
 
   async fetchDestinationImage(destination: string | undefined): Promise<void> {
     if (!destination) {
-      this.destinationImage = 'assets/images/default.jpg'; // Default image
+      this.destinationImage = 'assets/images/default.jpg';
       return;
     }
 
@@ -86,89 +113,95 @@ export class BookAFlightComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error fetching destination image:', error);
-      this.destinationImage = 'assets/images/default.jpg'; // Default image on error
+      this.destinationImage = 'assets/images/default.jpg';
     }
   }
 
   async saveBooking(): Promise<void> {
+    // ✅ Prevent saving if validation fails
+    if (this.hasErrors()) {
+      this.showErrorDialog('Please fix validation errors before saving.');
+      return;
+    }
+
     if (this.passengers.every((p) => p.name && p.id)) {
-      // Open confirmation dialog
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         width: '350px',
         data: { type: 'save', name: 'this booking' },
       });
-  
-      // Wait for user response
+
       const result = await dialogRef.afterClosed().toPromise();
-  
-      // If user confirmed, proceed with saving
+
       if (result?.confirmed) {
         try {
           // Generate a unique booking ID
-          const bookingsCollection = collection(this.firestore, 'bookings');
           let bookingId: string;
-  
+
           do {
-            // Generate a random booking ID
-            const randomId = Math.floor(1000 + Math.random() * 9000); // Generate a random 4-digit number
+            const randomId = Math.floor(1000 + Math.random() * 9000);
             bookingId = `BK${randomId}`;
-            
-            // Check if the ID already exists in Firestore
             const bookingDoc = doc(this.firestore, `bookings/${bookingId}`);
             const docSnapshot = await getDoc(bookingDoc);
-            
-            if (!docSnapshot.exists()) {
-              break; // Unique ID found
-            }
+            if (!docSnapshot.exists()) break;
           } while (true);
-  
-          // Prepare the booking data
+
+          // Save booking
           const bookingData = {
-            bookingId: bookingId, // Custom booking ID
-            id: bookingId, // Ensure document "id" field matches bookingId
+            bookingId,
+            id: bookingId,
+            flightNumber: this.flight?.flightNumber || 'Unknown Flight',
             origin: this.flight?.origin || 'Unknown Origin',
             destination: this.flight?.destination || 'Unknown Destination',
             boarding: `${this.flight?.date || 'Unknown Date'} ${this.flight?.departureTime || 'Unknown Time'}`,
             landing: `${this.flight?.arrivalDate || 'Unknown Date'} ${this.flight?.arrivalTime || 'Unknown Time'}`,
             numberOfPassengers: this.passengers.length,
-            passengers: this.passengers.map((p) => ({
-              name: p.name,
-              id: p.id, // Store passenger ID
-            })),
-            image: '', // Image will be fetched
+            passengers: this.passengers.map((p) => ({ name: p.name, id: p.id })),
+            image: '',
             isDynamicDate: true,
-            status: 'Active', // ✅ Set the default status to Active
+            status: 'Active',
           };
-  
-          // Fetch the destination image if available
+
+          // Fetch destination image
           if (this.flight?.destination) {
             const destinationDoc = doc(this.firestore, `destinations/${this.flight.destination}`);
             const destinationSnapshot = await getDoc(destinationDoc);
-  
             if (destinationSnapshot.exists()) {
               bookingData.image = destinationSnapshot.data()?.['image'] || '';
             }
           }
-  
-          // Save the booking data to Firestore with the bookingId as the document ID
-          const bookingDoc = doc(this.firestore, `bookings/${bookingId}`); // Explicit document ID
-          await setDoc(bookingDoc, bookingData); // Save data with custom ID
-  
-          alert(`Booking saved successfully with ID: ${bookingId}!`);
+
+          // Save to Firestore
+          const bookingDoc = doc(this.firestore, `bookings/${bookingId}`);
+          await setDoc(bookingDoc, bookingData);
+
+          this.showSuccessDialog(`Booking saved successfully with ID: ${bookingId}!`);
           this.router.navigate(['/homepage']);
         } catch (error) {
           console.error('Error saving booking:', error);
-          alert('An error occurred while saving the booking. Please try again.');
+          this.showErrorDialog('An error occurred while saving the booking. Please try again.');
         }
       }
     } else {
-      alert('Please fill in all passenger details.');
+      this.showErrorDialog('Please fill in all passenger details.');
     }
   }
-  
-  
-    redirectToFlightList(): void {
-    alert('Flight not found. Redirecting to Find A Flight.');
+
+  redirectToFlightList(): void {
+    this.showErrorDialog('Flight not found. Redirecting to Find A Flight.');
     this.router.navigate(['/find-a-flight']);
+  }
+
+  private showErrorDialog(message: string): void {
+    this.dialog.open(ConfirmDialogComponent, {
+      width: '350px',
+      data: { title: 'Error', message, showCloseButton: true }
+    });
+  }
+
+  private showSuccessDialog(message: string): void {
+    this.dialog.open(ConfirmDialogComponent, {
+      width: '350px',
+      data: { title: 'Success', message, showCloseButton: true }
+    });
   }
 }

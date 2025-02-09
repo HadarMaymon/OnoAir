@@ -5,6 +5,7 @@ import { BookingStatus
   export class Booking {
     constructor(
       public bookingId: string,
+      public flightNumber: string,
       public origin: string,
       public destination: string,
       public boarding: string = '',

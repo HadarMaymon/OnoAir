@@ -114,6 +114,8 @@
     </button>
   </div>
 
+  
+
   <p class="note">
     <strong>Note:</strong> Editing flight number will create a new entry in the database. If you wish to remove a flight, please click on the trash icon.
   </p>
@@ -121,7 +123,6 @@
     <strong>Note:</strong> Canceled flights will not be displayed in the find a flight section.
   </p>
 
-  <!-- ✨ Flight Edit Component ✨ -->
   <app-edit-flight *ngIf="selectedFlightNumber" [flightNumber]="selectedFlightNumber"></app-edit-flight>
 
 </div>

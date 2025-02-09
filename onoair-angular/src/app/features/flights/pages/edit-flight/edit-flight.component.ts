@@ -60,47 +60,56 @@ export class EditFlightComponent implements OnInit {
     const today = new Date();
     today.setDate(today.getDate() + 1);
     this.minDate = today.toISOString().split('T')[0];
-
+  
     // Fetch all destinations
     this.destinationsService.getAllDestinations().then((destinations) => {
       const destinationNames = destinations.map((dest) => dest.destinationName);
       this.origin = destinationNames;
       this.destination = destinationNames;
-
-      console.log('Fetched origin options:', this.origin); 
-      console.log('Fetched destination options:', this.destination); 
-
+  
       if (!this.flightNumber) {
         this.redirectToFlightList();
         return;
       }
-
+  
       if (this.flightNumber === 'new') {
         this.resetForm('');
         return;
       }
-
+  
+      // 🔥 Fetch flight details
       this.flightService.getFlightByNumber(this.flightNumber).then((flight) => {
-        if (flight) {
-          if (flight.date) {
-            const date = new Date(flight.date);
-            date.setMinutes(date.getMinutes() - date.getTimezoneOffset()); 
-            flight.date = date.toISOString().split('T')[0]; 
-          }
-
-          if (flight.arrivalDate) {
-            const arrivalDate = new Date(flight.arrivalDate);
-            arrivalDate.setMinutes(arrivalDate.getMinutes() - arrivalDate.getTimezoneOffset()); 
-            flight.arrivalDate = arrivalDate.toISOString().split('T')[0];
-            flight.status = flight.status as FlightStatus || FlightStatus.Active;
-          }
-
-          this.flight = flight;
-          this.cdr.detectChanges();
+        if (!flight) {
+          this.redirectToFlightList();
+          return;
         }
+  
+        if (flight.date) {
+          const date = new Date(flight.date);
+          date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+          flight.date = date.toISOString().split('T')[0];
+        }
+  
+        if (flight.arrivalDate) {
+          const arrivalDate = new Date(flight.arrivalDate);
+          arrivalDate.setMinutes(arrivalDate.getMinutes() - arrivalDate.getTimezoneOffset());
+          flight.arrivalDate = arrivalDate.toISOString().split('T')[0];
+          flight.status = flight.status as FlightStatus || FlightStatus.Active;
+        }
+  
+        this.flight = flight;
+  
+        // 🔥 Ensure `hasBookings` is a boolean (default to `false` if undefined)
+        if (this.flightNumber) {
+          this.flightService.getFlightBookings(this.flightNumber).then((hasBookings) => {
+          this.flight!.hasBookings = hasBookings ?? false; // ✅ Default to false
+          });
+        }
+        });
       });
-    });
-  }
+    }
+
+  
   
 
   validateFlightNumber(event: KeyboardEvent): void {
@@ -153,60 +162,73 @@ export class EditFlightComponent implements OnInit {
 
   saveChanges(flightForm: any): void {
     if (flightForm.invalid) {
-      if (!this.dialog.openDialogs.length) {  // Ensure no existing dialog is open
-        this.dialog.open(ConfirmDialogComponent, {
-          width: '350px',
-          data: {
-            title: 'Error',
-            message: 'Please fill in all required fields before saving.',
-          },
-        });
-      }
+      this.showErrorDialog('Please fill in all required fields before saving.');
       return;
     }
   
-    if (this.flight) {
-      // Fix date issue: Convert to local time zone before saving
-      if (this.flight.date) {
-        const selectedDate = new Date(this.flight.date);
-        selectedDate.setMinutes(selectedDate.getMinutes() - selectedDate.getTimezoneOffset()); // Adjust for local timezone
-        this.flight.date = selectedDate.toISOString().split('T')[0]; // Store in YYYY-MM-DD format
-      }
+    if (!this.flight) {
+      this.showErrorDialog('Flight is not defined.');
+      return;
+    }
   
-      if (this.flight.arrivalDate) {
-        const arrivalDate = new Date(this.flight.arrivalDate);
-        arrivalDate.setMinutes(arrivalDate.getMinutes() - arrivalDate.getTimezoneOffset());
-        this.flight.arrivalDate = arrivalDate.toISOString().split('T')[0];
-      }
-  
-      this.flightService.updateFlight(this.flight).then(() => {
-        if (!this.dialog.openDialogs.length) {
-          const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-            width: '350px',
-            data: {
-              title: 'Success',
-              message: 'Changes saved successfully!',
-            },
-          });
-  
-          dialogRef.afterClosed().subscribe(() => {
-            this.router.navigate(['/manage-flight']);
+    // 🚨 Ensure status is not changed if there are active bookings
+    if (this.flight && this.flight.hasBookings) {
+      this.flightService.getFlightByNumber(this.flight.flightNumber).then((originalFlight) => {
+        if (originalFlight && originalFlight.status !== this.flight!.status) {
+          this.showErrorDialog('This flight has active bookings. Status cannot be changed.');
+          this.flight!.status = originalFlight.status; // Reset status to original
+          this.cdr.detectChanges();
+          return;
+        }
+    
+        // ✅ Proceed with saving other changes
+        if (this.flight) { // Add null check here
+          this.flightService.updateFlight(this.flight).then(() => {
+            this.showSuccessDialog('Changes saved successfully!', () => {
+              this.router.navigate(['/manage-flight']);
+            });
+          }).catch((error) => {
+            this.showErrorDialog('Failed to save changes. Please try again.');
+            console.error('Error saving changes:', error);
           });
         }
-      }).catch((error) => {
-        if (!this.dialog.openDialogs.length) {
-          this.dialog.open(ConfirmDialogComponent, {
-            width: '350px',
-            data: {
-              title: 'Error',
-              message: 'Failed to save changes. Please try again.',
-            },
-          });
-        }
-        console.error('Error saving changes:', error);
       });
+    
+      return; // Stop here if bookings exist
+    }
+  
+    // ✅ Save changes if no bookings exist
+    this.flightService.updateFlight(this.flight).then(() => {
+      this.showSuccessDialog('Changes saved successfully!', () => {
+        this.router.navigate(['/manage-flight']);
+      });
+    }).catch((error) => {
+      this.showErrorDialog('Failed to save changes. Please try again.');
+      console.error('Error saving changes:', error);
+    });
+  }
+    
+
+  // Show error dialog
+  private showErrorDialog(message: string): void {
+    this.dialog.open(ConfirmDialogComponent, {
+      width: '350px',
+      data: { title: 'Error', message, showCloseButton: true }
+    });
+  }
+  
+  // Show success dialog
+  private showSuccessDialog(message: string, afterClose?: () => void): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '350px',
+      data: { title: 'Success', message, showCloseButton: true }
+    });
+  
+    if (afterClose) {
+      dialogRef.afterClosed().subscribe(afterClose);
     }
   }
+    
   
   
 

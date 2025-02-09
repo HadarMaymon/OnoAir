@@ -1,8 +1,10 @@
-<h2 mat-dialog-title>{{ data.title || 'Confirm Action' }}</h2>
+<h2 mat-dialog-title>{{ getTitle() }}</h2>
 <mat-dialog-content>
-  <p>{{ data.message }}</p>
+  <p>{{ getMessage() }}</p>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button *ngIf="data.showConfirmButton" mat-button color="primary" (click)="onConfirm()">Confirm</button>
-  <button *ngIf="data.showCloseButton" mat-button (click)="onCancel()">Close</button>
+  <button *ngIf="data.showCancelButton" mat-button color="warn" (click)="onCancel()">No</button>
+  <button *ngIf="data.showConfirmButton" mat-button [color]="getConfirmButtonColor()" (click)="onConfirm()">
+    {{ getConfirmButtonText() }}  </button>
+  <button *ngIf="data.showCloseButton" mat-button color="primary" (click)="onCancel()">Close</button>
 </mat-dialog-actions>

@@ -52,7 +52,15 @@
     transform: scale(1.05);
 }
 
-
+mat-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  button {
+    min-width: 64px;
+  }
+  
 
 
 h1 {

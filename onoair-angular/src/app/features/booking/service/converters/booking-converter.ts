@@ -9,6 +9,7 @@ export const bookingConverter: FirestoreDataConverter<Booking> = {
    */
   toFirestore: (booking: Booking): DocumentData => ({
     bookingId: booking.bookingId,
+    flightNumber: booking.flightNumber,
     origin: booking.origin,
     destination: booking.destination,
     boarding: booking.boarding,
@@ -29,6 +30,7 @@ export const bookingConverter: FirestoreDataConverter<Booking> = {
   fromFirestore: (snapshot) => {
     const data = snapshot.data() as {
       bookingId: string;
+      flightNumber: string;
       origin: string;
       destination: string;
       boarding: string;
@@ -42,6 +44,7 @@ export const bookingConverter: FirestoreDataConverter<Booking> = {
 
     return new Booking(
       data.bookingId,
+      data.flightNumber,
       data.origin,
       data.destination,
       data.boarding,

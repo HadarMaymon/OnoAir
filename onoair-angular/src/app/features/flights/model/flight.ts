@@ -13,7 +13,8 @@ export class Flight {
     public image: string = '',
     public availableSeats: number = 0,
     public isDynamicDate: boolean = false,
-    public status: FlightStatus = FlightStatus.Active // Default to Active
+    public status: FlightStatus = FlightStatus.Active, // Default to Active
+    public hasBookings: boolean = false // ✅ Default to false
   ) {}
 
   updatePrice(newPrice: number) {
@@ -29,6 +30,6 @@ export class Flight {
   }
 
   updateStatus(newStatus: FlightStatus) {
-    this.status = newStatus; // Add a method to update status
+    this.status = newStatus;
   }
 }

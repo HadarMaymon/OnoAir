@@ -26,7 +26,6 @@ import { EditDestinationsComponent } from '../edit-destinations/edit-destination
   styleUrls: ['./manage-destinations.component.css'],
   standalone: true,
   imports: [
-    RouterLink,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
@@ -37,7 +36,6 @@ import { EditDestinationsComponent } from '../edit-destinations/edit-destination
     MatSort,
     MatPaginator,
     MatIconModule,
-    EditDestinationsComponent
   ],
 })
 export class ManageDestinationComponent implements OnInit, AfterViewInit {

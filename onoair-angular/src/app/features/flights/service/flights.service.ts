@@ -16,6 +16,8 @@ import {
 import { Flight } from '../model/flight';
 import { Destination } from '../../destinations/models/destination';
 import { FlightStatus } from '../model/flight-status.enum';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog.component';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +26,7 @@ export class FlightService {
   private flightsSubject = new BehaviorSubject<Flight[]>([]);
   flights$ = this.flightsSubject.asObservable();
 
-  constructor(private firestore: Firestore) {
+  constructor(private firestore: Firestore, private dialog: MatDialog) {
     this.syncFlights();
   }
 
@@ -107,13 +109,30 @@ export class FlightService {
   /**
    * Deletes a flight from Firestore.
    */
-  deleteFlight(flightNumber: string): Promise<void> {
+  async deleteFlight(flightNumber: string): Promise<void> {
+  try {
     const flightDoc = doc(this.firestore, 'flights', flightNumber);
-    return deleteDoc(flightDoc).then(() => {
-      console.log(`Flight ${flightNumber} deleted successfully!`);
-    });
+    await deleteDoc(flightDoc);
+    console.log(`Flight ${flightNumber} deleted successfully.`);
+  } catch (error) {
+    console.error(`Error deleting flight ${flightNumber}:`, error);
+    throw error; // Ensure error is handled properly
   }
+}
 
+
+async getFlightBookings(flightNumber: string): Promise<boolean> {
+  const bookingsCollection = collection(this.firestore, 'bookings');
+  const bookingsQuery = query(bookingsCollection, where('flightNumber', '==', flightNumber));
+  const bookingSnapshot = await getDocs(bookingsQuery);
+
+  console.log(`Checking bookings for flight ${flightNumber}:`, bookingSnapshot.size); 
+
+  return !bookingSnapshot.empty; 
+}
+
+
+  
   /**
    * Fetches a flight by its number from Firestore.
    */

@@ -25,11 +25,15 @@
 
     <!-- Departure Date -->
     <mat-form-field appearance="outline">
-      <mat-label>Departure</mat-label>
-      <input matInput [(ngModel)]="filters.departureDate" [matDatepicker]="picker1" [min]="today" placeholder="Departure Date">
-      <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-      <mat-datepicker #picker1></mat-datepicker>
+      <mat-label>Departure Date Range</mat-label>
+      <mat-date-range-input [formGroup]="filterForm" [rangePicker]="departureRangePicker">
+        <input matStartDate formControlName="departureStartDate" placeholder="Start Date">
+        <input matEndDate formControlName="departureEndDate" placeholder="End Date">
+      </mat-date-range-input>
+      <mat-datepicker-toggle matSuffix [for]="departureRangePicker"></mat-datepicker-toggle>
+      <mat-date-range-picker #departureRangePicker></mat-date-range-picker>
     </mat-form-field>
+    
     
 
     <!-- Price Budget -->

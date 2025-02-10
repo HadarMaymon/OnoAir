@@ -174,7 +174,7 @@ async getFlightBookings(flightNumber: string): Promise<boolean> {
   /**
    * Fetches flights within a specific date range.
    */
-  getFlightsWithinDateRange(startDate: string, endDate: string): Observable<Flight[]> {
+  getFlightsByDateRange(startDate: string, endDate: string): Observable<Flight[]> {
     const flightsRef = collection(this.firestore, 'flights');
     const flightsQuery = query(
       flightsRef,

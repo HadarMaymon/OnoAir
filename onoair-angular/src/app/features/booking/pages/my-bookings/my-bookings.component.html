@@ -8,44 +8,43 @@
     <h1>{{ section.title }}</h1>
 
     <!-- Show bookings if available, otherwise fallback to 'noBookings' -->
-    <div *ngIf="section.bookings.length > 0; else noBookings">
-      <div *ngFor="let booking of section.bookings" class="booking-card">
-        <img
-          [src]="booking.image || 'assets/images/default-destination.jpg'"
-          alt="Image for {{ booking.destination }}"
-          class="destination-image"
-        />
-        <div class="booking-details">
-          <p><strong>Flight Number:</strong> {{ booking.flightNumber }}</p>
-          <p><strong>Origin:</strong> {{ booking.origin }}</p>
-          <p><strong>Boarding:</strong> {{ booking.boarding }}</p>
-          <p><strong>Destination:</strong> {{ booking.destination }}</p>
-          <p><strong>Landing:</strong> {{ booking.landing }}</p>
-          <p><strong>No. of Passengers:</strong> {{ booking.passengers.length }}</p>
-          <p><strong>Status:</strong> 
-            <span [ngClass]="{'active-status': booking.status === bookingStatus.Active, 'canceled-status': booking.status === bookingStatus.Canceled}">
-              {{ booking.status }}
-            </span>
-          </p>
+    <div *ngFor="let booking of section.bookings" class="booking-card">
+      <img
+        [src]="booking.image || 'assets/images/default-destination.jpg'"
+        alt="Image for {{ booking.destination }}"
+        class="destination-image"
+      />
+      <div class="booking-details">
+        <p><strong>Flight Number:</strong> {{ booking.flightNumber }}</p>
+        <p><strong>Origin:</strong> {{ booking.origin }}</p>
+        <p><strong>Boarding:</strong> {{ booking.boarding }}</p>
+        <p><strong>Destination:</strong> {{ booking.destination }}</p>
+        <p><strong>Landing:</strong> {{ booking.landing }}</p>
+        <p><strong>No. of Passengers:</strong> {{ booking.passengers.length }}</p>
+        <p><strong>Status:</strong> 
+          <span [ngClass]="{'active-status': booking.status === bookingStatus.Active, 'canceled-status': booking.status === bookingStatus.Canceled}">
+            {{ booking.status }}
+          </span>
+        </p>
+    
+        <!-- View Booking Button -->
+        <button 
+          mat-raised-button 
+          color="primary" 
+          (click)="viewBooking(booking.bookingId)">
+          View Details
+        </button>
+    
+    <!-- Cancel Button (only visible for Active bookings with a future boarding date) -->
+    <button 
+      mat-raised-button 
+      color="warn" 
+      *ngIf="booking.status === bookingStatus.Active && parseDate(booking.boarding) > now" 
+      (click)="toggleBookingStatus(booking)">
+      Cancel
+    </button>
 
-          <!-- View Booking Button -->
-          <button 
-            mat-raised-button 
-            color="primary" 
-            (click)="viewBooking(booking.bookingId)">
-            View Details
-          </button>
-
-          <button 
-            mat-raised-button 
-            [color]="booking.status === bookingStatus.Active ? 'warn' : 'primary'" 
-            (click)="toggleBookingStatus(booking)">
-            {{ booking.status === bookingStatus.Active ? 'Cancel' : 'Activate' }}
-          </button>
-
-        </div>
-      </div>
-    </div>
+    
 
     <!-- Fallback template for no bookings -->
     <ng-template #noBookings>

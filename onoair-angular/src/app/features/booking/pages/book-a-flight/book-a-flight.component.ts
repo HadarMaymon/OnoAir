@@ -61,10 +61,7 @@ export class BookAFlightComponent implements OnInit {
   }
 
   updatePassengers(): void {
-    this.passengers = Array.from({ length: this.passengerCount }, () => ({
-      name: '',
-      id: '',
-    }));
+    this.passengers = Array.from({ length: this.passengerCount }, () => ({ name: '', id: '' }));
     this.errors = Array(this.passengerCount).fill({});
   }
 
@@ -72,27 +69,27 @@ export class BookAFlightComponent implements OnInit {
     const passenger = this.passengers[index];
     this.errors[index] = {};
 
-    // Validate Name (First and Last name only)
+    // ✅ Validate Name (First and Last name only)
     const nameRegex = /^[A-Za-z]+ [A-Za-z]+$/;
     if (!nameRegex.test(passenger.name)) {
       this.errors[index].name = 'Enter first and last name (letters only)';
     }
 
-    // Validate ID (Exactly 9 digits)
+    // ✅ Validate Passport ID (Exactly 9 digits)
     const idRegex = /^[0-9]{9}$/;
     if (!idRegex.test(passenger.id)) {
       this.errors[index].id = 'ID must be exactly 9 digits';
     }
 
-    // Check for duplicate IDs
-    const idCounts = this.passengers.map(p => p.id).filter(id => id);
-    if (idCounts.filter(id => id === passenger.id).length > 1) {
+    // ✅ Check for Duplicate Passport ID
+    const idCounts = this.passengers.map((p) => p.id).filter((id) => id);
+    if (idCounts.filter((id) => id === passenger.id).length > 1) {
       this.errors[index].duplicateId = 'Duplicate Passport ID found';
     }
   }
 
   hasErrors(): boolean {
-    return this.errors.some(error => Object.keys(error).length > 0);
+    return this.errors.some((error) => Object.keys(error).length > 0);
   }
 
   async fetchDestinationImage(destination: string | undefined): Promise<void> {
@@ -118,7 +115,6 @@ export class BookAFlightComponent implements OnInit {
   }
 
   async saveBooking(): Promise<void> {
-    // ✅ Prevent saving if validation fails
     if (this.hasErrors()) {
       this.showErrorDialog('Please fix validation errors before saving.');
       return;
@@ -134,9 +130,7 @@ export class BookAFlightComponent implements OnInit {
 
       if (result?.confirmed) {
         try {
-          // Generate a unique booking ID
           let bookingId: string;
-
           do {
             const randomId = Math.floor(1000 + Math.random() * 9000);
             bookingId = `BK${randomId}`;
@@ -145,7 +139,6 @@ export class BookAFlightComponent implements OnInit {
             if (!docSnapshot.exists()) break;
           } while (true);
 
-          // Save booking
           const bookingData = {
             bookingId,
             id: bookingId,
@@ -161,20 +154,9 @@ export class BookAFlightComponent implements OnInit {
             status: 'Active',
           };
 
-          // Fetch destination image
-          if (this.flight?.destination) {
-            const destinationDoc = doc(this.firestore, `destinations/${this.flight.destination}`);
-            const destinationSnapshot = await getDoc(destinationDoc);
-            if (destinationSnapshot.exists()) {
-              bookingData.image = destinationSnapshot.data()?.['image'] || '';
-            }
-          }
-
-          // Save to Firestore
           const bookingDoc = doc(this.firestore, `bookings/${bookingId}`);
           await setDoc(bookingDoc, bookingData);
 
-          this.showSuccessDialog(`Booking saved successfully with ID: ${bookingId}!`);
           this.router.navigate(['/homepage']);
         } catch (error) {
           console.error('Error saving booking:', error);
@@ -187,21 +169,14 @@ export class BookAFlightComponent implements OnInit {
   }
 
   redirectToFlightList(): void {
-    this.showErrorDialog('Flight not found. Redirecting to Find A Flight.');
     this.router.navigate(['/find-a-flight']);
   }
 
   private showErrorDialog(message: string): void {
     this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
-      data: { title: 'Error', message, showCloseButton: true }
+      data: { title: 'Error', message, showCloseButton: true },
     });
   }
 
-  private showSuccessDialog(message: string): void {
-    this.dialog.open(ConfirmDialogComponent, {
-      width: '350px',
-      data: { title: 'Success', message, showCloseButton: true }
-    });
-  }
 }

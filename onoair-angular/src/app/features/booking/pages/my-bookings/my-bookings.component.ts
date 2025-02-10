@@ -21,6 +21,7 @@ export class MyBookingsComponent implements OnInit {
   bookingSections: { title: string; bookings: Booking[] }[] = [];
   bookingStatus = BookingStatus; // Expose the enum to the template
   isLoading = true;
+  now: Date = new Date(); // ✅ Current date, exposed to the template
 
   constructor(private bookingService: BookingsService, private router: Router, private dialog: MatDialog) {}
 
@@ -59,9 +60,8 @@ export class MyBookingsComponent implements OnInit {
       },
     });
   }
-  
 
-  private parseDate(dateStr: string): Date {
+  parseDate(dateStr: string): Date {
     try {
       if (!dateStr) {
         return new Date(0);
@@ -87,54 +87,41 @@ export class MyBookingsComponent implements OnInit {
   }
 
   toggleBookingStatus(booking: Booking): void {
-    const newStatus = booking.status === BookingStatus.Active ? BookingStatus.Canceled : BookingStatus.Active;
-    const actionText = newStatus === BookingStatus.Canceled ? 'cancel' : 'activate';
-  
-    if (this.dialog.openDialogs.length > 0) return; // Prevent duplicate dialogs
-  
+    if (booking.status === BookingStatus.Canceled) {
+      console.warn(`Booking ${booking.bookingId} is already canceled and cannot be reactivated.`);
+      return;
+    }
+
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
       data: {
         type: 'update',
-        title: `Confirm ${actionText.charAt(0).toUpperCase() + actionText.slice(1)}`,
-        message: `Are you sure you want to ${actionText} this booking?`,
+        title: 'Confirm Cancel',
+        message: 'Are you sure you want to cancel this booking?',
         showCancelButton: true,
         showConfirmButton: true,
       },
     });
-  
+
     dialogRef.afterClosed().pipe(take(1)).subscribe((result) => {
       if (result?.confirmed) {
-        this.bookingService.updateBookingStatus(booking.bookingId, newStatus)
+        this.bookingService.updateBookingStatus(booking.bookingId, BookingStatus.Canceled)
           .then(() => {
-            // ✅ Update UI immediately
-            booking.status = newStatus;
+            booking.status = BookingStatus.Canceled;
             this.moveBookingToCorrectSection(booking);
-            console.log(`Booking ${booking.bookingId} status updated to ${newStatus}`);
           })
           .catch((error) => {
-            console.error(`Error updating booking status:`, error);
-            this.dialog.open(ConfirmDialogComponent, {
-              width: '350px',
-              data: {
-                title: 'Error',
-                message: 'Failed to update the booking status. Please try again.',
-                showCloseButton: true,
-              },
-            });
+            console.error('Error canceling booking:', error);
           });
       }
     });
   }
-  
 
   private moveBookingToCorrectSection(updatedBooking: Booking): void {
-    // Remove the booking from its current section
     this.bookingSections.forEach(section => {
       section.bookings = section.bookings.filter(b => b.bookingId !== updatedBooking.bookingId);
     });
-  
-    // **Logic Change: Canceled bookings always go to "Previous Bookings"**
+
     if (updatedBooking.status === BookingStatus.Canceled) {
       this.bookingSections.find(section => section.title === 'Previous Bookings')?.bookings.push(updatedBooking);
     } else {
@@ -146,5 +133,4 @@ export class MyBookingsComponent implements OnInit {
       }
     }
   }
-  
 }

@@ -75,15 +75,16 @@ export class ManageFlightComponent implements OnInit, AfterViewInit {
     if (this.dataSource) {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
-
+  
       this.dataSource.sortingDataAccessor = (item, property) => {
         if (property === 'date') {
-          return this.parseDate(item.date);
+          return item.date instanceof Date ? item.date.getTime() : 0;
         }
         return (item as any)[property] || '';
       };
     }
   }
+  
 
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;

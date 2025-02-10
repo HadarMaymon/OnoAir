@@ -17,7 +17,7 @@ import { Flight } from '../model/flight';
 import { Destination } from '../../destinations/models/destination';
 import { FlightStatus } from '../model/flight-status.enum';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog.component';
+import { Timestamp } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -99,12 +99,14 @@ export class FlightService {
     const flightDoc = doc(flightCollection, flight.flightNumber);
     return setDoc(flightDoc, { 
       ...flight, 
-      status: flight.status as FlightStatus // Ensure the status is saved as an enum
+      date: Timestamp.fromDate(flight.date), // ✅ Convert to Timestamp
+      arrivalDate: Timestamp.fromDate(flight.arrivalDate), // ✅ Convert to Timestamp
+      status: flight.status as FlightStatus 
     }).then(() => {
       console.log(`Flight ${flight.flightNumber} updated successfully!`);
     });
   }
-  
+
 
   /**
    * Deletes a flight from Firestore.

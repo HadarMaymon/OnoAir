@@ -39,15 +39,16 @@ export class LastMinuteFlightComponent implements OnInit {
     console.log("Today:", today);
     console.log("One Week From Now:", oneWeekFromNow);
   
-    // Filter flights occurring within the next 7 days
-    this.lastMinuteFlights = flights.filter((flight) => {
-      const flightDate = this.parseDate(flight.date);
-      console.log(`Flight Date (${flight.date}):`, flightDate);
-      return flightDate >= today && flightDate <= oneWeekFromNow;
-    });
-  
-    console.log("Filtered Flights:", this.lastMinuteFlights);
-  }
+// Filter flights occurring within the next 7 days
+this.lastMinuteFlights = flights.filter((flight) => {
+  const flightDate = new Date(flight.date); 
+  console.log(`Flight Date (${flight.date}):`, flightDate);
+
+  return flightDate >= today && flightDate <= oneWeekFromNow;
+});
+
+console.log("Filtered Flights:", this.lastMinuteFlights);
+}
   
   
 

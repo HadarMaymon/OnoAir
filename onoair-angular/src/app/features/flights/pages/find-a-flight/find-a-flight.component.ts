@@ -117,7 +117,7 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
   applyFilters(): void {
     const { from, to, departureDate, priceBudget, passengers } = this.filters;
   
-    // Get today's date in local time (set to midnight for accurate comparison)
+    // Get today's date at midnight for accurate comparison
     const today = new Date();
     today.setHours(0, 0, 0, 0);
   
@@ -125,9 +125,8 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
       const filteredFlights = flights.filter((flight) => {
         if (!flight.date) return false; // Skip flights with missing date
   
-        // ✅ Convert flight.date from string to Date object
-        const [year, month, day] = flight.date.split('-').map(Number);
-        const flightDate = new Date(year, month - 1, day);
+        // ✅ flight.date is already a Date object, so no need to convert it
+        const flightDate = new Date(flight.date);
         flightDate.setHours(0, 0, 0, 0); // Ensure same time for comparison
   
         console.log(
@@ -146,14 +145,17 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
           return false;
         }
   
+        // ✅ Convert `departureDate` to Date (if provided)
+        const isDepartureMatch =
+          !departureDate || new Date(departureDate).toDateString() === flightDate.toDateString();
+  
         // ✅ Apply filters
         const matchesFrom = !from || flight.origin === from;
         const matchesTo = !to || flight.destination === to;
-        const matchesDeparture = !departureDate || flight.date === departureDate;
         const matchesPrice = !priceBudget || flight.price <= priceBudget;
         const matchesPassengers = !passengers || flight.availableSeats >= passengers;
   
-        return matchesFrom && matchesTo && matchesDeparture && matchesPrice && matchesPassengers;
+        return matchesFrom && matchesTo && isDepartureMatch && matchesPrice && matchesPassengers;
       });
   
       this.dataSource.data = filteredFlights;

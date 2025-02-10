@@ -5,16 +5,16 @@ export class Flight {
     public flightNumber: string = '',
     public origin: string = '',
     public destination: string = '',
-    public date: string = '',
+    public date: Date = new Date(), 
     public departureTime: string = '',
-    public arrivalDate: string = '',
+    public arrivalDate: Date = new Date(), 
     public arrivalTime: string = '',
     public price: number = 0,
     public image: string = '',
     public availableSeats: number = 0,
     public isDynamicDate: boolean = false,
-    public status: FlightStatus = FlightStatus.Active, // Default to Active
-    public hasBookings: boolean = false // ✅ Default to false
+    public status: FlightStatus = FlightStatus.Active,
+    public hasBookings: boolean = false
   ) {}
 
   updatePrice(newPrice: number) {

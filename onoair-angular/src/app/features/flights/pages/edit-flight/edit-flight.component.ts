@@ -83,29 +83,30 @@ export class EditFlightComponent implements OnInit {
           this.redirectToFlightList();
           return;
         }
-  
+
         if (flight.date) {
           const date = new Date(flight.date);
           date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
-          flight.date = date.toISOString().split('T')[0];
+          flight.date = date; // ✅ Keep as a Date object
         }
-  
+
         if (flight.arrivalDate) {
           const arrivalDate = new Date(flight.arrivalDate);
           arrivalDate.setMinutes(arrivalDate.getMinutes() - arrivalDate.getTimezoneOffset());
-          flight.arrivalDate = arrivalDate.toISOString().split('T')[0];
-          flight.status = flight.status as FlightStatus || FlightStatus.Active;
+          flight.arrivalDate = arrivalDate; // ✅ Keep as a Date object
         }
-  
+
+        flight.status = flight.status as FlightStatus || FlightStatus.Active;
         this.flight = flight;
-  
+
         // 🔥 Ensure `hasBookings` is a boolean (default to `false` if undefined)
         if (this.flightNumber) {
           this.flightService.getFlightBookings(this.flightNumber).then((hasBookings) => {
-          this.flight!.hasBookings = hasBookings ?? false; // ✅ Default to false
+            this.flight!.hasBookings = hasBookings ?? false; // ✅ Default to false
           });
         }
-        });
+      });
+
       });
     }
 
@@ -237,9 +238,9 @@ export class EditFlightComponent implements OnInit {
       flightNumber,
       '',
       '',
+      new Date(),
       '',
-      '',
-      '',
+      new Date(),
       '',
       0,
       '',

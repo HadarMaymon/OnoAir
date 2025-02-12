@@ -1,29 +1,28 @@
 <div class="find-a-flight-container">
   <h1>Find A Flight</h1>
 
-  <!-- Filter Form -->
-  <div class="filter-container">
+  <div class="filter-container" [formGroup]="filterForm">
     <!-- Origin Dropdown -->
     <mat-form-field appearance="outline">
       <mat-label>From</mat-label>
-      <mat-select [(value)]="filters.from">
+      <mat-select formControlName="from">
         <mat-option *ngFor="let origin of destinationNames" [value]="origin">
           {{ origin }}
         </mat-option>
       </mat-select>
     </mat-form-field>
-
+  
     <!-- Destination Dropdown -->
     <mat-form-field appearance="outline">
       <mat-label>To</mat-label>
-      <mat-select [(value)]="filters.to">
+      <mat-select formControlName="to">
         <mat-option *ngFor="let destination of destinationNames" [value]="destination">
           {{ destination }}
         </mat-option>
       </mat-select>
     </mat-form-field>
-
-    <!-- Departure Date -->
+  
+    <!-- Departure Date Range -->
     <mat-form-field appearance="outline">
       <mat-label>Departure Date Range</mat-label>
       <mat-date-range-input [formGroup]="filterForm" [rangePicker]="departureRangePicker">
@@ -33,24 +32,23 @@
       <mat-datepicker-toggle matSuffix [for]="departureRangePicker"></mat-datepicker-toggle>
       <mat-date-range-picker #departureRangePicker></mat-date-range-picker>
     </mat-form-field>
-    
-    
-
+  
     <!-- Price Budget -->
     <mat-form-field appearance="outline">
       <mat-label>Price Budget</mat-label>
-      <input matInput type="number" [(ngModel)]="filters.priceBudget" placeholder="Enter max price (in $)">
+      <input matInput type="number" formControlName="priceBudget" placeholder="Max Price ($)">
     </mat-form-field>
-
+  
     <!-- Passengers -->
     <mat-form-field appearance="outline">
       <mat-label>Passengers</mat-label>
-      <input matInput type="number" [(ngModel)]="filters.passengers" placeholder="Passengers">
+      <input matInput type="number" formControlName="passengers" placeholder="Number of Passengers">
     </mat-form-field>
-
+  
     <!-- Search Button -->
     <button mat-raised-button color="primary" (click)="applyFilters()">Search</button>
   </div>
+  
 
   <!-- Flights Table -->
   <table mat-table [dataSource]="dataSource" matSort matSortActive="date" matSortDirection="asc" class="mat-elevation-z8">

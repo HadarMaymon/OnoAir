@@ -98,7 +98,7 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    // ✅ Initialize filterForm with controls
+    //Initialize filterForm with controls
     this.filterForm = this.fb.group({
       from: [''],
       to: [''],
@@ -148,15 +148,15 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
   
     this.flightService.flights$.subscribe((flights) => {
       const filteredFlights = flights.filter((flight) => {
-        const flightDate = new Date(flight.date); // flight.date is a Date object
-        flightDate.setHours(0, 0, 0, 0); // Normalize time for comparison
+        const flightDate = new Date(flight.date);
+        flightDate.setHours(0, 0, 0, 0);
   
         const isInRange =
           (!startDate || flightDate >= startDate) &&
           (!endDate || flightDate <= endDate);
   
-        const matchesFrom = !from || flight.origin === from;
-        const matchesTo = !to || flight.destination === to;
+        const matchesFrom = !from || flight.origin.toLowerCase() === from.toLowerCase();
+        const matchesTo = !to || flight.destination.toLowerCase() === to.toLowerCase();
         const matchesPrice = !priceBudget || flight.price <= priceBudget;
         const matchesPassengers = !passengers || flight.availableSeats >= passengers;
   
@@ -164,12 +164,13 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
       });
   
       if (filteredFlights.length === 0) {
-        alert("No flights found for the selected range. Try adjusting your filters.");
+        alert("No flights found for the selected filters. Try adjusting your search.");
       }
   
       this.dataSource.data = filteredFlights;
     });
   }
+  
   
   
     

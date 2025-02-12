@@ -28,7 +28,7 @@
           {{ formatDate(booking.landing) | date: 'dd-MM-yyyy HH:mm' }}
         </p>
 
-        <p><strong>No. of Passengers:</strong> {{ booking.passengers?.length || 'N/A' }}</p>
+        <p><strong>No. of Passengers:</strong> {{ booking.passengers.length || 'N/A' }}</p>
         <p><strong>Status:</strong> 
           <span [ngClass]="{'active-status': booking.status === bookingStatus.Active, 'canceled-status': booking.status === bookingStatus.Canceled}">
             {{ booking.status || 'N/A' }}

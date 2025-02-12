@@ -128,15 +128,15 @@ export class BookAFlightComponent implements OnInit {
       this.showErrorDialog('Please fix validation errors before saving.');
       return;
     }
-
+  
     if (this.passengers.every((p) => p.name && p.id)) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         width: '350px',
         data: { type: 'save', name: 'this booking' },
       });
-
+  
       const result = await dialogRef.afterClosed().toPromise();
-
+  
       if (result?.confirmed) {
         try {
           let bookingId: string;
@@ -147,25 +147,27 @@ export class BookAFlightComponent implements OnInit {
             const docSnapshot = await getDoc(bookingDoc);
             if (!docSnapshot.exists()) break;
           } while (true);
-
+  
           const bookingData = {
             bookingId,
             id: bookingId,
             flightNumber: this.flight?.flightNumber || 'Unknown Flight',
             origin: this.flight?.origin || 'Unknown Origin',
             destination: this.flight?.destination || 'Unknown Destination',
-            boarding: `${this.flight?.date || 'Unknown Date'} ${this.flight?.departureTime || 'Unknown Time'}`,
-            landing: `${this.flight?.arrivalDate || 'Unknown Date'} ${this.flight?.arrivalTime || 'Unknown Time'}`,
+            boarding: this.flight?.date ? Timestamp.fromDate(this.flight.date) : Timestamp.now(),
+            departureTime: this.flight?.departureTime || '00:00', // ✅ Store departure time
+            landing: this.flight?.arrivalDate ? Timestamp.fromDate(this.flight.arrivalDate) : Timestamp.now(),
+            arrivalTime: this.flight?.arrivalTime || '00:00', // ✅ Store arrival time
             numberOfPassengers: this.passengers.length,
             passengers: this.passengers.map((p) => ({ name: p.name, id: p.id })),
             image: '',
             isDynamicDate: true,
             status: 'Active',
           };
-
+  
           const bookingDoc = doc(this.firestore, `bookings/${bookingId}`);
           await setDoc(bookingDoc, bookingData);
-
+  
           this.router.navigate(['/homepage']);
         } catch (error) {
           console.error('Error saving booking:', error);
@@ -176,7 +178,7 @@ export class BookAFlightComponent implements OnInit {
       this.showErrorDialog('Please fill in all passenger details.');
     }
   }
-
+  
   redirectToFlightList(): void {
     this.router.navigate(['/find-a-flight']);
   }

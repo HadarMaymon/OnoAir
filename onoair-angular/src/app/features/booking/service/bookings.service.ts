@@ -45,18 +45,19 @@ export class BookingsService {
             data.origin,
             data.destination,
             data.boarding instanceof Timestamp 
-            ? data.boarding.toDate() 
-            : new Date(data.boarding),
+              ? data.boarding.toDate() 
+              : new Date(data.boarding),
+            data.departureTime || '00:00', // ✅ Read departure time
             data.landing instanceof Timestamp 
-            ? data.landing.toDate() 
-            : new Date(data.landing),
+              ? data.landing.toDate() 
+              : new Date(data.landing),
+            data.arrivalTime || '00:00', // ✅ Read arrival time
             data.numberOfPassengers,
             data.passengers?.map((p: { name: string; id: string }) => new Passenger(p.name, p.id)) || [],
             destinations.find(dest => dest.destinationName === data.destination)?.image || 'assets/images/default-destination.jpg',
             data.isDynamicDate,
             data.status as BookingStatus
           );
-          
         });
     
         console.log('✅ Processed Bookings:', bookings);
@@ -65,6 +66,7 @@ export class BookingsService {
         console.error('❌ Error syncing bookings:', error);
       }
     });
+    
     
 }
 

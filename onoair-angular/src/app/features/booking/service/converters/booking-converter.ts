@@ -24,21 +24,24 @@ export const bookingConverter: FirestoreDataConverter<Booking> = {
 
   fromFirestore: (snapshot) => {
     const data = snapshot.data();
-    console.log('🔥 Firestore bookingConverter received:', data); // ✅ Debugging
+    console.log('🔥 Firestore bookingConverter received:', data); 
 
     return new Booking(
       data['bookingId'],
       data['flightNumber'],
       data['origin'],
       data['destination'],
-      parseFirestoreTimestamp(data['boarding']), // ✅ Convert properly
-      parseFirestoreTimestamp(data['landing']), // ✅ Convert properly
+      parseFirestoreTimestamp(data['boarding']), 
+      data['departureTime'] || '00:00', 
+      parseFirestoreTimestamp(data['landing']), 
+      data['arrivalTime'] || '00:00', 
       data['numberOfPassengers'],
       data['passengers']?.map((p: { name: string; id: string }) => new Passenger(p.name, p.id)) || [],
       data['image'] || 'assets/images/default-destination.jpg',
       data['isDynamicDate'],
       data['status'] as BookingStatus
     );
+    
   },
 };
 

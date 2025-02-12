@@ -1,56 +1,51 @@
-<div class="loading-spinner" *ngIf="isLoading">
-  <p>Loading bookings...</p>
-</div>
-
-<div class="my-bookings-container" *ngIf="!isLoading">
-  <!-- Iterate through booking sections (e.g., Upcoming and Previous) -->
-  <div *ngFor="let section of bookingSections" class="booking-section">
+<div class="my-bookings-container">
+  <!-- Iterate through booking sections (Upcoming & Previous) -->
+  <div *ngFor="let section of bookingSections">
     <h1>{{ section.title }}</h1>
 
-    <!-- Show bookings if available, otherwise fallback to 'noBookings' -->
+    <!-- Show bookings if available, otherwise show fallback message -->
     <div *ngFor="let booking of section.bookings" class="booking-card">
+      <!-- Destination Image -->
       <img
         [src]="booking.image && booking.image.trim() !== '' ? booking.image : 'assets/images/default-destination.jpg'"
         alt="Image for {{ booking.destination }}"
         class="destination-image"
       />
+
+      <!-- Booking Details -->
       <div class="booking-details">
         <p><strong>Flight Number:</strong> {{ booking.flightNumber || 'N/A' }}</p>
         <p><strong>Origin:</strong> {{ booking.origin || 'N/A' }}</p>
-
-        <p><strong>Boarding:</strong> 
-          {{ formatDate(booking.boarding) | date: 'dd-MM-yyyy HH:mm' }}
-        </p>
+        <p><strong>Boarding:</strong> {{ booking.boarding | date: 'dd-MM-yyyy' }}</p>
+        <p><strong>Departure Time:</strong> {{ booking.departureTime || 'N/A' }}</p>
 
         <p><strong>Destination:</strong> {{ booking.destination || 'N/A' }}</p>
-
-        <p><strong>Landing:</strong> 
-          {{ formatDate(booking.landing) | date: 'dd-MM-yyyy HH:mm' }}
-        </p>
+        <p><strong>Landing:</strong> {{ booking.landing | date: 'dd-MM-yyyy' }}</p>
+        <p><strong>Arrival Time:</strong> {{ booking.arrivalTime || 'N/A' }}</p>
 
         <p><strong>No. of Passengers:</strong> {{ booking.passengers.length || 'N/A' }}</p>
+        
         <p><strong>Status:</strong> 
           <span [ngClass]="{'active-status': booking.status === bookingStatus.Active, 'canceled-status': booking.status === bookingStatus.Canceled}">
             {{ booking.status || 'N/A' }}
           </span>
         </p>
 
-        <!-- View Booking Button -->
-        <button 
-          mat-raised-button 
-          color="primary" 
-          (click)="viewBooking(booking.bookingId)">
-          View Details
-        </button>
+        <!-- Buttons -->
+        <div class="buttons">
+          <button mat-raised-button color="primary" (click)="viewBooking(booking.bookingId)">
+            View Details
+          </button>
 
-        <!-- ✅ Fixed Cancel Button Logic -->
-        <button 
-          mat-raised-button 
-          color="warn" 
-          *ngIf="booking.status === bookingStatus.Active && isFutureDate(booking.boarding)" 
-          (click)="toggleBookingStatus(booking)">
-          Cancel
-        </button>
+          <button 
+            mat-raised-button 
+            color="warn" 
+            class="cancel-button"
+            *ngIf="booking.status === bookingStatus.Active && isFutureDate(booking.boarding)" 
+            (click)="toggleBookingStatus(booking)">
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
 

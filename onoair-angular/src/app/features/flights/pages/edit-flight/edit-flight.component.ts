@@ -17,7 +17,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { DestinationsService } from '../../../destinations/service/destinations.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { FlightStatus } from '../../model/flight-status.enum';
-import { Timestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-edit-flight',
@@ -98,10 +97,6 @@ export class EditFlightComponent implements OnInit {
     });
   }
   
-  
-  
-  
-  
 
   validateFlightNumber(event: KeyboardEvent): void {
     const allowedPattern = /^[A-Za-z0-9]+$/;
@@ -129,7 +124,7 @@ export class EditFlightComponent implements OnInit {
       this.resetForm(newFlightNumber);
     });
   }
-  
+
   get isEditingAllowed(): boolean {
     if (!this.flight) return false; // Prevent editing if flight is not loaded
   
@@ -140,14 +135,11 @@ export class EditFlightComponent implements OnInit {
     const latestBookingDate = new Date(this.flight.date);
     latestBookingDate.setHours(0, 0, 0, 0);
   
-    // 🔥 Editing is only blocked if:
+    // Editing is only blocked if:
     // 1. There are active bookings AND
     // 2. The earliest active booking is in the future
     return !(this.flight.hasBookings && latestBookingDate >= today);
   }
-  
-  
-  
   
   
   

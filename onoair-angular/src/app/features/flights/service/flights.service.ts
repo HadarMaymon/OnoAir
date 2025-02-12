@@ -47,34 +47,31 @@ export class FlightService {
         const data = doc.data();
   
         return new Flight(
-          data['flightNumber'] || '', // Use index signature
+          data['flightNumber'] || '',
           data['origin'] || '',
           data['destination'] || '',
-          data['date'] || '',
+          data['date'] instanceof Timestamp ? data['date'].toDate() : new Date(data['date']), // ✅ Convert Timestamp
           data['departureTime'] || '',
-          data['arrivalDate'] || '',
+          data['arrivalDate'] instanceof Timestamp ? data['arrivalDate'].toDate() : new Date(data['arrivalDate']), // ✅ Convert Timestamp
           data['arrivalTime'] || '',
           data['price'] || 0,
           data['image'] || 'https://via.placeholder.com/300',
           data['availableSeats'] || 0,
           data['isDynamicDate'] || false,
-          (data['status'] as FlightStatus) || FlightStatus.Active 
+          (data['status'] as FlightStatus) || FlightStatus.Active,
+          false
         );
       });
   
       // Enrich flights with images
       flights.forEach((flight) => {
         const matchingDestination = destinations.find(
-          (d) =>
-            d.destinationName.trim().toLowerCase() ===
-            flight.destination.trim().toLowerCase()
+          (d) => d.destinationName.trim().toLowerCase() === flight.destination.trim().toLowerCase()
         );
-  
-        flight.image =
-          matchingDestination?.image || 'https://via.placeholder.com/300';
+        flight.image = matchingDestination?.image || 'https://via.placeholder.com/300';
       });
   
-      // Update BehaviorSubject
+      // ✅ Update BehaviorSubject
       this.flightsSubject.next(flights);
     });
   }
@@ -99,13 +96,14 @@ export class FlightService {
     const flightDoc = doc(flightCollection, flight.flightNumber);
     return setDoc(flightDoc, { 
       ...flight, 
-      date: Timestamp.fromDate(flight.date), // ✅ Convert to Timestamp
-      arrivalDate: Timestamp.fromDate(flight.arrivalDate), // ✅ Convert to Timestamp
+      date: Timestamp.fromDate(flight.date), // ✅ Ensure it's stored as a Firestore Timestamp
+      arrivalDate: Timestamp.fromDate(flight.arrivalDate), // ✅ Ensure it's stored as a Firestore Timestamp
       status: flight.status as FlightStatus 
     }).then(() => {
       console.log(`Flight ${flight.flightNumber} updated successfully!`);
     });
   }
+  
 
 
   /**
@@ -174,12 +172,12 @@ async getFlightBookings(flightNumber: string): Promise<boolean> {
   /**
    * Fetches flights within a specific date range.
    */
-  getFlightsByDateRange(startDate: string, endDate: string): Observable<Flight[]> {
+  getFlightsByDateRange(startDate: Date, endDate: Date): Observable<Flight[]> {
     const flightsRef = collection(this.firestore, 'flights');
     const flightsQuery = query(
       flightsRef,
-      where('date', '>=', startDate),
-      where('date', '<=', endDate),
+      where('date', '>=', Timestamp.fromDate(startDate)), // ✅ Convert to Timestamp
+      where('date', '<=', Timestamp.fromDate(endDate)), // ✅ Convert to Timestamp
       orderBy('date')
     );
   
@@ -189,17 +187,23 @@ async getFlightBookings(flightNumber: string): Promise<boolean> {
         (snapshot) => {
           const flights = snapshot.docs.map((doc) => {
             const data = doc.data();
-            return {
-              id: doc.id,
-              ...(data as Omit<
-                Flight,
-                'updatePrice' | 'updateSeats' | 'assignDynamicDate'
-              >),
-              updatePrice: () => {},
-              updateSeats: () => {},
-              assignDynamicDate: () => {},
-            } as Flight;
+            return new Flight(
+              data['flightNumber'] || '',
+              data['origin'] || '',
+              data['destination'] || '',
+              data['date'] instanceof Timestamp ? data['date'].toDate() : new Date(data['date']),
+              data['departureTime'] || '',
+              data['arrivalDate'] instanceof Timestamp ? data['arrivalDate'].toDate() : new Date(data['arrivalDate']),
+              data['arrivalTime'] || '',
+              data['price'] || 0,
+              data['image'] || 'https://via.placeholder.com/300',
+              data['availableSeats'] || 0,
+              data['isDynamicDate'] || false,
+              (data['status'] as FlightStatus) || FlightStatus.Active,
+              false
+            );
           });
+  
           observer.next(flights);
         },
         (error) => {
@@ -210,4 +214,5 @@ async getFlightBookings(flightNumber: string): Promise<boolean> {
       return () => unsubscribe();
     });
   }
-  }
+  
+}

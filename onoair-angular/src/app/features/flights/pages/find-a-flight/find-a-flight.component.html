@@ -75,7 +75,7 @@
     <!-- Date Column -->
     <ng-container matColumnDef="date">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
-      <td mat-cell *matCellDef="let flight"> {{ flight.date }} </td>
+      <td mat-cell *matCellDef="let flight"> {{ flight.date | date: 'dd-MM-yyyy' }} </td>
     </ng-container>
 
     <!-- Departure Time Column -->
@@ -87,19 +87,13 @@
     <!-- Arrival Date Column -->
     <ng-container matColumnDef="arrivalDate">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Arrival Date</th>
-      <td mat-cell *matCellDef="let flight">{{ flight.arrivalDate }}</td>
+      <td mat-cell *matCellDef="let flight">{{ flight.arrivalDate | date: 'dd-MM-yyyy' }}</td>
     </ng-container>
 
     <!-- Arrival Time Column -->
     <ng-container matColumnDef="arrivalTime">
       <th mat-header-cell *matHeaderCellDef>Arrival Time</th>
       <td mat-cell *matCellDef="let flight">{{ flight.arrivalTime }}</td>
-    </ng-container>
-
-    <!-- Duration Column -->
-    <ng-container matColumnDef="duration">
-      <th mat-header-cell *matHeaderCellDef> Duration </th>
-      <td mat-cell *matCellDef="let flight"> {{ flight.duration }} </td>
     </ng-container>
 
     <!-- Price Column -->

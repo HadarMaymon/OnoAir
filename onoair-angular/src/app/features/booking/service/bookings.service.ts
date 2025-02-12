@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, doc, setDoc, onSnapshot, getDoc, updateDoc } from '@angular/fire/firestore';
+import { Firestore, collection, doc, setDoc, onSnapshot, getDoc, updateDoc, runTransaction } from '@angular/fire/firestore';
 import { BehaviorSubject } from 'rxjs';
 import { Booking } from '../models/booking';
 import { bookingConverter } from './converters/booking-converter';
 import { DestinationsService } from '../../destinations/service/destinations.service';
 import { BookingStatus } from '../models/booking-status.enum';
+import { Timestamp } from 'firebase/firestore';
+import { Passenger } from '../../destinations/models/passenger';
 
 @Injectable({
   providedIn: 'root',
@@ -18,92 +20,140 @@ export class BookingsService {
   }
 
   /**
-   * Sync bookings from Firestore and attach destination images.
+   * ✅ Sync bookings from Firestore and attach destination images efficiently.
    */
   syncBookingsWithImages(): void {
     const bookingCollection = collection(this.firestore, 'bookings').withConverter(bookingConverter);
   
     onSnapshot(bookingCollection, async (snapshot) => {
       try {
-        const bookings = snapshot.docs.map((doc) => {
-          const data = doc.data();
-          if (!data.bookingId || !data.destination) {
-            console.warn('Skipping invalid booking document:', doc.id);
-            return null;
-          }
-          return data;
-        }).filter((booking) => booking !== null);
-  
-        // Fetch destinations from Firestore
+        console.log('📡 Firestore snapshot received:', snapshot.docs.map((doc) => doc.data()));
+    
+        if (snapshot.empty) {
+          console.warn('⚠️ No bookings found in Firestore!');
+        }
+    
         const destinations = await this.destinationsService.getAllDestinations();
-  
-        // Map images to bookings
-        bookings.forEach((booking) => {
-          const destination = destinations.find((dest) => dest.destinationName === booking.destination);
-          booking.image = destination?.image || 'assets/images/default-destination.jpg'; // Fallback image
+    
+        let bookings = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          console.log(`📅 Booking ${data.bookingId}: Raw Boarding ->`, data.boarding, " | Raw Landing ->", data.landing);
+    
+          return new Booking(
+            data.bookingId,
+            data.flightNumber,
+            data.origin,
+            data.destination,
+            data.boarding instanceof Timestamp 
+            ? data.boarding.toDate() 
+            : new Date(data.boarding),
+            data.landing instanceof Timestamp 
+            ? data.landing.toDate() 
+            : new Date(data.landing),
+            data.numberOfPassengers,
+            data.passengers?.map((p: { name: string; id: string }) => new Passenger(p.name, p.id)) || [],
+            destinations.find(dest => dest.destinationName === data.destination)?.image || 'assets/images/default-destination.jpg',
+            data.isDynamicDate,
+            data.status as BookingStatus
+          );
+          
         });
-  
-        // Update the observable with enriched bookings
-        this.bookingsSubject.next(bookings as Booking[]);
+    
+        console.log('✅ Processed Bookings:', bookings);
+        this.bookingsSubject.next(bookings);
       } catch (error) {
-        console.error('Error syncing bookings:', error);
+        console.error('❌ Error syncing bookings:', error);
       }
     });
-  }
-  
+    
+}
 
   /**
-   * Get a specific booking by its ID.
+   * ✅ Get a specific booking by its ID.
    */
   getBookingById(bookingId: string): Promise<Booking | undefined> {
     const bookingDoc = doc(this.firestore, 'bookings', bookingId).withConverter(bookingConverter);
     return getDoc(bookingDoc)
       .then((snapshot) => (snapshot.exists() ? snapshot.data() : undefined))
       .catch((error) => {
-        console.error(`Error fetching booking with ID ${bookingId}:`, error);
+        console.error(`❌ Error fetching booking ${bookingId}:`, error);
         return undefined;
       });
   }
 
   /**
-   * Add a new booking to Firestore.
+   * ✅ Add a new booking using Firestore transactions (ensures data consistency).
    */
-  addBooking(booking: Booking): Promise<void> {
-    const bookingCollection = collection(this.firestore, 'bookings').withConverter(bookingConverter);
-    const bookingDoc = doc(bookingCollection, booking.bookingId);
+  async addBooking(booking: Booking): Promise<void> {
+    const bookingDoc = doc(this.firestore, 'bookings', booking.bookingId);
+    const flightDoc = doc(this.firestore, 'flights', booking.flightNumber);
+
+    try {
+        await runTransaction(this.firestore, async (transaction) => {
+            const flightSnapshot = await transaction.get(flightDoc);
+
+            if (!flightSnapshot.exists()) {
+                throw new Error(`❌ Flight ${booking.flightNumber} not found.`);
+            }
+
+            const boardingTimestamp = booking.boarding instanceof Timestamp 
+            ? booking.boarding 
+            : Timestamp.fromDate(new Date(booking.boarding));
+        
+        
+            const landingTimestamp = booking.landing instanceof Timestamp 
+                ? booking.landing 
+                : Timestamp.fromDate(new Date(booking.landing)); // Store default if invalid
+            
+
+            transaction.set(bookingDoc, {
+                ...booking,
+                boarding: boardingTimestamp || Timestamp.fromDate(new Date()),  // Store default if null
+                landing: landingTimestamp || Timestamp.fromDate(new Date()),  // Store default if null
+            });
+        });
+
+        console.log(`✅ Booking ${booking.bookingId} successfully created.`);
+    } catch (error) {
+        console.error(`❌ Error creating booking:`, error);
+    }
+}
+
+  /**
+   * ✅ Update an existing booking efficiently.
+   */
+  updateBooking(booking: Booking): Promise<void> {
+    const bookingDoc = doc(this.firestore, 'bookings', booking.bookingId);
+    
+    return setDoc(bookingDoc, {
+      ...booking, 
+      boarding: booking.boarding instanceof Timestamp 
+      ? booking.boarding 
+      : Timestamp.fromDate(new Date(booking.boarding)),
   
-    // 🔥 Ensure flightNumber is saved
-    return setDoc(bookingDoc, { ...booking, flightNumber: booking.flightNumber, updateBoardingTime: booking.updateBoardingTime, updateLandingTime: booking.updateLandingTime }).then(() => {
-      console.log(`Booking ${booking.bookingId} added successfully.`);
-    });
+  landing: booking.landing instanceof Timestamp 
+      ? booking.landing 
+      : Timestamp.fromDate(new Date(booking.landing)),
+  
+    })
   }
   
-/**
- * Update an existing booking in Firestore.
- */
-updateBooking(booking: Booking): Promise<void> {
-  const bookingCollection = collection(this.firestore, 'bookings').withConverter(bookingConverter);
-  const bookingDoc = doc(bookingCollection, booking.bookingId);
-  return setDoc(bookingDoc, booking).then(() => {
-    console.log(`Booking ${booking.bookingId} updated successfully.`);
-  });
+  
+  /**
+   * ✅ Cancel a booking by setting its status to "Canceled".
+   */
+  updateBookingStatus(bookingId: string, newStatus: BookingStatus): Promise<void> {
+    const bookingDoc = doc(this.firestore, `bookings/${bookingId}`);
+
+    return updateDoc(bookingDoc, { status: newStatus })
+      .then(() => {
+        console.log(`✅ Booking ${bookingId} updated to ${newStatus}`);
+      })
+      .catch((error) => {
+        console.error(`❌ Error updating booking ${bookingId} to ${newStatus}:`, error);
+        throw error;
+      });
+  }
 }
 
-/**
- * Cancel a booking by setting its status to "Canceled".
- */
-updateBookingStatus(bookingId: string, newStatus: BookingStatus): Promise<void> {
-  const bookingDoc = doc(this.firestore, `bookings/${bookingId}`);
-  
-  return updateDoc(bookingDoc, { status: newStatus })
-    .then(() => {
-      console.log(`✅ Booking ${bookingId} updated to ${newStatus}`);
-    })
-    .catch((error) => {
-      console.error(`❌ Error updating booking ${bookingId} to ${newStatus}:`, error);
-      throw error;
-    });
-}
 
-  
-}

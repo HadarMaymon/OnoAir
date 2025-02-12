@@ -10,23 +10,31 @@
     <!-- Show bookings if available, otherwise fallback to 'noBookings' -->
     <div *ngFor="let booking of section.bookings" class="booking-card">
       <img
-        [src]="booking.image || 'assets/images/default-destination.jpg'"
+        [src]="booking.image && booking.image.trim() !== '' ? booking.image : 'assets/images/default-destination.jpg'"
         alt="Image for {{ booking.destination }}"
         class="destination-image"
       />
       <div class="booking-details">
-        <p><strong>Flight Number:</strong> {{ booking.flightNumber }}</p>
-        <p><strong>Origin:</strong> {{ booking.origin }}</p>
-        <p><strong>Boarding:</strong> {{ booking.boarding }}</p>
-        <p><strong>Destination:</strong> {{ booking.destination }}</p>
-        <p><strong>Landing:</strong> {{ booking.landing }}</p>
-        <p><strong>No. of Passengers:</strong> {{ booking.passengers.length }}</p>
+        <p><strong>Flight Number:</strong> {{ booking.flightNumber || 'N/A' }}</p>
+        <p><strong>Origin:</strong> {{ booking.origin || 'N/A' }}</p>
+
+        <p><strong>Boarding:</strong> 
+          {{ formatDate(booking.boarding) | date: 'dd-MM-yyyy HH:mm' }}
+        </p>
+
+        <p><strong>Destination:</strong> {{ booking.destination || 'N/A' }}</p>
+
+        <p><strong>Landing:</strong> 
+          {{ formatDate(booking.landing) | date: 'dd-MM-yyyy HH:mm' }}
+        </p>
+
+        <p><strong>No. of Passengers:</strong> {{ booking.passengers?.length || 'N/A' }}</p>
         <p><strong>Status:</strong> 
           <span [ngClass]="{'active-status': booking.status === bookingStatus.Active, 'canceled-status': booking.status === bookingStatus.Canceled}">
-            {{ booking.status }}
+            {{ booking.status || 'N/A' }}
           </span>
         </p>
-    
+
         <!-- View Booking Button -->
         <button 
           mat-raised-button 
@@ -34,17 +42,17 @@
           (click)="viewBooking(booking.bookingId)">
           View Details
         </button>
-    
-    <!-- Cancel Button (only visible for Active bookings with a future boarding date) -->
-    <button 
-      mat-raised-button 
-      color="warn" 
-      *ngIf="booking.status === bookingStatus.Active && parseDate(booking.boarding) > now" 
-      (click)="toggleBookingStatus(booking)">
-      Cancel
-    </button>
 
-    
+        <!-- ✅ Fixed Cancel Button Logic -->
+        <button 
+          mat-raised-button 
+          color="warn" 
+          *ngIf="booking.status === bookingStatus.Active && isFutureDate(booking.boarding)" 
+          (click)="toggleBookingStatus(booking)">
+          Cancel
+        </button>
+      </div>
+    </div>
 
     <!-- Fallback template for no bookings -->
     <ng-template #noBookings>

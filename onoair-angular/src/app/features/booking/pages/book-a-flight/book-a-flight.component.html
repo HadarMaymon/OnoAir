@@ -2,9 +2,9 @@
   <div class="main-content">
     <div class="book-flight-container" *ngIf="flight; else notFound">
       <h1>Book a Flight</h1>
-      <p><strong>Origin:</strong> {{ flight.origin }} Boarding: {{ flight.date }} {{ flight.departureTime }}</p>
-      <p><strong>Destination:</strong> {{ flight.destination }} Landing: {{ flight.arrivalDate }} {{ flight.arrivalTime }}</p>
-
+      <p><strong>Origin:</strong> {{ flight.origin }} Boarding: {{ flight.date | date: 'dd-MM-yyyy' }} {{ flight.departureTime }}</p>
+      <p><strong>Destination:</strong> {{ flight.destination }} Landing: {{ flight.arrivalDate | date: 'dd-MM-yyyy' }} {{ flight.arrivalTime }}</p>
+      
       <!-- Number of Passengers -->
       <label for="passengers">No of passengers:</label>
       <input id="passengers" type="number" [(ngModel)]="passengerCount" (change)="updatePassengers()" required min="1" />

@@ -8,7 +8,7 @@ import { Booking } from '../../models/booking';
 import { BookingStatus } from '../../models/booking-status.enum';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component';
-
+import { Timestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-my-bookings',
@@ -26,28 +26,26 @@ export class MyBookingsComponent implements OnInit {
   constructor(private bookingService: BookingsService, private router: Router, private dialog: MatDialog) {}
 
   ngOnInit(): void {
-    const now = new Date();
-  
     this.bookingService.syncBookingsWithImages();
     this.bookingService.bookings$.subscribe({
       next: (allBookings: Booking[]) => {
-        // Separate bookings into upcoming and previous
+        console.log('🛬 Bookings received in MyBookingsComponent:', allBookings); // ✅ Debugging
+
         const upcoming: Booking[] = [];
         const previous: Booking[] = [];
-  
+        const now = new Date();
+
         allBookings.forEach((booking) => {
-          const boardingDate = this.parseDate(booking.boarding);
-  
+          const boardingDate = booking.boarding instanceof Timestamp ? booking.boarding.toDate() : new Date(booking.boarding);
           if (booking.status === BookingStatus.Canceled) {
-            previous.push(booking); // ✅ Always move canceled bookings to "Previous"
+            previous.push(booking);
           } else if (boardingDate > now) {
-            upcoming.push(booking); // ✅ Active + Future -> "Upcoming"
+            upcoming.push(booking);
           } else {
-            previous.push(booking); // ✅ Active + Past -> "Previous"
+            previous.push(booking);
           }
         });
-  
-        // Assign to sections
+
         this.bookingSections = [
           { title: 'Upcoming Bookings', bookings: upcoming },
           { title: 'Previous Bookings', bookings: previous },
@@ -55,31 +53,10 @@ export class MyBookingsComponent implements OnInit {
         this.isLoading = false;
       },
       error: (error) => {
-        console.error('Error fetching bookings:', error);
+        console.error('❌ Error fetching bookings:', error);
         this.isLoading = false;
       },
     });
-  }
-
-  parseDate(dateStr: string): Date {
-    try {
-      if (!dateStr) {
-        return new Date(0);
-      }
-      const [year, month, dayAndTime] = dateStr.split('-');
-      const [day, time] = dayAndTime?.split(' ') ?? ['01', '00:00'];
-      const [hours, minutes] = time?.split(':') ?? ['00', '00'];
-      return new Date(
-        Number(year),
-        Number(month) - 1,
-        Number(day),
-        Number(hours),
-        Number(minutes)
-      );
-    } catch (error) {
-      console.error(`Error parsing date: ${dateStr}`, error);
-      return new Date(0);
-    }
   }
 
   viewBooking(bookingId: string): void {
@@ -117,20 +94,33 @@ export class MyBookingsComponent implements OnInit {
     });
   }
 
+  isTimestamp(value: any): boolean {
+    return value instanceof Timestamp;
+}
+
+isFutureDate(date: any): boolean {
+  const parsedDate = date instanceof Timestamp ? date.toDate() : new Date(date);
+  return parsedDate > new Date(); // Compare with current time
+}
+
+
   private moveBookingToCorrectSection(updatedBooking: Booking): void {
     this.bookingSections.forEach(section => {
       section.bookings = section.bookings.filter(b => b.bookingId !== updatedBooking.bookingId);
     });
 
+    const now = new Date();
+    const boardingDate = updatedBooking.boarding instanceof Timestamp ? updatedBooking.boarding.toDate() : new Date(updatedBooking.boarding);
+
     if (updatedBooking.status === BookingStatus.Canceled) {
       this.bookingSections.find(section => section.title === 'Previous Bookings')?.bookings.push(updatedBooking);
+    } else if (boardingDate > now) {
+      this.bookingSections.find(section => section.title === 'Upcoming Bookings')?.bookings.push(updatedBooking);
     } else {
-      const now = new Date();
-      if (this.parseDate(updatedBooking.boarding) > now) {
-        this.bookingSections.find(section => section.title === 'Upcoming Bookings')?.bookings.push(updatedBooking);
-      } else {
-        this.bookingSections.find(section => section.title === 'Previous Bookings')?.bookings.push(updatedBooking);
-      }
+      this.bookingSections.find(section => section.title === 'Previous Bookings')?.bookings.push(updatedBooking);
     }
+  }
+  formatDate(date: any): Date {
+    return date instanceof Timestamp ? date.toDate() : date;
   }
 }

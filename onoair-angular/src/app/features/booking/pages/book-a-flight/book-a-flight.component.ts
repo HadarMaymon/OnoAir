@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { Flight } from '../../../flights/model/flight';
-import { Firestore, collection, getDoc, doc, getDocs, setDoc } from '@angular/fire/firestore';
+import { Firestore, collection, getDoc, doc, getDocs, setDoc, Timestamp } from '@angular/fire/firestore';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component';
 
@@ -41,12 +41,20 @@ export class BookAFlightComponent implements OnInit {
 
   ngOnInit(): void {
     const flightNumber = this.route.snapshot.paramMap.get('flightNumber');
-
+  
     if (flightNumber) {
       this.flightService.getFlightByNumber(flightNumber)
         .then((data) => {
           if (data) {
-            this.flight = data;
+            this.flight = {
+              ...data,
+              date: data.date instanceof Timestamp ? data.date.toDate() : new Date(data.date), // ✅ Convert timestamp to date
+              arrivalDate: data.arrivalDate instanceof Timestamp ? data.arrivalDate.toDate() : new Date(data.arrivalDate), // ✅ Convert timestamp to date
+              updatePrice: data.updatePrice,
+              updateSeats: data.updateSeats,
+              assignDynamicDate: data.assignDynamicDate,
+              updateStatus: data.updateStatus
+            };
             this.fetchDestinationImage(this.flight.destination);
           } else {
             this.redirectToFlightList();
@@ -56,9 +64,10 @@ export class BookAFlightComponent implements OnInit {
           this.redirectToFlightList();
         });
     }
-
+  
     this.updatePassengers();
   }
+  
 
   updatePassengers(): void {
     this.passengers = Array.from({ length: this.passengerCount }, () => ({ name: '', id: '' }));

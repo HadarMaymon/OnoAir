@@ -47,14 +47,13 @@ import { ReactiveFormsModule, FormGroup, FormBuilder } from '@angular/forms';
 })
 
 export class FindAFlightComponent implements OnInit, AfterViewInit {
-  filterForm!: FormGroup; // ✅ Use non-null assertion operator (!)
+  filterForm!: FormGroup; 
   displayedColumns: string[] = [
     'flightNumber',
     'origin',
     'destination',
     'date',
     'departureTime',
-    'duration',
     'arrivalDate',
     'arrivalTime',
     'price',
@@ -149,7 +148,7 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
   
     this.flightService.flights$.subscribe((flights) => {
       const filteredFlights = flights.filter((flight) => {
-        const flightDate = new Date(flight.date); // `flight.date` is a Date object
+        const flightDate = new Date(flight.date); // flight.date is a Date object
         flightDate.setHours(0, 0, 0, 0); // Normalize time for comparison
   
         const isInRange =

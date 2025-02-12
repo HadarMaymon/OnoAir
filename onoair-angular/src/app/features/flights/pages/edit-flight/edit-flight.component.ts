@@ -246,7 +246,8 @@ export class EditFlightComponent implements OnInit {
       '',
       0,
       false,
-      FlightStatus.Active 
+      FlightStatus.Active,
+      false,
     );
     this.flightNumber = flightNumber;
   

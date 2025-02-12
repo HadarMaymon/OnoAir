@@ -7,15 +7,16 @@ export const flightConverter: FirestoreDataConverter<Flight> = {
     flightNumber: flight.flightNumber,
     origin: flight.origin,
     destination: flight.destination,
-    date: Timestamp.fromDate(flight.date), // ✅ Convert Date to Firestore Timestamp
+    date: Timestamp.fromDate(flight.date), // Convert Date to Firestore Timestamp
     departureTime: flight.departureTime,
-    arrivalDate: Timestamp.fromDate(flight.arrivalDate), // ✅ Convert Date to Firestore Timestamp
+    arrivalDate: Timestamp.fromDate(flight.arrivalDate), // Convert Date to Firestore Timestamp
     arrivalTime: flight.arrivalTime,
     price: flight.price,
     image: flight.image,
     availableSeats: flight.availableSeats,
     isDynamicDate: flight.isDynamicDate,
-    status: flight.status
+    status: flight.status,
+    hasBookings: flight.hasBookings ?? false, // Ensure field exists
   }),
 
   fromFirestore: (snapshot) => {
@@ -23,7 +24,7 @@ export const flightConverter: FirestoreDataConverter<Flight> = {
       flightNumber: string;
       origin: string;
       destination: string;
-      date: Timestamp; // Firestore stores it as a Timestamp
+      date: Timestamp;
       departureTime: string;
       arrivalDate: Timestamp;
       arrivalTime: string;
@@ -32,21 +33,23 @@ export const flightConverter: FirestoreDataConverter<Flight> = {
       availableSeats: number;
       isDynamicDate: boolean;
       status: FlightStatus;
+      hasBookings: boolean;
     };
 
     return new Flight(
       data.flightNumber,
       data.origin,
       data.destination,
-      data.date.toDate(), 
+      data.date.toDate(), // Convert Timestamp to Date
       data.departureTime,
-      data.arrivalDate.toDate(), 
+      data.arrivalDate.toDate(), // Convert Timestamp to Date
       data.arrivalTime,
       data.price,
       data.image,
       data.availableSeats,
       data.isDynamicDate,
-      data.status
+      data.status,
+      data.hasBookings ?? false // Ensure default value if missing
     );
   },
 };

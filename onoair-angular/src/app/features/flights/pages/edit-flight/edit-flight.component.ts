@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import {  Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { FlightService } from '../../service/flights.service';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,10 +14,10 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component';
 import { MatOption } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
-import { MatOptionModule } from '@angular/material/core';
 import { DestinationsService } from '../../../destinations/service/destinations.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { FlightStatus } from '../../model/flight-status.enum';
+import { Timestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-edit-flight',
@@ -34,17 +34,16 @@ import { FlightStatus } from '../../model/flight-status.enum';
     MatInputModule,
     MatNativeDateModule,
     MatOption,
-    MatSelectModule,
-    MatOptionModule,
+    MatSelectModule
   ],
 })
 export class EditFlightComponent implements OnInit {
-  
+
   @Input() flightNumber: string | null = null;
   flight: Flight | undefined;
   origin: string[] = [];
   destination: string[] = [];
-  minDate: string = new Date().toISOString().split('T')[0]; 
+  minDate: string = '';
 
   FlightStatus = FlightStatus;
 
@@ -61,7 +60,6 @@ export class EditFlightComponent implements OnInit {
     today.setDate(today.getDate() + 1);
     this.minDate = today.toISOString().split('T')[0];
   
-    // Fetch all destinations
     this.destinationsService.getAllDestinations().then((destinations) => {
       const destinationNames = destinations.map((dest) => dest.destinationName);
       this.origin = destinationNames;
@@ -77,73 +75,82 @@ export class EditFlightComponent implements OnInit {
         return;
       }
   
-      // 🔥 Fetch flight details
       this.flightService.getFlightByNumber(this.flightNumber).then((flight) => {
         if (!flight) {
           this.redirectToFlightList();
           return;
         }
-
-        if (flight.date) {
-          const date = new Date(flight.date);
-          date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
-          flight.date = date; // ✅ Keep as a Date object
-        }
-
-        if (flight.arrivalDate) {
-          const arrivalDate = new Date(flight.arrivalDate);
-          arrivalDate.setMinutes(arrivalDate.getMinutes() - arrivalDate.getTimezoneOffset());
-          flight.arrivalDate = arrivalDate; // ✅ Keep as a Date object
-        }
-
-        flight.status = flight.status as FlightStatus || FlightStatus.Active;
+  
         this.flight = flight;
-
-        // 🔥 Ensure `hasBookings` is a boolean (default to `false` if undefined)
-        if (this.flightNumber) {
-          this.flightService.getFlightBookings(this.flightNumber).then((hasBookings) => {
-            this.flight!.hasBookings = hasBookings ?? false; // ✅ Default to false
-          });
-        }
+  
+        //Get earliest active booking date
+        this.flightService.getLatestBookingDate(this.flightNumber !).then((bookingDate) => {
+          if (bookingDate) {
+            this.flight!.date = bookingDate; // Override flight date with latest boarding date
+          }
+        });
+  
+        //Check if there are active bookings
+        this.flightService.hasActiveBookings(this.flightNumber !).then((hasBookings) => {
+          this.flight!.hasBookings = hasBookings;
+        });
       });
-
-      });
-    }
-
+    });
+  }
+  
+  
+  
   
   
 
   validateFlightNumber(event: KeyboardEvent): void {
     const allowedPattern = /^[A-Za-z0-9]+$/;
     const key = event.key;
-  
+
     if (!allowedPattern.test(key) && key !== 'Backspace' && key !== 'Tab') {
-      event.preventDefault(); // Prevents invalid characters from being entered
+      event.preventDefault();
     }
   }
-  
-        
-      
-  
+
   onFlightNumberChange(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
-    const newFlightNumber = inputElement.value.trim(); // Remove extra spaces
+    const newFlightNumber = inputElement.value.trim();
 
-    if (!newFlightNumber) return; // Ignore empty input
+    if (!newFlightNumber) return;
 
-    // Check if the flight exists in Firestore
     this.flightService.getFlightByNumber(newFlightNumber).then((flight) => {
       if (flight) {
-        this.flight = flight; // Flight exists, load data
+        this.flight = flight;
       } else {
-        this.resetForm(newFlightNumber); // Flight does NOT exist, reset form
+        this.resetForm(newFlightNumber);
       }
     }).catch((error) => {
       console.error('Error fetching flight:', error);
-      this.resetForm(newFlightNumber); // Reset form on error
+      this.resetForm(newFlightNumber);
     });
   }
-
+  
+  get isEditingAllowed(): boolean {
+    if (!this.flight) return false; // Prevent editing if flight is not loaded
+  
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+  
+    // Use latest active booking date (which was fetched in ngOnInit)
+    const latestBookingDate = new Date(this.flight.date);
+    latestBookingDate.setHours(0, 0, 0, 0);
+  
+    // 🔥 Editing is only blocked if:
+    // 1. There are active bookings AND
+    // 2. The earliest active booking is in the future
+    return !(this.flight.hasBookings && latestBookingDate >= today);
+  }
+  
+  
+  
+  
+  
+  
   redirectToFlightList(): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
@@ -160,45 +167,43 @@ export class EditFlightComponent implements OnInit {
     });
   }
 
-
   saveChanges(flightForm: any): void {
     if (flightForm.invalid) {
       this.showErrorDialog('Please fill in all required fields before saving.');
       return;
     }
-  
+
     if (!this.flight) {
       this.showErrorDialog('Flight is not defined.');
       return;
     }
-  
-    // 🚨 Ensure status is not changed if there are active bookings
-    if (this.flight && this.flight.hasBookings) {
+
+    if (this.flight.hasBookings) {
       this.flightService.getFlightByNumber(this.flight.flightNumber).then((originalFlight) => {
         if (originalFlight && originalFlight.status !== this.flight!.status) {
           this.showErrorDialog('This flight has active bookings. Status cannot be changed.');
-          this.flight!.status = originalFlight.status; // Reset status to original
+          this.flight!.status = originalFlight.status;
           this.cdr.detectChanges();
           return;
         }
-    
-        // ✅ Proceed with saving other changes
-        if (this.flight) { // Add null check here
-          this.flightService.updateFlight(this.flight).then(() => {
-            this.showSuccessDialog('Changes saved successfully!', () => {
-              this.router.navigate(['/manage-flight']);
-            });
-          }).catch((error) => {
-            this.showErrorDialog('Failed to save changes. Please try again.');
-            console.error('Error saving changes:', error);
-          });
+
+        if (!this.flight) {
+          this.showErrorDialog('Flight is not defined.');
+          return;
         }
+        this.flightService.updateFlight(this.flight).then(() => {
+          this.showSuccessDialog('Changes saved successfully!', () => {
+            this.router.navigate(['/manage-flight']);
+          });
+        }).catch((error) => {
+          this.showErrorDialog('Failed to save changes. Please try again.');
+          console.error('Error saving changes:', error);
+        });
       });
-    
-      return; // Stop here if bookings exist
+
+      return;
     }
-  
-    // ✅ Save changes if no bookings exist
+
     this.flightService.updateFlight(this.flight).then(() => {
       this.showSuccessDialog('Changes saved successfully!', () => {
         this.router.navigate(['/manage-flight']);
@@ -208,30 +213,24 @@ export class EditFlightComponent implements OnInit {
       console.error('Error saving changes:', error);
     });
   }
-    
 
-  // Show error dialog
   private showErrorDialog(message: string): void {
     this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
       data: { title: 'Error', message, showCloseButton: true }
     });
   }
-  
-  // Show success dialog
+
   private showSuccessDialog(message: string, afterClose?: () => void): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
       data: { title: 'Success', message, showCloseButton: true }
     });
-  
+
     if (afterClose) {
       dialogRef.afterClosed().subscribe(afterClose);
     }
   }
-    
-  
-  
 
   resetForm(flightNumber: string): void {
     this.flight = new Flight(
@@ -249,8 +248,7 @@ export class EditFlightComponent implements OnInit {
       FlightStatus.Active,
       false,
     );
-    this.flightNumber = flightNumber;
-  
+
     if (!this.origin || !this.destination) {
       this.destinationsService.getAllDestinations().then((destinations) => {
         const destinationNames = destinations.map((dest) => dest.destinationName);
@@ -258,7 +256,7 @@ export class EditFlightComponent implements OnInit {
         this.destination = destinationNames;
       });
     }
-  
+
     this.cdr.detectChanges();
-  }  
+  }
 }

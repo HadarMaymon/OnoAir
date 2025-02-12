@@ -2,140 +2,139 @@
   <h1>Edit Flight: {{ flight.flightNumber || 'New Flight' }}</h1>
   <form class="edit-flight-form" #flightForm="ngForm" (ngSubmit)="saveChanges(flightForm)">
     
-<!-- Flight Number -->
-<mat-label>Flight Number</mat-label>
-<input matInput
-  [(ngModel)]="flight.flightNumber"
-  name="flightNumber"
-  placeholder="Enter flight number"
-  required
-  pattern="^[A-Z]{2}[0-9]{3}$"
-  (input)="onFlightNumberChange($event)"  
-  (keypress)="validateFlightNumber($event)"
-  #flightNumber="ngModel"
-  [disabled]="flight.hasBookings"
-/>
+    <!-- Flight Number -->
+    <mat-label>Flight Number</mat-label>
+    <input matInput
+      [(ngModel)]="flight.flightNumber"
+      name="flightNumber"
+      placeholder="Enter flight number"
+      required
+      pattern="^[A-Z]{2}[0-9]{3}$"
+      (input)="onFlightNumberChange($event)"  
+      (keypress)="validateFlightNumber($event)"
+      #flightNumber="ngModel"
+      [disabled]="!isEditingAllowed"
+    />
 
-<!-- Origin -->
-<mat-form-field class="form-field" appearance="outline">
-  <mat-label>Origin</mat-label>
-  <mat-select [(ngModel)]="flight.origin" name="origin" required #originControl="ngModel"
-              [disabled]="flight.hasBookings">
-    <mat-option *ngFor="let originItem of origin" [value]="originItem">
-      {{ originItem }}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
+    <!-- Origin -->
+    <mat-form-field class="form-field" appearance="outline">
+      <mat-label>Origin</mat-label>
+      <mat-select [(ngModel)]="flight.origin" name="origin" required #originControl="ngModel"
+                  [disabled]="!isEditingAllowed">
+        <mat-option *ngFor="let originItem of origin" [value]="originItem">
+          {{ originItem }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-<!-- Destination -->
-<mat-form-field class="form-field" appearance="outline">
-  <mat-label>Destination</mat-label>
-  <mat-select [(ngModel)]="flight.destination" name="destination" required #destinationControl="ngModel"
-              [disabled]="flight.hasBookings">
-    <mat-option *ngFor="let destinationItem of destination" [value]="destinationItem">
-      {{ destinationItem }}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
+    <!-- Destination -->
+    <mat-form-field class="form-field" appearance="outline">
+      <mat-label>Destination</mat-label>
+      <mat-select [(ngModel)]="flight.destination" name="destination" required #destinationControl="ngModel"
+                  [disabled]="!isEditingAllowed">
+        <mat-option *ngFor="let destinationItem of destination" [value]="destinationItem">
+          {{ destinationItem }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-<!-- Departure Date -->
-<mat-form-field class="form-field" appearance="outline">
-  <mat-label>Departure Date</mat-label>
-  <input matInput
-    [matDatepicker]="picker"
-    [(ngModel)]="flight.date"
-    name="date"
-    required
-    [min]="minDate"
-    #date="ngModel"
-    placeholder="Enter departure date"
-    [disabled]="flight.hasBookings"/>
-  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-  <mat-datepicker #picker></mat-datepicker>
-</mat-form-field>
+    <!-- Departure Date -->
+    <mat-form-field class="form-field" appearance="outline">
+      <mat-label>Departure Date</mat-label>
+      <input matInput
+      [matDatepicker]="picker"
+      [(ngModel)]="flight.date"
+      name="date"
+      required
+      [min]="minDate" 
+      #date="ngModel"
+      placeholder="Enter departure date"
+      [disabled]="!isEditingAllowed" />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
 
-<!-- Departure Time -->
-<mat-label>Departure Time</mat-label>
-<input matInput
-  [(ngModel)]="flight.departureTime"
-  name="departureTime"
-  type="time"
-  required
-  #departureTime="ngModel"
-  placeholder="Enter departure time"
-  [disabled]="flight.hasBookings"
-/>
 
-<!-- Arrival Date -->
-<mat-form-field class="form-field" appearance="outline">
-  <mat-label>Arrival Date</mat-label>
-  <input matInput
-    [matDatepicker]="arrivalPicker"
-    [(ngModel)]="flight.arrivalDate"
-    name="arrivalDate"
-    required
-    [min]="flight.date"
-    #arrivalDate="ngModel"
-    placeholder="Enter arrival date"
-    [disabled]="flight.hasBookings"/>
-  <mat-datepicker-toggle matSuffix [for]="arrivalPicker"></mat-datepicker-toggle>
-  <mat-datepicker #arrivalPicker></mat-datepicker>
-</mat-form-field>
+    <!-- Departure Time -->
+    <mat-label>Departure Time</mat-label>
+    <input matInput
+      [(ngModel)]="flight.departureTime"
+      name="departureTime"
+      type="time"
+      required
+      #departureTime="ngModel"
+      placeholder="Enter departure time"
+      [disabled]="!isEditingAllowed"
+    />
 
-<!-- Arrival Time -->
-<mat-label>Arrival Time</mat-label>
-<input matInput
-  [(ngModel)]="flight.arrivalTime"
-  name="arrivalTime"
-  type="time"
-  required
-  #arrivalTime="ngModel"
-  placeholder="Enter arrival time"
-  [disabled]="flight.hasBookings"
-/>
+    <!-- Arrival Date -->
+    <mat-form-field class="form-field" appearance="outline">
+      <mat-label>Arrival Date</mat-label>
+      <input matInput
+        [matDatepicker]="arrivalPicker"
+        [(ngModel)]="flight.arrivalDate"
+        name="arrivalDate"
+        required
+        [min]="flight.date"
+        #arrivalDate="ngModel"
+        placeholder="Enter arrival date"
+        [disabled]="!isEditingAllowed"/>
+      <mat-datepicker-toggle matSuffix [for]="arrivalPicker"></mat-datepicker-toggle>
+      <mat-datepicker #arrivalPicker></mat-datepicker>
+    </mat-form-field>
 
-<!-- Price (Editable) -->
-<mat-label>Price</mat-label>
-<input matInput
-  [(ngModel)]="flight.price"
-  name="price"
-  type="number"
-  required
-  min="1"
-  #price="ngModel"
-  placeholder="Enter price"
-/>
+    <!-- Arrival Time -->
+    <mat-label>Arrival Time</mat-label>
+    <input matInput
+      [(ngModel)]="flight.arrivalTime"
+      name="arrivalTime"
+      type="time"
+      required
+      #arrivalTime="ngModel"
+      placeholder="Enter arrival time"
+      [disabled]="!isEditingAllowed"
+    />
 
-<!-- Available Seats (Editable) -->
-<mat-label>Available Seats</mat-label>
-<input matInput
-  [(ngModel)]="flight.availableSeats"
-  name="availableSeats"
-  type="number"
-  required
-  min="1"
-  #availableSeats="ngModel"
-  placeholder="Enter available seats"
-/>
+    <!-- Price -->
+    <mat-label>Price</mat-label>
+    <input matInput
+      [(ngModel)]="flight.price"
+      name="price"
+      type="number"
+      required
+      min="1"
+      #price="ngModel"
+      placeholder="Enter price"
+    />
 
-<!-- Flight Status -->
-<mat-form-field class="form-field" appearance="outline">
-  <mat-label>Flight Status</mat-label>
-  <mat-select [(ngModel)]="flight.status" name="status" required [disabled]="flight.hasBookings">
-    <mat-option [value]="FlightStatus.Active">Active</mat-option>
-    <mat-option [value]="FlightStatus.Canceled">Canceled</mat-option>
-  </mat-select>
-</mat-form-field>
+    <!-- Available Seats -->
+    <mat-label>Available Seats</mat-label>
+    <input matInput
+      [(ngModel)]="flight.availableSeats"
+      name="availableSeats"
+      type="number"
+      required
+      min="1"
+      #availableSeats="ngModel"
+      placeholder="Enter available seats"
+    />
 
-<!-- Warning message -->
-<p *ngIf="flight?.hasBookings ?? false" class="warning-text">
-  This flight has active bookings. You can only change the price and available seats.
-</p>
-        
+    <!-- Flight Status -->
+    <mat-form-field class="form-field" appearance="outline">
+      <mat-label>Flight Status</mat-label>
+      <mat-select [(ngModel)]="flight.status" name="status" required [disabled]="!isEditingAllowed">
+        <mat-option [value]="FlightStatus.Active">Active</mat-option>
+        <mat-option [value]="FlightStatus.Canceled">Canceled</mat-option>
+      </mat-select>
+    </mat-form-field>
 
+    <!-- Warning message -->
+    <p *ngIf="!isEditingAllowed" class="warning-text">
+      This flight is active and scheduled for the future. Editing is not allowed.
+    </p>
 
     <!-- Save Button -->
-    <button mat-raised-button color="primary" [disabled]="flightForm.invalid" type="submit">
+    <button mat-raised-button color="primary" [disabled]="!isEditingAllowed || flightForm.invalid" type="submit">
       Save Changes
     </button>
   </form>

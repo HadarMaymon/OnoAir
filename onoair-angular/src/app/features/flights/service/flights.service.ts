@@ -214,5 +214,48 @@ async getFlightBookings(flightNumber: string): Promise<boolean> {
       return () => unsubscribe();
     });
   }
+
+  hasActiveBookings(flightNumber: string): Promise<boolean> {
+    const bookingsCollection = collection(this.firestore, 'bookings');
+    const bookingQuery = query(
+      bookingsCollection,
+      where('flightNumber', '==', flightNumber),
+      where('status', '==', 'Active') // Only check Active bookings
+    );
+  
+    return getDocs(bookingQuery).then((snapshot) => {
+      return !snapshot.empty; // If there are active bookings, return true
+    });
+  }  
+
+  getLatestBookingDate(flightNumber: string): Promise<Date | null> {
+    const bookingsCollection = collection(this.firestore, 'bookings');
+    const bookingQuery = query(
+      bookingsCollection,
+      where('flightNumber', '==', flightNumber),
+      where('status', '==', 'Active') // Only check active bookings
+    );
+  
+    return getDocs(bookingQuery).then((snapshot) => {
+      if (snapshot.empty) {
+        return null; // No active bookings, so editing is allowed
+      }
+  
+      // Find the earliest boarding date
+      let earliestDate: Date | null = null;
+  
+      snapshot.docs.forEach((doc) => {
+        const booking = doc.data();
+        if (booking['boarding'] instanceof Timestamp) {
+          const boardingDate = booking['boarding'].toDate();
+          if (!earliestDate || boardingDate < earliestDate) {
+            earliestDate = boardingDate;
+          }
+        }
+      });
+  
+      return earliestDate;
+    });
+  }
   
 }

@@ -1,6 +1,6 @@
 import { FirestoreDataConverter, DocumentData, Timestamp } from '@firebase/firestore';
 import { Booking } from '../../models/booking';
-import { Passenger } from '../../../destinations/models/passenger';
+import { Passenger } from '../../models/passenger';
 import { BookingStatus } from '../../models/booking-status.enum';
 
 export const bookingConverter: FirestoreDataConverter<Booking> = {
@@ -11,13 +11,17 @@ export const bookingConverter: FirestoreDataConverter<Booking> = {
     destination: booking.destination,
     boarding: booking.boarding instanceof Timestamp 
       ? booking.boarding 
-      : Timestamp.fromDate(new Date(booking.boarding)),  // ✅ Store as Firestore Timestamp
+      : Timestamp.fromDate(new Date(booking.boarding)),
     landing: booking.landing instanceof Timestamp 
       ? booking.landing 
-      : Timestamp.fromDate(new Date(booking.landing)),  // ✅ Store as Firestore Timestamp
+      : Timestamp.fromDate(new Date(booking.landing)), 
     numberOfPassengers: booking.numberOfPassengers,
-    passengers: booking.passengers.map((p) => ({ name: p.name, id: p.id })),
-    image: booking.image || 'assets/images/default-destination.jpg',
+    passengers: booking.passengers.map((p) => ({ 
+      name: p.name, 
+      id: p.id, 
+      luggage: p.luggage || { cabin: 0, checked: 0, heavy: 0 } 
+    })),
+        image: booking.image || 'assets/images/default-destination.jpg',
     isDynamicDate: booking.isDynamicDate,
     status: booking.status,
   }),
@@ -36,7 +40,9 @@ export const bookingConverter: FirestoreDataConverter<Booking> = {
       parseFirestoreTimestamp(data['landing']), 
       data['arrivalTime'] || '00:00', 
       data['numberOfPassengers'],
-      data['passengers']?.map((p: { name: string; id: string }) => new Passenger(p.name, p.id)) || [],
+      data['passengers']?.map((p: { name: string; id: string; luggage?: any }) => 
+        new Passenger(p.name, p.id, p.luggage || { cabin: 0, checked: 0, heavy: 0 })
+      ) || [],
       data['image'] || 'assets/images/default-destination.jpg',
       data['isDynamicDate'],
       data['status'] as BookingStatus

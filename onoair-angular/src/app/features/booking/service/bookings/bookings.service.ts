@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Firestore, collection, doc, setDoc, onSnapshot, getDoc, updateDoc, runTransaction } from '@angular/fire/firestore';
 import { BehaviorSubject } from 'rxjs';
-import { Booking } from '../models/booking';
-import { bookingConverter } from './converters/booking-converter';
-import { DestinationsService } from '../../destinations/service/destinations.service';
-import { BookingStatus } from '../models/booking-status.enum';
+import { Booking } from '../../models/booking';
+import { bookingConverter } from '../converters/booking-converter';
+import { DestinationsService } from '../../../destinations/service/destinations.service';
+import { BookingStatus } from '../../models/booking-status.enum';
 import { Timestamp } from 'firebase/firestore';
-import { Passenger } from '../../destinations/models/passenger';
+import { Passenger } from '../../models/passenger';
+import { LuggageDialogComponent } from '../../dialog/luggage-dialog/luggage-dialog.component';
+
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +18,7 @@ export class BookingsService {
   bookings$ = this.bookingsSubject.asObservable();
 
   constructor(private firestore: Firestore, private destinationsService: DestinationsService) {
-    this.syncBookingsWithImages(); // Start syncing bookings in real-time
+    this.syncBookingsWithImages(); 
   }
 
   /**
@@ -75,13 +77,43 @@ export class BookingsService {
    */
   getBookingById(bookingId: string): Promise<Booking | undefined> {
     const bookingDoc = doc(this.firestore, 'bookings', bookingId).withConverter(bookingConverter);
+  
     return getDoc(bookingDoc)
-      .then((snapshot) => (snapshot.exists() ? snapshot.data() : undefined))
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.data();
+  
+          // ✅ Ensure passengers array exists and has luggage details
+          const passengers = (data.passengers || []).map((p: any) => ({
+            name: p.name,
+            id: p.id,
+            luggage: p.luggage || { cabin: 0, checked: 0, heavy: 0 } // Default luggage if missing
+          }));
+  
+          return new Booking(
+            data.bookingId,
+            data.flightNumber,
+            data.origin,
+            data.destination,
+            data.boarding,
+            data.departureTime || '00:00',
+            data.landing,
+            data.arrivalTime || '00:00',
+            passengers.length,
+            passengers,
+            data.image || 'default-image.jpg', 
+            data.isDynamicDate || false, 
+            data.status as BookingStatus 
+          );
+        }
+        return undefined;
+      })
       .catch((error) => {
-        console.error(`❌ Error fetching booking ${bookingId}:`, error);
+        console.error(`Error fetching booking ${bookingId}:`, error);
         return undefined;
       });
   }
+  
 
   /**
    * ✅ Add a new booking using Firestore transactions (ensures data consistency).
@@ -149,10 +181,10 @@ export class BookingsService {
 
     return updateDoc(bookingDoc, { status: newStatus })
       .then(() => {
-        console.log(`✅ Booking ${bookingId} updated to ${newStatus}`);
+        console.log(`Booking ${bookingId} updated to ${newStatus}`);
       })
       .catch((error) => {
-        console.error(`❌ Error updating booking ${bookingId} to ${newStatus}:`, error);
+        console.error(`Error updating booking ${bookingId} to ${newStatus}:`, error);
         throw error;
       });
   }

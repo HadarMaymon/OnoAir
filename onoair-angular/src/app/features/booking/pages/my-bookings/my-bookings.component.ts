@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { take } from 'rxjs/operators';
-import { BookingsService } from '../../service/bookings.service';
+import { BookingsService } from '../../service/bookings/bookings.service';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';

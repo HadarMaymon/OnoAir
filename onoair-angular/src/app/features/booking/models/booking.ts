@@ -1,4 +1,4 @@
-import { Passenger } from '../../destinations/models/passenger';
+import { Passenger } from './passenger';
 import { BookingStatus } from './booking-status.enum';
 
 export class Booking {

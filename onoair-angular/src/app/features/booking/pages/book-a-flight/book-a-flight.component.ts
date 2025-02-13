@@ -10,6 +10,10 @@ import { Flight } from '../../../flights/model/flight';
 import { Firestore, collection, getDoc, doc, getDocs, setDoc, Timestamp } from '@angular/fire/firestore';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component';
+import { LuggageDialogComponent } from '../../dialog/luggage-dialog/luggage-dialog.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatStepperModule } from '@angular/material/stepper';
+
 
 @Component({
   selector: 'app-book-a-flight',
@@ -22,14 +26,19 @@ import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confir
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatStepperModule,
+    MatIconModule, 
   ],
 })
 export class BookAFlightComponent implements OnInit {
   flight: Flight | null = null;
-  passengerCount: number = 1; // Default number of passengers
-  passengers: { name: string; id: string }[] = [];
-  errors: { name?: string; id?: string; duplicateId?: string }[] = []; // ✅ Add errors array
+  passengerCount: number = 1;
+  passengers: { name: string; id: string; luggage: { cabin: number; checked: number; heavy: number } }[] = [];
+  errors: { name?: string; id?: string; duplicateId?: string }[] = [];
   destinationImage: string = '';
+  maxLuggageItems = 9;
+  currentStep = 0;
+;
 
   constructor(
     private route: ActivatedRoute,
@@ -39,21 +48,29 @@ export class BookAFlightComponent implements OnInit {
     private dialog: MatDialog
   ) {}
 
+  
+
+
+  setStep(index: number) {
+    this.currentStep = index;
+  }
+
+
   ngOnInit(): void {
     const flightNumber = this.route.snapshot.paramMap.get('flightNumber');
-  
+
     if (flightNumber) {
       this.flightService.getFlightByNumber(flightNumber)
         .then((data) => {
           if (data) {
             this.flight = {
               ...data,
-              date: data.date instanceof Timestamp ? data.date.toDate() : new Date(data.date), // ✅ Convert timestamp to date
-              arrivalDate: data.arrivalDate instanceof Timestamp ? data.arrivalDate.toDate() : new Date(data.arrivalDate), // ✅ Convert timestamp to date
+              date: data.date instanceof Timestamp ? data.date.toDate() : new Date(data.date),
+              arrivalDate: data.arrivalDate instanceof Timestamp ? data.arrivalDate.toDate() : new Date(data.arrivalDate),
               updatePrice: data.updatePrice,
               updateSeats: data.updateSeats,
               assignDynamicDate: data.assignDynamicDate,
-              updateStatus: data.updateStatus
+              updateStatus: data.updateStatus,
             };
             this.fetchDestinationImage(this.flight.destination);
           } else {
@@ -64,43 +81,91 @@ export class BookAFlightComponent implements OnInit {
           this.redirectToFlightList();
         });
     }
-  
-    this.updatePassengers();
+
+    this.updatePassengers(); // ✅ Only call it once
+  }
+
+  hasAtLeastOneValidPassenger(): boolean {
+    return this.passengers.some(passenger => passenger.name.trim() !== '' && passenger.id.trim() !== '');
   }
   
 
+  /**
+   * ✅ Update passengers when the number changes.
+   */
   updatePassengers(): void {
-    this.passengers = Array.from({ length: this.passengerCount }, () => ({ name: '', id: '' }));
-    this.errors = Array(this.passengerCount).fill({});
+    if (this.passengers.length < this.passengerCount) {
+      // Add new passengers
+      while (this.passengers.length < this.passengerCount) {
+        this.passengers.push({ name: '', id: '', luggage: { cabin: 0, checked: 0, heavy: 0 } });
+      }
+    } else {
+      // Remove extra passengers
+      this.passengers = this.passengers.slice(0, this.passengerCount);
+    }
+  
+    // ✅ Reset errors to prevent outdated validation messages
+    this.errors = this.passengers.map(() => ({}));
   }
+  
+  /**
+   * ✅ Open Luggage Dialog
+   */
+openLuggageDialog(passengerIndex: number): void {
+  const dialogRef = this.dialog.open(LuggageDialogComponent, {
+    width: '400px',
+    data: { 
+      passenger: { 
+        name: this.passengers[passengerIndex].name, 
+        luggage: { ...this.passengers[passengerIndex].luggage }
+      },
+      maxLuggageItems: this.maxLuggageItems,
+    }
+  });
 
+  dialogRef.afterClosed().subscribe((result) => {
+    if (result) {
+      const totalItems = result.cabin + result.checked + result.heavy;
+
+      if (totalItems > this.maxLuggageItems) {
+        this.showErrorDialog(`Luggage limit exceeded! Maximum allowed: ${this.maxLuggageItems}`);
+      } else {
+        this.passengers[passengerIndex].luggage = result;
+      }
+    }
+  });
+}
+
+  
+
+  /**
+   * ✅ Validate passenger details
+   */
   validatePassenger(index: number): void {
     const passenger = this.passengers[index];
     this.errors[index] = {};
-
-    // ✅ Validate Name (First and Last name only)
+  
     const nameRegex = /^[A-Za-z]+ [A-Za-z]+$/;
     if (!nameRegex.test(passenger.name)) {
       this.errors[index].name = 'Enter first and last name (letters only)';
     }
-
-    // ✅ Validate Passport ID (Exactly 9 digits)
+  
     const idRegex = /^[0-9]{9}$/;
     if (!idRegex.test(passenger.id)) {
       this.errors[index].id = 'ID must be exactly 9 digits';
     }
-
-    // ✅ Check for Duplicate Passport ID
+  
     const idCounts = this.passengers.map((p) => p.id).filter((id) => id);
     if (idCounts.filter((id) => id === passenger.id).length > 1) {
       this.errors[index].duplicateId = 'Duplicate Passport ID found';
     }
   }
+  
+  
 
-  hasErrors(): boolean {
-    return this.errors.some((error) => Object.keys(error).length > 0);
-  }
-
+  /**
+   * ✅ Fetch Flight Destination Image
+   */
   async fetchDestinationImage(destination: string | undefined): Promise<void> {
     if (!destination) {
       this.destinationImage = 'assets/images/default.jpg';
@@ -111,18 +176,29 @@ export class BookAFlightComponent implements OnInit {
       const destinationDoc = doc(this.firestore, `destinations/${destination}`);
       const snapshot = await getDoc(destinationDoc);
 
-      if (snapshot.exists()) {
-        this.destinationImage = snapshot.data()?.['image'] || 'assets/images/default.jpg';
-      } else {
-        console.warn(`No image found for destination: ${destination}`);
-        this.destinationImage = 'assets/images/default.jpg';
-      }
+      this.destinationImage = snapshot.exists() ? snapshot.data()?.['image'] || 'assets/images/default.jpg' : 'assets/images/default.jpg';
     } catch (error) {
       console.error('Error fetching destination image:', error);
       this.destinationImage = 'assets/images/default.jpg';
     }
   }
 
+  addPassenger(): void {
+    this.passengers.push({ name: '', id: '', luggage: { cabin: 0, checked: 0, heavy: 0 } });
+    this.errors.push({});
+  }
+  
+  removePassenger(index: number): void {
+    if (this.passengers.length > 1) {
+      this.passengers.splice(index, 1);
+      this.errors.splice(index, 1); // Remove errors for that passenger
+    }
+  }
+  
+
+  /**
+   * ✅ Save Booking Data
+   */
   async saveBooking(): Promise<void> {
     if (this.hasErrors()) {
       this.showErrorDialog('Please fix validation errors before saving.');
@@ -150,24 +226,16 @@ export class BookAFlightComponent implements OnInit {
   
           const bookingData = {
             bookingId,
-            id: bookingId,
             flightNumber: this.flight?.flightNumber || 'Unknown Flight',
-            origin: this.flight?.origin || 'Unknown Origin',
-            destination: this.flight?.destination || 'Unknown Destination',
-            boarding: this.flight?.date ? Timestamp.fromDate(this.flight.date) : Timestamp.now(),
-            departureTime: this.flight?.departureTime || '00:00', // ✅ Store departure time
-            landing: this.flight?.arrivalDate ? Timestamp.fromDate(this.flight.arrivalDate) : Timestamp.now(),
-            arrivalTime: this.flight?.arrivalTime || '00:00', // ✅ Store arrival time
-            numberOfPassengers: this.passengers.length,
-            passengers: this.passengers.map((p) => ({ name: p.name, id: p.id })),
-            image: '',
-            isDynamicDate: true,
+            passengers: this.passengers.map((p) => ({
+              name: p.name,
+              id: p.id,
+              luggage: p.luggage || { cabin: 0, checked: 0, heavy: 0 }, // ✅ Default luggage storage
+            })),
             status: 'Active',
           };
   
-          const bookingDoc = doc(this.firestore, `bookings/${bookingId}`);
-          await setDoc(bookingDoc, bookingData);
-  
+          await setDoc(doc(this.firestore, `bookings/${bookingId}`), bookingData);
           this.router.navigate(['/homepage']);
         } catch (error) {
           console.error('Error saving booking:', error);
@@ -179,10 +247,10 @@ export class BookAFlightComponent implements OnInit {
     }
   }
   
-  redirectToFlightList(): void {
-    this.router.navigate(['/find-a-flight']);
-  }
 
+  /**
+   * ✅ Error Dialog
+   */
   private showErrorDialog(message: string): void {
     this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
@@ -190,4 +258,24 @@ export class BookAFlightComponent implements OnInit {
     });
   }
 
+  redirectToFlightList(): void {
+    this.router.navigate(['/find-a-flight']);
+  }
+
+  hasErrors(): boolean {
+    return this.errors.some((error) => Object.keys(error).length > 0);
+  }
+  
+  canProceedToStep2(): boolean {
+    return !this.hasErrors() && this.passengers.every((p) => p.name && p.id);
+  }
+
+  finishBooking(): void {
+    this.router.navigate(['/homepage']); 
+  }
+
+  canProceedToStep3(): boolean {
+    return this.hasAtLeastOneValidPassenger(); 
+  }
+  
 }

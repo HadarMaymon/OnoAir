@@ -16,7 +16,7 @@
   width: 100%;
   background-color: #fff;
   border-radius: 10px;
-  padding: 20px;
+  padding: 80px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -73,12 +73,52 @@ h3 {
   font-weight: bold;
 }
 
-/* Button styles */
+/* Stepper container */
+mat-horizontal-stepper {
+  width: 100%;
+  max-width: 800px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+/* Make form fields larger and more readable */
+mat-form-field {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+/* Align buttons properly */
 button {
-    position: relative;
-    margin: 0 auto; 
-    display: block;
-  
+  margin-top: 10px;
+}
+
+/* Button container styles */
+.step-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px; /* Space between buttons */
+  margin-top: 20px;
+}
+
+/* Standard button styles */
+button[mat-raised-button] {
+  width: 250px;
+  padding: 12px 16px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  text-align: center;
+  background-color: #b03b5b;
+  color: white;
+}
+
+/* Hover effect */
+button[mat-raised-button]:hover {
+  background-color: #922a47;
+  transform: scale(1.05);
 }
 
 /* Responsive styles */
@@ -96,8 +136,13 @@ button {
     font-size: 0.9rem;
   }
 
-  button {
-    font-size: 0.9rem;
+  .step-buttons {
+    flex-direction: column; /* Stack buttons on smaller screens */
+    align-items: center;
+  }
+
+  button[mat-raised-button] {
+    width: 90%;
   }
 }
 
@@ -106,7 +151,138 @@ button {
     font-size: 1.2rem;
   }
 
-  button {
-    font-size: 0.8rem;
+  button[mat-raised-button] {
+    font-size: 0.9rem;
+    width: 100%;
   }
+
+/* Passenger Details Section */
+.passenger-container {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+  border-left: 5px solid #b03b5b;
+  position: relative;
+}
+
+/* Passenger Input Fields */
+.passenger-container label {
+  font-size: 1rem;
+  color: #444;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.passenger-container input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+/* Input Hover & Focus Effect */
+.passenger-container input:focus {
+  outline: none;
+  border-color: #007bff;
+  background-color: #fff;
+  transition: 0.3s ease-in-out;
+}
+
+/* Error Message Styling */
+.error {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: -5px;
+  margin-bottom: 10px;
+}
+
+/* Delete Passenger Button */
+button[mat-icon-button] {
+  align-self: flex-end;
+  background: transparent;
+  cursor: pointer;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+
+/* Passenger List Styling */
+.passenger-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Add Passenger Button */
+.add-passenger-button {
+  width: 100%;
+  background-color: #b03b5b;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.add-passenger-button:hover {
+  background-color: #922a47;
+  transform: scale(1.05);
+}
+
+/* Passenger Summary List */
+.passenger-summary {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  margin-top: 15px;
+}
+
+.passenger-summary ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.passenger-summary li {
+  font-size: 1rem;
+  color: #333;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Step Buttons Alignment */
+.step-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .passenger-container {
+    padding: 10px;
+  }
+
+  .step-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .add-passenger-button {
+    width: 100%;
+  }
+}
+
 }

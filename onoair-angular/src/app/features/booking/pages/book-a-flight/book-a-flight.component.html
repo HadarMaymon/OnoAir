@@ -1,36 +1,92 @@
-<div class="wrapper">
-  <div class="main-content">
-    <div class="book-flight-container" *ngIf="flight; else notFound">
-      <h1>Book a Flight</h1>
-      <p><strong>Origin:</strong> {{ flight.origin }} Boarding: {{ flight.date | date: 'dd-MM-yyyy' }} {{ flight.departureTime }}</p>
-      <p><strong>Destination:</strong> {{ flight.destination }} Landing: {{ flight.arrivalDate | date: 'dd-MM-yyyy' }} {{ flight.arrivalTime }}</p>
-      
-      <!-- Number of Passengers -->
-      <label for="passengers">No of passengers:</label>
-      <input id="passengers" type="number" [(ngModel)]="passengerCount" (change)="updatePassengers()" required min="1" />
-
-      <!-- Passenger Form -->
-      <div *ngFor="let passenger of passengers; let i = index">
-        <h3>Passenger {{ i + 1 }}</h3>
-
-        <!-- Name Input with Validation -->
-        <label for="name-{{ i }}">Name:</label>
-        <input id="name-{{ i }}" [(ngModel)]="passenger.name" (blur)="validatePassenger(i)" required />
-        <p class="error-message" *ngIf="errors[i]?.name">{{ errors[i].name }}</p>
-
-        <!-- Passport ID Input with Validation -->
-        <label for="id-{{ i }}">Passport ID:</label>
-        <input id="id-{{ i }}" [(ngModel)]="passenger.id" (blur)="validatePassenger(i)" required />
-        <p class="error-message" *ngIf="errors[i]?.id">{{ errors[i].id }}</p>
-        <p class="error-message" *ngIf="errors[i]?.duplicateId">{{ errors[i].duplicateId }}</p>
-      </div>
-
-      <!-- Save Button -->
-      <button mat-raised-button color="primary" (click)="saveBooking()" [disabled]="hasErrors()">Save</button>
+<mat-horizontal-stepper [selectedIndex]="currentStep" linear="true">
+  <!-- Step 1: Flight & Passenger Details -->
+  <mat-step [completed]="hasAtLeastOneValidPassenger()">
+    <h2>Flight & Passenger Details</h2>
+  
+    <div *ngFor="let passenger of passengers; let i = index" class="passenger-container">
+      <label>Name:</label>
+      <input [(ngModel)]="passenger.name" (blur)="validatePassenger(i)" required />
+  
+      <label>Passport ID:</label>
+      <input [(ngModel)]="passenger.id" (blur)="validatePassenger(i)" required />
+  
+      <p *ngIf="errors[i]?.name" class="error">{{ errors[i].name }}</p>
+      <p *ngIf="errors[i]?.id" class="error">{{ errors[i].id }}</p>
+      <p *ngIf="errors[i]?.duplicateId" class="error">{{ errors[i].duplicateId }}</p>
+  
+      <button mat-icon-button color="warn" (click)="removePassenger(i)" *ngIf="passengers.length > 1">
+        <mat-icon>delete</mat-icon>
+      </button>
     </div>
+  
+    <button mat-raised-button color="accent" (click)="addPassenger()">+ Add Passenger</button>
+  
+    <div class="step-buttons">
+      <button mat-raised-button color="primary" [disabled]="!hasAtLeastOneValidPassenger()" (click)="setStep(1)">
+        Next: Select Luggage
+      </button>
+    </div>
+  </mat-step>
+  
+<!-- Step 2: Luggage Selection -->
+<mat-step [completed]="canProceedToStep3()">
+  <div class="luggage-selection">
+    <h2>Luggage Selection</h2>
 
-    <ng-template #notFound>
-      <p>Flight not found. Please return to the flight list.</p>
-    </ng-template>
+    <!-- ✅ Loop through each passenger -->
+    <div *ngFor="let passenger of passengers; let i = index">
+      <h3 *ngIf="passenger.name">{{ passenger.name }}'s Luggage</h3>
+      
+      <button mat-raised-button class="add-luggage-button" (click)="openLuggageDialog(i)">
+        Add Luggage
+      </button>
+
+      <!-- ✅ Show Luggage Summary After Selection -->
+      <div class="luggage-summary" *ngIf="passenger.luggage && (passenger.luggage.cabin || passenger.luggage.checked || passenger.luggage.heavy)">
+        <p><strong>Selected Luggage:</strong></p>
+        <ul>
+          <li *ngIf="passenger.luggage.cabin">Cabin: {{ passenger.luggage.cabin }}</li>
+          <li *ngIf="passenger.luggage.checked">Checked: {{ passenger.luggage.checked }}</li>
+          <li *ngIf="passenger.luggage.heavy">Heavy: {{ passenger.luggage.heavy }}</li>
+        </ul>
+      </div>
+    </div>
   </div>
-</div>
+
+  <!-- Step Navigation Buttons -->
+  <div class="step-buttons">
+    <button mat-raised-button color="warn" (click)="setStep(0)">
+      Back to Passenger Details
+    </button>
+    <button mat-raised-button color="primary" (click)="setStep(2)">
+      Proceed to Confirmation
+    </button>
+      </div>
+</mat-step>
+
+
+
+  <!-- Step 3: Booking Confirmation -->
+  <mat-step>
+    <h2>Booking Confirmation</h2>
+    
+    <p>Your flight has been successfully booked!</p>
+
+    <h3>Booking Details</h3>
+    <p><strong>Flight Number:</strong> {{ flight?.flightNumber }}</p>
+    <p><strong>Passengers:</strong></p>
+    <ul>
+      <li *ngFor="let passenger of passengers">
+        {{ passenger.name }} (ID: {{ passenger.id }}) - 
+        Luggage: {{ passenger.luggage.cabin }} Cabin, 
+        {{ passenger.luggage.checked }} Checked, 
+        {{ passenger.luggage.heavy }} Heavy
+      </li>
+    </ul>
+
+    <div class="step-buttons">
+      <button mat-raised-button color="warn" (click)="setStep(1)">Back to Luggage Selection</button>
+      <button mat-raised-button color="primary" (click)="finishBooking()">Finish</button>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>

@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BookingsService } from '../../service/bookings.service';
+import { BookingsService } from '../../service/bookings/bookings.service';
 import { MatCardModule } from '@angular/material/card'; 
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { Booking } from '../../models/booking';
-import { Passenger } from '../../../destinations/models/passenger';
+import { Passenger } from '../../models/passenger';
 
 @Component({
   selector: 'app-my-bookings-details',
@@ -28,11 +28,16 @@ export class MyBookingsDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     const bookingId = this.route.snapshot.paramMap.get('bookingId');
+  
     if (bookingId) {
       this.bookingService.getBookingById(bookingId).then((booking) => {
-        this.booking = booking;
-      });    }
-  }
+        if (booking) {
+          this.booking = booking;
+          this.passengers = booking.passengers.map((p) => new Passenger(p.name, p.id, p.luggage || { cabin: 0, checked: 0, heavy: 0 }));
+        }
+      });
+    }
+  }  
 
   navigateToBookings(): void {
     this.router.navigate(['/my-bookings']);

@@ -1,0 +1,24 @@
+<h2>Add Luggage - {{ data.passenger.name }}</h2>
+
+<mat-form-field appearance="outline">
+  <mat-label>Cabin Baggage (8kg)</mat-label>
+  <input matInput type="number" [(ngModel)]="luggage.cabin" (input)="validateLuggage()" min="0" max="9">
+</mat-form-field>
+
+<mat-form-field appearance="outline">
+  <mat-label>Checked Baggage (23kg)</mat-label>
+  <input matInput type="number" [(ngModel)]="luggage.checked" (input)="validateLuggage()" min="0" max="9">
+</mat-form-field>
+
+<mat-form-field appearance="outline">
+  <mat-label>Heavy Baggage (32kg)</mat-label>
+  <input matInput type="number" [(ngModel)]="luggage.heavy" (input)="validateLuggage()" min="0" max="9">
+</mat-form-field>
+
+<!-- ✅ Display Error Message -->
+<p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+<div class="dialog-actions">
+  <button mat-button (click)="dialogRef.close()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="saveLuggage()">Save</button>
+</div>

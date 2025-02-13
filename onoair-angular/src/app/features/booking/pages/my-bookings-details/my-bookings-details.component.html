@@ -22,9 +22,17 @@
         <p><strong>Passenger {{ i + 1 }}:</strong> {{ passenger.name }}</p>
         <p><strong>ID:</strong> {{ passenger.id }}</p>
 
+        <!-- Luggage Details -->
+        <p *ngIf="passenger.luggage">
+          <strong>Luggage:</strong>
+          Cabin: {{ passenger.luggage.cabin }},
+          Checked: {{ passenger.luggage.checked }},
+          Heavy: {{ passenger.luggage.heavy }}
+        </p>
       </mat-card-content>
       <mat-divider></mat-divider>
     </mat-card>
+
   
     <!-- Back Button -->
     <div class="actions">

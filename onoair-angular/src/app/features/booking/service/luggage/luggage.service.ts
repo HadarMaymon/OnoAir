@@ -1,14 +1,18 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Luggage } from '../../models/luggage';
-import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
-
+import { Firestore, Timestamp, collection, doc, getDoc, onSnapshot, setDoc } from '@angular/fire/firestore';
+import { Passenger
+  
+ } from '../../models/passenger';
 @Injectable({
   providedIn: 'root'
 })
 export class LuggageService {
   private luggageData = new BehaviorSubject<{ [passengerId: string]: Luggage }>({});
   luggageData$ = this.luggageData.asObservable();
+  luggageService: any;
+  bookingsSubject: any;
 
   constructor(private firestore: Firestore) {}
 
@@ -28,13 +32,19 @@ export class LuggageService {
    * Retrieves luggage data from memory or Firestore.
    */
   async getLuggage(passengerId: string, bookingId: string): Promise<Luggage> {
-    const storedLuggage = this.luggageData.getValue()[passengerId];
-    if (storedLuggage) {
-      return storedLuggage;
-    }
+    try {
+      const docRef = doc(this.firestore, `bookings/${bookingId}`);
+      const snapshot = await getDoc(docRef);
 
-    // Fetch luggage from Firestore if not in memory
-    return await this.getLuggageFromFirestore(passengerId, bookingId);
+      if (snapshot.exists()) {
+        const bookingData = snapshot.data();
+        const passenger = bookingData['passengers'].find((p: Passenger) => p.id === passengerId);
+        return passenger?.luggage || new Luggage(); // ✅ Ensure Luggage object
+      }
+    } catch (error) {
+      console.error(`Error fetching luggage for passenger ${passengerId}:`, error);
+    }
+    return new Luggage(); // ✅ Default to avoid undefined errors
   }
 
   /**

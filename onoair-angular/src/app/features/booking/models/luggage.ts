@@ -1,6 +1,7 @@
-export interface Luggage {
-    cabin: number;   // 8kg 
-    checked: number; // 23kg 
-    heavy: number;   // 32kg 
-  }
-  
+export class Luggage {
+  constructor(
+    public cabin: number = 0,
+    public checked: number = 0,
+    public heavy: number = 0
+  ) {}
+}

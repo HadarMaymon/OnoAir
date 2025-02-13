@@ -53,7 +53,7 @@ export class MyBookingsComponent implements OnInit {
         this.isLoading = false;
       },
       error: (error) => {
-        console.error('❌ Error fetching bookings:', error);
+        console.error('Error fetching bookings:', error);
         this.isLoading = false;
       },
     });

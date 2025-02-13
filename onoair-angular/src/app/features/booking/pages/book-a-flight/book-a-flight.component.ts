@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injectable, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FlightService } from '../../../flights/service/flights.service';
 import { CommonModule } from '@angular/common';
@@ -7,12 +7,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { Flight } from '../../../flights/model/flight';
-import { Firestore, collection, getDoc, doc, getDocs, setDoc, Timestamp } from '@angular/fire/firestore';
+import { Firestore, getDoc, doc, setDoc, Timestamp, collection } from '@angular/fire/firestore';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component';
 import { LuggageDialogComponent } from '../../dialog/luggage-dialog/luggage-dialog.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatStepperModule } from '@angular/material/stepper';
+import { LuggageService } from '../../service/luggage/luggage.service';
+import { inject } from '@angular/core';
 
 
 @Component({
@@ -31,6 +33,7 @@ import { MatStepperModule } from '@angular/material/stepper';
   ],
 })
 export class BookAFlightComponent implements OnInit {
+  private firestore = inject(Firestore);
   flight: Flight | null = null;
   passengerCount: number = 1;
   passengers: { name: string; id: string; luggage: { cabin: number; checked: number; heavy: number } }[] = [];
@@ -44,9 +47,11 @@ export class BookAFlightComponent implements OnInit {
     private route: ActivatedRoute,
     private flightService: FlightService,
     private router: Router,
-    private firestore: Firestore,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private luggageService: LuggageService
   ) {}
+
+
 
   
 
@@ -111,31 +116,32 @@ export class BookAFlightComponent implements OnInit {
   /**
    * ✅ Open Luggage Dialog
    */
-openLuggageDialog(passengerIndex: number): void {
-  const dialogRef = this.dialog.open(LuggageDialogComponent, {
-    width: '400px',
-    data: { 
-      passenger: { 
-        name: this.passengers[passengerIndex].name, 
-        luggage: { ...this.passengers[passengerIndex].luggage }
-      },
-      maxLuggageItems: this.maxLuggageItems,
-    }
-  });
-
-  dialogRef.afterClosed().subscribe((result) => {
-    if (result) {
-      const totalItems = result.cabin + result.checked + result.heavy;
-
-      if (totalItems > this.maxLuggageItems) {
-        this.showErrorDialog(`Luggage limit exceeded! Maximum allowed: ${this.maxLuggageItems}`);
-      } else {
-        this.passengers[passengerIndex].luggage = result;
+  openLuggageDialog(passengerIndex: number): void {
+    const dialogRef = this.dialog.open(LuggageDialogComponent, {
+      width: '400px',
+      data: { 
+        passenger: { 
+          name: this.passengers[passengerIndex].name, 
+          luggage: { ...this.passengers[passengerIndex].luggage } // ✅ Preserve existing luggage data
+        },
+        maxLuggageItems: this.maxLuggageItems,
       }
-    }
-  });
-}
-
+    });
+  
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        const totalItems = result.cabin + result.checked + result.heavy;
+  
+        if (totalItems > this.maxLuggageItems) {
+          this.showErrorDialog(`Luggage limit exceeded! Maximum allowed: ${this.maxLuggageItems}`);
+        } else {
+          console.log(`🛄 Updating luggage for passenger ${passengerIndex}:`, result);
+          this.passengers[passengerIndex].luggage = result;  // ✅ Save luggage in the passengers array
+        }
+      }
+    });
+  }
+  
   
 
   /**
@@ -201,14 +207,14 @@ openLuggageDialog(passengerIndex: number): void {
    */
   async saveBooking(): Promise<void> {
     if (this.hasErrors()) {
-      this.showErrorDialog('Please fix validation errors before saving.');
+      this.showErrorDialog("Please fix validation errors before saving.");
       return;
     }
   
     if (this.passengers.every((p) => p.name && p.id)) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-        width: '350px',
-        data: { type: 'save', name: 'this booking' },
+        width: "350px",
+        data: { type: "save", name: "this booking" },
       });
   
       const result = await dialogRef.afterClosed().toPromise();
@@ -224,29 +230,57 @@ openLuggageDialog(passengerIndex: number): void {
             if (!docSnapshot.exists()) break;
           } while (true);
   
+          console.log("🚀 Generated Booking ID:", bookingId);
+  
+          // ✅ Ensure luggage exists before saving and convert to plain object
+          const passengersWithLuggage = await Promise.all(
+            this.passengers.map(async (p) => {
+              const latestLuggage = await this.luggageService.getLuggage(p.id, bookingId) || { cabin: 0, checked: 0, heavy: 0 };
+              return {
+                name: p.name,
+                id: p.id,
+                luggage: {
+                  cabin: latestLuggage.cabin,
+                  checked: latestLuggage.checked,
+                  heavy: latestLuggage.heavy,
+                }
+              };
+            })
+          );
+  
+          console.log("🛄 Passengers Before Firestore Save:", JSON.stringify(passengersWithLuggage, null, 2));
+  
           const bookingData = {
             bookingId,
-            flightNumber: this.flight?.flightNumber || 'Unknown Flight',
-            passengers: this.passengers.map((p) => ({
-              name: p.name,
-              id: p.id,
-              luggage: p.luggage || { cabin: 0, checked: 0, heavy: 0 }, // ✅ Default luggage storage
-            })),
-            status: 'Active',
+            flightNumber: this.flight?.flightNumber || "Unknown Flight",
+            origin: this.flight?.origin || "Unknown",
+            destination: this.flight?.destination || "Unknown",
+            numberOfPassengers: passengersWithLuggage.length,
+            passengers: passengersWithLuggage,
+            boarding: Timestamp.fromDate(new Date(this.flight?.date || Date.now())),
+            landing: Timestamp.fromDate(new Date(this.flight?.arrivalDate || Date.now())),
+            image: this.destinationImage || 'assets/images/default-destination.jpg',
+            isDynamicDate: this.flight?.assignDynamicDate || false,
+            status: "Active",
           };
   
-          await setDoc(doc(this.firestore, `bookings/${bookingId}`), bookingData);
-          this.router.navigate(['/homepage']);
+          console.log("🚀 Booking Data Before Firestore Save:", JSON.stringify(bookingData, null, 2));
+  
+          // ✅ Write to Firestore
+          const bookingsCollection = collection(this.firestore, "bookings");
+          await setDoc(doc(bookingsCollection, bookingId), bookingData, { merge: true });
+  
+          console.log(`✅ Booking ${bookingId} saved successfully.`);
         } catch (error) {
-          console.error('Error saving booking:', error);
-          this.showErrorDialog('An error occurred while saving the booking. Please try again.');
+          console.error("❌ Firestore save failed:", error);
+          const errorMessage = (error as Error).message;
+          this.showErrorDialog(`Firestore error: ${errorMessage}`);
         }
       }
     } else {
-      this.showErrorDialog('Please fill in all passenger details.');
+      this.showErrorDialog("Please fill in all passenger details.");
     }
   }
-  
 
   /**
    * ✅ Error Dialog
@@ -268,10 +302,6 @@ openLuggageDialog(passengerIndex: number): void {
   
   canProceedToStep2(): boolean {
     return !this.hasErrors() && this.passengers.every((p) => p.name && p.id);
-  }
-
-  finishBooking(): void {
-    this.router.navigate(['/homepage']); 
   }
 
   canProceedToStep3(): boolean {

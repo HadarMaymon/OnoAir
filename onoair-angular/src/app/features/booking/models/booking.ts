@@ -1,5 +1,6 @@
 import { Passenger } from './passenger';
 import { BookingStatus } from './booking-status.enum';
+import { Luggage } from './luggage';
 
 export class Booking {
   constructor(

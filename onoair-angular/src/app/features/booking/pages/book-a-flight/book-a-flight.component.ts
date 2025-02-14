@@ -13,7 +13,6 @@ import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confir
 import { LuggageDialogComponent } from '../../dialog/luggage-dialog/luggage-dialog.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatStepperModule } from '@angular/material/stepper';
-import { LuggageService } from '../../service/luggage/luggage.service';
 import { inject } from '@angular/core';
 
 
@@ -50,7 +49,6 @@ export class BookAFlightComponent implements OnInit {
     private flightService: FlightService,
     private router: Router,
     private dialog: MatDialog,
-    private luggageService: LuggageService
   ) {}
 
 
@@ -110,7 +108,11 @@ export class BookAFlightComponent implements OnInit {
 
   openLuggageDialog(passengerIndex: number): void {
     const dialogRef = this.dialog.open(LuggageDialogComponent, {
-      width: '400px',
+      width: '700px', 
+      height: '500px', 
+      maxWidth: '90vw', 
+      maxHeight: '90vh', 
+      panelClass: 'custom-dialog-container', 
       data: { 
         passenger: { 
           name: this.passengers[passengerIndex].name, 
@@ -127,7 +129,7 @@ export class BookAFlightComponent implements OnInit {
         if (totalItems > this.maxLuggageItems) {
           this.showErrorDialog(`Luggage limit exceeded! Maximum allowed: ${this.maxLuggageItems}`);
         } else {
-          console.log(`🛄 Updating luggage for passenger ${passengerIndex}:`, result);
+          console.log(`Updating luggage for passenger ${passengerIndex}:`, result);
           this.passengers[passengerIndex].luggage = result;
         }
       }
@@ -251,7 +253,7 @@ export class BookAFlightComponent implements OnInit {
                     status: "Active",
                 };
 
-                console.log("🚀 Booking Data Before Firestore Save:", JSON.stringify(bookingData, null, 2));
+                console.log(" Booking Data Before Firestore Save:", JSON.stringify(bookingData, null, 2));
 
                 const bookingsCollection = collection(this.firestore, "bookings");
                 await setDoc(doc(bookingsCollection, bookingId), bookingData, { merge: true });
@@ -276,7 +278,7 @@ export class BookAFlightComponent implements OnInit {
 }
 
   /**
-   * ✅ Error Dialog
+   *Error Dialog
    */
   private showErrorDialog(message: string): void {
     this.dialog.open(ConfirmDialogComponent, {

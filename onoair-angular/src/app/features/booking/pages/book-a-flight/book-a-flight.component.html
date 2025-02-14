@@ -38,7 +38,7 @@
       <h3 *ngIf="passenger.name">{{ passenger.name }}'s Luggage</h3>
       
       <button mat-raised-button class="add-luggage-button" (click)="openLuggageDialog(i)">
-        Add Luggage
+        Add Luggage 🧳
       </button>
 
       <!-- ✅ Show Luggage Summary After Selection -->
@@ -74,10 +74,13 @@
 
     <h3>Booking Details</h3>
     <p><strong>Flight Number:</strong> {{ flight?.flightNumber }}</p>
+    <p><strong>Origin:</strong> {{ flight?.origin }}</p>
+    <p><strong>Destination:</strong> {{ flight?.destination }}</p>
+    <p><strong>Date:</strong> {{ flight?.date | date: 'dd-MM-yyyy' }}</p>
     <p><strong>Passengers:</strong></p>
     <ul>
       <li *ngFor="let passenger of passengers">
-        {{ passenger.name }} (ID: {{ passenger.id }}) - 
+        {{ passenger.name }} (Passport ID: {{ passenger.id }}) - 
         Luggage: {{ passenger.luggage.cabin }} Cabin, 
         {{ passenger.luggage.checked }} Checked, 
         {{ passenger.luggage.heavy }} Heavy

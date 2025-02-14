@@ -19,9 +19,9 @@ import { Timestamp } from '@angular/fire/firestore';
 })
 export class MyBookingsComponent implements OnInit {
   bookingSections: { title: string; bookings: Booking[] }[] = [];
-  bookingStatus = BookingStatus; // Expose the enum to the template
+  bookingStatus = BookingStatus; 
   isLoading = true;
-  now: Date = new Date(); // ✅ Current date, exposed to the template
+  now: Date = new Date(); 
 
   constructor(private bookingService: BookingsService, private router: Router, private dialog: MatDialog) {}
 
@@ -29,7 +29,7 @@ export class MyBookingsComponent implements OnInit {
     this.bookingService.syncBookingsWithImages();
     this.bookingService.bookings$.subscribe({
       next: (allBookings: Booking[]) => {
-        console.log('🛬 Bookings received in MyBookingsComponent:', allBookings); // ✅ Debugging
+        console.log('🛬 Bookings received in MyBookingsComponent:', allBookings);
 
         const upcoming: Booking[] = [];
         const previous: Booking[] = [];

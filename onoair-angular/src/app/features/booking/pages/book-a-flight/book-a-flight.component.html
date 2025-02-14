@@ -5,10 +5,10 @@
   
     <div *ngFor="let passenger of passengers; let i = index" class="passenger-container">
       <label>Name:</label>
-      <input [(ngModel)]="passenger.name" (blur)="validatePassenger(i)" required />
+      <input [(ngModel)]="passenger.name" (blur)="validatePassenger(i)" required title="Passenger Name" placeholder="Enter passenger name" />
   
       <label>Passport ID:</label>
-      <input [(ngModel)]="passenger.id" (blur)="validatePassenger(i)" required />
+      <input [(ngModel)]="passenger.id" (blur)="validatePassenger(i)" required title="Passport ID" placeholder="Enter passport ID" />
   
       <p *ngIf="errors[i]?.name" class="error">{{ errors[i].name }}</p>
       <p *ngIf="errors[i]?.id" class="error">{{ errors[i].id }}</p>
@@ -86,7 +86,9 @@
 
     <div class="step-buttons">
       <button mat-raised-button color="warn" (click)="setStep(1)">Back to Luggage Selection</button>
-      <button mat-raised-button color="primary" (click)="saveBooking()">Finish</button>
-    </div>
+      <button mat-raised-button color="primary" (click)="saveBooking()" [disabled]="isSaving">
+        {{ isSaving ? "Saving..." : "Finish" }}
+    </button>
+        </div>
   </mat-step>
 </mat-horizontal-stepper>

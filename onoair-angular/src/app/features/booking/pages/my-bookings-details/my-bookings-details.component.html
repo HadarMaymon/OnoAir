@@ -1,54 +1,56 @@
 <div class="booking-details-container" *ngIf="booking; else notFound">
-    <h1>Booking Details</h1>
-  
-    <!-- Flight Information Card -->
-    <mat-card class="flight-info">
-      <mat-card-header>
-        <mat-card-title>Flight Information</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <p><strong>Origin:</strong> {{ booking.origin }} - 
-          <strong>Boarding:</strong> {{ booking.boarding | date:'dd-MM-yyyy' }}</p>
-        <p><strong>Destination:</strong> {{ booking.destination }} - 
-          <strong>Landing:</strong> {{ booking.landing | date:'dd-MM-yyyy' }}</p>
-        <p><strong>No. of passengers:</strong> {{ booking.numberOfPassengers }}</p>
-      </mat-card-content>      
-    </mat-card>
-  
-    <!-- Passenger List Section -->
-    <h2>Passenger List</h2>
-    <mat-card class="passenger-card" *ngFor="let passenger of booking?.passengers; let i = index">
-      <mat-card-content>
-        <p><strong>Passenger {{ i + 1 }}:</strong> {{ passenger.name }}</p>
-        <p><strong>ID:</strong> {{ passenger.id }}</p>
+  <h1>Booking Details</h1>
 
-        <!-- Luggage Details -->
-        <p *ngIf="passenger.luggage">
-          <strong>Luggage:</strong>
-          Cabin: {{ passenger.luggage.cabin }},
-          Checked: {{ passenger.luggage.checked }},
-          Heavy: {{ passenger.luggage.heavy }}
-        </p>
-      </mat-card-content>
-      <mat-divider></mat-divider>
-    </mat-card>
+  <!-- Flight Information Card -->
+  <mat-card class="flight-info">
+    <mat-card-header>
+      <mat-card-title>Flight Information</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p><strong>Flight Number:</strong> {{ booking.flightNumber || 'N/A' }}</p>
+      <p><strong>Origin:</strong> {{ booking.origin }} - 
+        <strong>Boarding:</strong> {{ booking.boarding | date:'dd-MM-yyyy' }}</p>
+      <p><strong>Departure Time:</strong> {{ booking.departureTime || 'N/A' }}</p>
+      <p><strong>Destination:</strong> {{ booking.destination }} - 
+        <strong>Landing:</strong> {{ booking.landing | date:'dd-MM-yyyy' }}</p>
+      <p><strong>Arrival Time:</strong> {{ booking.arrivalTime || 'N/A' }}</p>
+      <p><strong>No. of passengers:</strong> {{ booking.numberOfPassengers }}</p>
+    </mat-card-content>      
+  </mat-card>
 
-  
-    <!-- Back Button -->
-    <div class="actions">
-      <button mat-raised-button color="primary" (click)="navigateToBookings()">
-        Back to My Bookings
-      </button>
-    </div>
+  <!-- Passenger List Section -->
+  <h2>Passenger List</h2>
+  <mat-card class="passenger-card" *ngFor="let passenger of booking?.passengers; let i = index">
+    <mat-card-content>
+      <p><strong>Passenger {{ i + 1 }}:</strong> {{ passenger.name }}</p>
+      <p><strong>ID:</strong> {{ passenger.id }}</p>
+
+      <!-- Luggage Details -->
+      <p *ngIf="passenger.luggage">
+        <strong>Luggage:</strong>
+        Cabin: {{ passenger.luggage.cabin }},
+        Checked: {{ passenger.luggage.checked }},
+        Heavy: {{ passenger.luggage.heavy }}
+      </p>
+    </mat-card-content>
+    <mat-divider></mat-divider>
+  </mat-card>
+
+
+  <!-- Back Button -->
+  <div class="actions">
+    <button mat-raised-button color="primary" (click)="navigateToBookings()">
+      Back to My Bookings
+    </button>
   </div>
-  
-  <!-- Booking Not Found -->
-  <ng-template #notFound>
-    <div class="not-found-message">
-      <p>Booking not found. Please return to the bookings page.</p>
-      <button mat-raised-button color="accent" (click)="navigateToBookings()">
-        Back to My Bookings
-      </button>
-    </div>
-  </ng-template>
-  
+</div>
+
+<!-- Booking Not Found -->
+<ng-template #notFound>
+  <div class="not-found-message">
+    <p>Booking not found. Please return to the bookings page.</p>
+    <button mat-raised-button color="accent" (click)="navigateToBookings()">
+      Back to My Bookings
+    </button>
+  </div>
+</ng-template>

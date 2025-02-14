@@ -10,7 +10,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule, DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core'; // ✅ Added for date handling
+import { MatNativeDateModule } from '@angular/material/core'; // ✅ Corrected
 import { MatOption } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
@@ -21,7 +21,7 @@ import { Router } from '@angular/router';
 import { Flight } from '../../model/flight';
 import { FlightStatus } from '../../model/flight-status.enum';
 import { ReactiveFormsModule, FormGroup, FormBuilder } from '@angular/forms';
-
+import { Timestamp } from 'firebase/firestore';
 
 @Component({
   selector: 'app-find-a-flight',
@@ -38,12 +38,10 @@ import { ReactiveFormsModule, FormGroup, FormBuilder } from '@angular/forms';
     MatPaginatorModule,
     MatSortModule,
     MatDatepickerModule,
-    MatNativeDateModule, 
+    MatNativeDateModule, // ✅ Only one import needed
     MatOption,
     MatSelectModule,
     ReactiveFormsModule,
-    MatNativeDateModule,
-  
   ],
 })
 
@@ -64,19 +62,7 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
   dataSource!: MatTableDataSource<Flight>;
   destinations$: Observable<any[]>;
   destinationNames: string[] = [];
-  
-  filters = {
-    from: '',
-    to: '',
-    departureStartDate: '', 
-    departureEndDate: '', 
-    priceBudget: null,
-    passengers: null,
-  };
-  
-
-  today: Date = new Date(); // Current date for min in date picker
-
+  today: Date = new Date(); // ✅ Store today's date
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -84,13 +70,11 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
   constructor(
     private flightService: FlightService,
     private router: Router,
-    private firestore: Firestore, // Firestore instance
-    private fb: FormBuilder, // Inject FormBuilder
-
+    private firestore: Firestore,
+    private fb: FormBuilder,
   ) {
+    this.today.setHours(0, 0, 0, 0); // ✅ Normalize to midnight
 
-    this.today = new Date();
-    this.today.setHours(0, 0, 0, 0);
     // Fetch destinations from Firestore
     const destinationsCollection = collection(this.firestore, 'destinations');
     this.destinations$ = collectionData(destinationsCollection, { idField: 'id' });
@@ -103,12 +87,11 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
 
   disablePastDates = (date: Date | null): boolean => {
     if (!date) return false;
-    return date >= this.today; // Disables past dates
+    return date >= this.today; // ✅ Disables past dates
   };
 
-
   ngOnInit(): void {
-    //Initialize filterForm with controls
+    // ✅ Initialize filterForm
     this.filterForm = this.fb.group({
       from: [''],
       to: [''],
@@ -118,7 +101,22 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
       passengers: [null],
     });
 
-    // Fetch active flights
+    // ✅ Prevent users from selecting past dates
+    this.filterForm.get('departureStartDate')?.valueChanges.subscribe((selectedDate) => {
+      if (selectedDate && new Date(selectedDate) < this.today) {
+        this.filterForm.patchValue({ departureStartDate: null });
+        alert("You cannot select a past departure date.");
+      }
+    });
+
+    this.filterForm.get('departureEndDate')?.valueChanges.subscribe((selectedDate) => {
+      if (selectedDate && new Date(selectedDate) < this.today) {
+        this.filterForm.patchValue({ departureEndDate: null });
+        alert("You cannot select a past return date.");
+      }
+    });
+
+    // ✅ Fetch active flights
     this.flightService.flights$.subscribe((flights) => {
       const activeFlights = flights.filter((flight) => flight.status === FlightStatus.Active);
       this.dataSource = new MatTableDataSource(activeFlights);
@@ -131,7 +129,6 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
       }
     });
   }
-
 
   ngAfterViewInit(): void {
     if (this.dataSource) {
@@ -147,43 +144,68 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
   
-    // Ensure the date range is valid
+    // Convert user-selected dates
     const startDate = departureStartDate ? new Date(departureStartDate) : undefined;
     const endDate = departureEndDate ? new Date(departureEndDate) : undefined;
   
+    console.log("🔎 Search Triggered");
+    console.log("From:", from, "To:", to);
+    console.log("Start Date:", startDate, "End Date:", endDate);
+  
+    if (!startDate && !endDate) {
+      alert("No dates were selected. Please select a departure date range.");
+      return;
+    }
+
     if (startDate && endDate && startDate > endDate) {
-      alert("End date must be later than or equal to the start date.");
+      alert("The end date must be later than or equal to the start date.");
       return;
     }
   
-    this.flightService.flights$.subscribe((flights) => {
-      const filteredFlights = flights.filter((flight) => {
-        const flightDate = new Date(flight.date);
-        flightDate.setHours(0, 0, 0, 0);
+    this.flightService.getFlightsByDateRange(startDate || today, endDate || new Date(today.getFullYear() + 1, today.getMonth(), today.getDate())).subscribe(
+      (flights) => {
+        console.log("📡 Flights Fetched:", flights);
   
-        const isInRange =
-          (!startDate || flightDate >= startDate) &&
-          (!endDate || flightDate <= endDate);
+        const filteredFlights = flights.filter((flight) => {
+          let flightDate: Date;
+          
+          if (flight.date instanceof Timestamp) {
+            flightDate = flight.date.toDate();
+          } else if (flight.date instanceof Date) {
+            flightDate = flight.date;
+          } else {
+            console.warn("⚠️ Unexpected date format:", flight.date);
+            return false;
+          }
   
-        const matchesFrom = !from || flight.origin.toLowerCase() === from.toLowerCase();
-        const matchesTo = !to || flight.destination.toLowerCase() === to.toLowerCase();
-        const matchesPrice = !priceBudget || flight.price <= priceBudget;
-        const matchesPassengers = !passengers || flight.availableSeats >= passengers;
-  
-        return isInRange && matchesFrom && matchesTo && matchesPrice && matchesPassengers;
-      });
-  
-      if (filteredFlights.length === 0) {
-        alert("No flights found for the selected filters. Try adjusting your search.");
+          flightDate.setHours(0, 0, 0, 0);
+
+          const isInRange =
+            (!startDate || flightDate >= startDate) &&
+            (!endDate || flightDate <= endDate);
+
+          const matchesFrom = !from || flight.origin.toLowerCase() === from.toLowerCase();
+          const matchesTo = !to || flight.destination.toLowerCase() === to.toLowerCase();
+          const matchesPrice = !priceBudget || flight.price <= priceBudget;
+          const matchesPassengers = !passengers || flight.availableSeats >= passengers;
+
+          return isInRange && matchesFrom && matchesTo && matchesPrice && matchesPassengers;
+        });
+
+        console.log("✅ Filtered Flights:", filteredFlights);
+
+        if (filteredFlights.length === 0) {
+          alert("No flights were found for the selected date range.");
+        }
+
+        this.dataSource.data = filteredFlights;
+      },
+      (error) => {
+        console.error("❌ Firebase Query Error:", error);
       }
-  
-      this.dataSource.data = filteredFlights;
-    });
+    );
   }
   
-  
-  
-    
   bookFlight(flight: Flight): void {
     this.router.navigate(['/book-a-flight', flight.flightNumber]);
   }

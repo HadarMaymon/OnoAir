@@ -10,16 +10,16 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule, DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core'; // ✅ Added for date handling
 import { MatOption } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Firestore, collectionData, collection } from '@angular/fire/firestore'; 
+import { Firestore, collectionData, collection } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { Flight } from '../../model/flight';
-import { FlightStatus} from '../../model/flight-status.enum';
+import { FlightStatus } from '../../model/flight-status.enum';
 import { ReactiveFormsModule, FormGroup, FormBuilder } from '@angular/forms';
 
 
@@ -42,6 +42,7 @@ import { ReactiveFormsModule, FormGroup, FormBuilder } from '@angular/forms';
     MatOption,
     MatSelectModule,
     ReactiveFormsModule,
+    MatNativeDateModule,
   
   ],
 })
@@ -84,9 +85,12 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
     private flightService: FlightService,
     private router: Router,
     private firestore: Firestore, // Firestore instance
-    private fb: FormBuilder, // ✅ Inject FormBuilder
+    private fb: FormBuilder, // Inject FormBuilder
 
   ) {
+
+    this.today = new Date();
+    this.today.setHours(0, 0, 0, 0);
     // Fetch destinations from Firestore
     const destinationsCollection = collection(this.firestore, 'destinations');
     this.destinations$ = collectionData(destinationsCollection, { idField: 'id' });
@@ -96,6 +100,12 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
       this.destinationNames = destinations.map((destination) => destination.destinationName).sort();
     });
   }
+
+  disablePastDates = (date: Date | null): boolean => {
+    if (!date) return false;
+    return date >= this.today; // Disables past dates
+  };
+
 
   ngOnInit(): void {
     //Initialize filterForm with controls

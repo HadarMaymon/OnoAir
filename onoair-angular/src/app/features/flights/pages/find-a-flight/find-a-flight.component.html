@@ -21,18 +21,20 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+
+    <!-- Departure Start Date -->
   
-    <!-- Departure Date Range -->
     <mat-form-field appearance="outline">
-      <mat-label>Departure Date Range</mat-label>
-      <mat-date-range-input [formGroup]="filterForm" [rangePicker]="departureRangePicker">
-        <input matStartDate formControlName="departureStartDate" placeholder="Start Date">
-        <input matEndDate formControlName="departureEndDate" placeholder="End Date">
-      </mat-date-range-input>
-      <mat-datepicker-toggle matSuffix [for]="departureRangePicker"></mat-datepicker-toggle>
-      <mat-date-range-picker #departureRangePicker></mat-date-range-picker>
+      <mat-label>Departure Start Date</mat-label>
+      <input matInput [matDatepicker]="departurePicker" formControlName="departureStartDate"
+             [min]="today" [matDatepickerFilter]="disablePastDates"
+             placeholder="Select departure start date">
+      <mat-datepicker-toggle matSuffix [for]="departurePicker"></mat-datepicker-toggle>
+      <mat-datepicker #departurePicker></mat-datepicker>
     </mat-form-field>
-  
+
+    
+
     <!-- Price Budget -->
     <mat-form-field appearance="outline">
       <mat-label>Price Budget</mat-label>

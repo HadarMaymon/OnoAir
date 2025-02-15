@@ -45,6 +45,9 @@ export class EditFlightComponent implements OnInit {
   minDate: string = '';
 
   FlightStatus = FlightStatus;
+  errorMessage: string = '';
+  successMessage: string = '';
+
 
   constructor(
     private flightService: FlightService,
@@ -142,89 +145,115 @@ export class EditFlightComponent implements OnInit {
     return !(this.flight.hasBookings && latestBookingDate >= today);
   }
   
+  validateFlightRoute(): void {
+    if (this.flight?.origin === this.flight?.destination) {
+      this.errorMessage = 'Origin and Destination must be different!';
+    } else {
+      this.errorMessage = '';
+    }
+  }
+  
+  
   
   
   redirectToFlightList(): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
-      data: {
-        title: 'Error',
-        message: 'Flight not found. Redirecting to Manage Flight.',
-        showConfirmButton: false,
-        showCloseButton: true,
-      },
+      data: { type: 'error', name: 'Flight not found. Redirecting to Manage Flight.' },
     });
-
+  
     dialogRef.afterClosed().subscribe(() => {
       this.router.navigate(['/manage-flight']);
     });
   }
+  
 
   saveChanges(flightForm: any): void {
+    this.errorMessage = ''; // Clear previous error message
+  
     if (flightForm.invalid) {
-      this.showErrorDialog('Please fill in all required fields before saving.');
+      this.dialog.open(ConfirmDialogComponent, {
+        width: '350px',
+        data: { type: 'error', name: 'Please fill in all required fields before saving.' },
+      });
       return;
     }
-
+  
     if (!this.flight) {
-      this.showErrorDialog('Flight is not defined.');
+      this.dialog.open(ConfirmDialogComponent, {
+        width: '350px',
+        data: { type: 'error', name: 'Flight data is missing. Please try again.' },
+      });
       return;
     }
+  
+    if (this.flight.origin === this.flight.destination) {
+      this.dialog.open(ConfirmDialogComponent, {
+        width: '350px',
+        data: { type: 'error', name: 'Origin and destination must be different.' },
+      });
+      return;
+    }
+  
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '350px',
+      data: { type: this.flightNumber === 'new' ? 'save' : 'update', name: this.flight.flightNumber },
+    });
+  
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.confirmed) {
+        this.updateFlight();
+      }
+    });
+  }
+  
 
+
+  
+  private updateFlight(): void {
+    if (!this.flight) {
+      this.dialog.open(ConfirmDialogComponent, {
+        width: '350px',
+        data: { type: 'error', name: 'Flight data is missing.' },
+      });
+      return;
+    }
+  
     if (this.flight.hasBookings) {
       this.flightService.getFlightByNumber(this.flight.flightNumber).then((originalFlight) => {
         if (originalFlight && originalFlight.status !== this.flight!.status) {
-          this.showErrorDialog('This flight has active bookings. Status cannot be changed.');
+          this.dialog.open(ConfirmDialogComponent, {
+            width: '350px',
+            data: { type: 'error', name: 'This flight has active bookings. Status cannot be changed.' },
+          });
+  
           this.flight!.status = originalFlight.status;
           this.cdr.detectChanges();
           return;
         }
-
-        if (!this.flight) {
-          this.showErrorDialog('Flight is not defined.');
-          return;
-        }
-        this.flightService.updateFlight(this.flight).then(() => {
-          this.showSuccessDialog('Changes saved successfully!', () => {
-            this.router.navigate(['/manage-flight']);
-          });
-        }).catch((error) => {
-          this.showErrorDialog('Failed to save changes. Please try again.');
-          console.error('Error saving changes:', error);
-        });
       });
-
-      return;
     }
-
+  
     this.flightService.updateFlight(this.flight).then(() => {
-      this.showSuccessDialog('Changes saved successfully!', () => {
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        width: '350px',
+        data: { type: 'success', name: `${this.flight!.flightNumber} has been updated successfully!` },
+      });
+  
+      dialogRef.afterClosed().subscribe(() => {
         this.router.navigate(['/manage-flight']);
       });
+  
     }).catch((error) => {
-      this.showErrorDialog('Failed to save changes. Please try again.');
+      this.dialog.open(ConfirmDialogComponent, {
+        width: '350px',
+        data: { type: 'error', name: 'Failed to save changes. Please try again.' },
+      });
       console.error('Error saving changes:', error);
     });
   }
-
-  private showErrorDialog(message: string): void {
-    this.dialog.open(ConfirmDialogComponent, {
-      width: '350px',
-      data: { title: 'Error', message, showCloseButton: true }
-    });
-  }
-
-  private showSuccessDialog(message: string, afterClose?: () => void): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '350px',
-      data: { title: 'Success', message, showCloseButton: true }
-    });
-
-    if (afterClose) {
-      dialogRef.afterClosed().subscribe(afterClose);
-    }
-  }
-
+  
+  
   resetForm(flightNumber: string): void {
     this.flight = new Flight(
       flightNumber,

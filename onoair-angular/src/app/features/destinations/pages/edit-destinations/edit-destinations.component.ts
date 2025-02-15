@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DestinationsService } from '../../service/destinations.service';
 import { CommonModule } from '@angular/common';
@@ -15,7 +15,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { DestinationStatus } from '../../models/destination-status.enum';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
-
+import { FlightService } from '../../../flights/service/flights.service';
 
 @Component({
   selector: 'app-edit-destinations',
@@ -35,93 +35,133 @@ import { MatSelectModule } from '@angular/material/select';
   standalone: true,
 })
 
-  export class EditDestinationsComponent implements OnInit {
-    @Input() destination?: Destination; // 👈 Parent can still pass data
-    destinationForm!: FormGroup;
-    destinationStatus = DestinationStatus;
-    originalIATA: string | null = null;
-    isEditMode = false;
-  
-    constructor(
-      private route: ActivatedRoute,
-      private fb: FormBuilder,
-      private destinationService: DestinationsService,
-      private router: Router,
-      private dialog: MatDialog
-    ) {}
-  
-    ngOnInit(): void {
-      this.originalIATA = this.route.snapshot.paramMap.get('IATA');
-  
-      if (!this.destination) {
-        // 👇 If @Input() is not provided, use the navigation state
-        this.destination = history.state.destination;
+export class EditDestinationsComponent implements OnInit {
+  @Input() destination?: Destination; 
+  destinationForm!: FormGroup;
+  destinationStatus = DestinationStatus;
+  originalIATA: string | null = null;
+  isEditMode = false;
+
+  constructor(
+    private route: ActivatedRoute,
+    private fb: FormBuilder,
+    private destinationService: DestinationsService,
+    private router: Router,
+    private dialog: MatDialog,
+    private flightService: FlightService
+  ) {}
+
+  private async fetchDestination(IATA: string): Promise<void> {
+    try {
+      const data = await this.destinationService.getDestinationByIATA(IATA);
+      
+      if (!data) {
+        this.router.navigate(['/manage-destinations']);
+        return;
       }
   
-      if (this.originalIATA) {
-        this.isEditMode = true;
-        if (this.destination) {
-          console.log('📡 Using @Input() Destination:', this.destination);
-          this.initForm(this.destination);
-        } else {
-          console.log('📡 Fetching Destination from Firestore:', this.originalIATA);
-          this.fetchDestination(this.originalIATA);
-        }
-      } else {
-        console.log('🆕 Creating New Destination');
-        this.initForm(this.getEmptyDestination());
-      }
-    }
   
-    private fetchDestination(IATA: string): void {
-      this.destinationService.getDestinationByIATA(IATA).then((data) => {
-        if (data) {
-          console.log(' Destination Fetched:', data);
-          this.initForm(data);
-        } else {
-          console.log('Destination not found, redirecting...');
-          this.router.navigate(['/manage-destinations']);
-        }
-      }).catch((error) => {
-        console.error('⚠️ Error fetching destination:', error);
-      });
-    }
+      const activeFlights = await this.flightService.getActiveFlightsForDestination(data.destinationName);
+    
+      const hasActiveFlights = activeFlights.length > 0;
   
-    private initForm(destination: Destination): void {
-      this.destinationForm = this.fb.group({
-        destinationName: [destination.destinationName, [Validators.required]],
-        airportName: [destination.airportName, [Validators.required]],
-        airportWebsite: [destination.airportWebsite, [Validators.required, Validators.pattern(/https?:\/\/.+/)]],
-        IATA: [destination.IATA, [Validators.required]],
-        timeZone: [destination.timeZone, [Validators.required]],
-        currency: [destination.currency, [Validators.required]],
-        image: [destination.image, [Validators.required]],
-        status: [destination.status, [Validators.required]],
-      });
-  
-      if (this.isEditMode) {
-        this.destinationForm.get('IATA')?.disable();
-      }
-    }
-  
-    private getEmptyDestination(): Destination {
-      return {
-        destinationName: '',
-        airportName: '',
-        airportWebsite: '',
-        IATA: '',
-        timeZone: '',
-        currency: '',
-        image: '',
-        status: DestinationStatus.Active,
+      this.destination = {
+        ...data,
+        hasFutureFlights: hasActiveFlights
       };
-    }
   
-    saveChanges(): void {
-      if (this.destinationForm.invalid) {
+  
+      setTimeout(() => {
+        if (this.destination) {
+          this.initForm(this.destination);
+        }
+      }, 0);  
+  
+    } catch (error) {
+      console.error(' Error fetching destination:', error);
+    }
+  }
+  
+
+  ngOnInit(): void {
+    this.flightService.testQuery();
+    this.originalIATA = this.route.snapshot.paramMap.get('IATA');
+
+    if (!this.destination) {
+      this.destination = history.state.destination;
+    }
+
+    if (this.originalIATA) {
+      this.isEditMode = true;
+      if (this.destination) {
+        this.initForm(this.destination);
+      } else {
+        this.fetchDestination(this.originalIATA);
+      }
+    } else {
+      this.initForm(this.getEmptyDestination());
+    }
+  }
+  
+
+  private initForm(destination: Destination): void {
+  
+    this.destinationForm = this.fb.group({
+      destinationName: [destination.destinationName, [Validators.required, Validators.minLength(2)]],
+      airportName: [destination.airportName, [Validators.required, Validators.minLength(2)]],
+      airportWebsite: [destination.airportWebsite, [Validators.required, Validators.pattern(/https?:\/\/.+/)]],
+      IATA: [destination.IATA, [Validators.required, Validators.pattern(/^[A-Z]{3}$/)]],
+      timeZone: [destination.timeZone, [Validators.required]],
+      currency: [destination.currency, [Validators.required, Validators.pattern(/^[A-Z]{3}$/)]],
+      image: [destination.image, [Validators.required, Validators.pattern(/https?:\/\/.+/)]],
+      status: [{ value: destination.status, disabled: destination.hasFutureFlights }, [Validators.required]],
+    });
+  
+  
+    if (!this.isEditingAllowed) {
+      this.destinationForm.disable();
+    }
+  }
+  
+  
+  
+  private getEmptyDestination(): Destination {
+    return {
+      destinationName: '',
+      airportName: '',
+      airportWebsite: '',
+      IATA: '',
+      timeZone: '',
+      currency: '',
+      image: '',
+      status: DestinationStatus.Active,
+      hasFutureFlights: false,
+      nextFlightDate: null
+    };
+  }
+
+  saveChanges(): void {  
+    // Re-check Firestore for active flights before allowing edit
+    this.flightService.getActiveFlightsForDestination(this.destination!.destinationName).then((activeFlights) => {
+      this.destination!.hasFutureFlights = activeFlights.length > 0;
+  
+      if (this.destination?.hasFutureFlights) {  
         this.dialog.open(ConfirmDialogComponent, {
           width: '350px',
-          data: { title: 'Error', message: 'Please fill in all required fields.' },
+          data: {
+            type: 'error',
+            name: 'This destination has active flights and cannot be modified.',
+            showCloseButton: true
+          },
+        });
+        return;
+      }
+  
+      if (this.destinationForm.invalid) {
+        console.warn('Form validation failed. Cannot proceed.');
+        this.dialog.open(ConfirmDialogComponent, {
+          width: '350px',
+          data: { type: 'error', name: 'Please fill in all required fields correctly' },
         });
         return;
       }
@@ -130,30 +170,71 @@ import { MatSelectModule } from '@angular/material/select';
         ...this.destinationForm.getRawValue(),
         IATA: this.originalIATA || this.destinationForm.get('IATA')?.value,
       };
-  
-      if (this.isEditMode) {
-        this.updateDestination(destinationData);
-      } else {
-        this.addDestination(destinationData);
-      }
-    }
-  
-    private updateDestination(destination: Destination): void {
-      this.destinationService.updateDestination(destination).then(() => {
-        console.log('✅ Destination updated:', destination);
-        this.router.navigate(['/manage-destinations']);
-      }).catch((error) => {
-        console.error('❌ Error updating destination:', error);
+    
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        width: '350px',
+        data: {
+          type: this.isEditMode ? 'update' : 'save',
+          name: destinationData.destinationName,
+        },
       });
-    }
   
-    private addDestination(destination: Destination): void {
-      this.destinationService.addDestination(destination).then(() => {
-        console.log('✅ Destination added:', destination);
-        this.router.navigate(['/manage-destinations']);
-      }).catch((error) => {
-        console.error('❌ Error adding destination:', error);
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result?.confirmed) {
+          if (this.isEditMode) {
+            this.updateDestination(destinationData);
+          } else {
+            this.addDestination(destinationData);
+          }
+        }
       });
-    }
+    });
   }
   
+  
+
+  private updateDestination(destination: Destination): void {
+    this.destinationService.updateDestination(destination).then(() => {
+
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        width: '350px',
+        data: {
+          type: 'success',
+          name: `${destination.destinationName} has been updated successfully!`,
+        },
+      });
+
+      dialogRef.afterClosed().subscribe(() => {
+        this.router.navigate(['/manage-destinations']);
+      });
+
+    }).catch((error) => {
+      console.error('Error updating destination:', error);
+    });
+  }
+
+  private addDestination(destination: Destination): void {
+    this.destinationService.addDestination(destination).then(() => {
+
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        width: '350px',
+        data: {
+          type: 'success',
+          name: `${destination.destinationName} has been added successfully!`,
+        },
+      });
+
+      dialogRef.afterClosed().subscribe(() => {
+        this.router.navigate(['/manage-destinations']);
+      });
+
+    }).catch((error) => {
+      console.error('Error adding destination:', error);
+    });
+  }
+
+
+  get isEditingAllowed(): boolean {
+    return !this.destination?.hasFutureFlights; 
+  }
+}

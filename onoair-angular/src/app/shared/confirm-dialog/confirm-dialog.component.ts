@@ -34,8 +34,12 @@ export class ConfirmDialogComponent {
         return 'Confirm Save';
       case 'update':
         return 'Confirm Update';
+        case 'error':
+        return 'Error';
+        case 'success':
+        return 'Success';
       default:
-        return 'Confirm Action';
+        return 'Default Confirm';
     }
   }
 
@@ -48,8 +52,12 @@ export class ConfirmDialogComponent {
         return `Are you sure you want to save changes to ${targetName}?`;
       case 'update':
         return `Are you sure you want to update ${targetName}?`;
+      case 'error':
+        return 'An error occurred while processing your request. Please check your form.';
+      case 'success':
+        return 'Your request was processed successfully.';
       default:
-        return 'Are you sure you want to proceed?';
+        return 'Default message!';
     }
   }
 
@@ -61,6 +69,10 @@ export class ConfirmDialogComponent {
         return 'Save';
       case 'update':
         return 'Update';
+      case 'error':
+        return 'Close';
+      case 'success':
+        return 'Close';
       default:
         return 'Confirm';
     }
@@ -74,6 +86,10 @@ export class ConfirmDialogComponent {
         return 'primary';
       case 'update':
         return 'accent';
+      case 'error':
+        return 'warn';
+      case 'success':
+        return 'primary';
       default:
         return 'default';
     }

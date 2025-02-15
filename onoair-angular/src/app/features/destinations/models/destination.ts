@@ -9,7 +9,11 @@ export class Destination {
       public timeZone: string,
       public currency: string,
       public image: string,
-      public status: DestinationStatus = DestinationStatus.Active
+      public status: DestinationStatus = DestinationStatus.Active,
+
+      public hasFutureFlights: boolean = false,  // Indicates if there are future flights
+      public nextFlightDate?: string | null  // Stores the next flight's date
+
 
     ) {}
   

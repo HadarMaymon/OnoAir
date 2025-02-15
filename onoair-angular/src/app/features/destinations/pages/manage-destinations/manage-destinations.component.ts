@@ -114,7 +114,7 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
           alert(`Destination ${destination.IATA} deleted successfully.`);
         }).catch((error) => {
           console.error(`Error deleting destination ${destination.IATA}:`, error);
-          alert('Failed to delete destination. Please try again.');
+          alert('Failed to delete destination. Active flight exist.');
         });
       }
     });

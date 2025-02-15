@@ -257,5 +257,69 @@ async getFlightBookings(flightNumber: string): Promise<boolean> {
       return earliestDate;
     });
   }
+
+  async getActiveFlightsForDestination(destinationName: string): Promise<Flight[]> {
+    console.log(`📡 Fetching active flights for ${destinationName}...`);
+  
+    const flightsRef = collection(this.firestore, 'flights');
+  
+    const q = query(
+      flightsRef,
+      where('destination', '==', destinationName.trim()),  // Ensure no spaces
+      where('status', '==', "Activated")
+    );
+  
+    const querySnapshot = await getDocs(q);
+    console.log(`📊 Found ${querySnapshot.size} active flights`);
+  
+    if (querySnapshot.empty) {
+      console.warn("⚠️ No active flights found! Check Firestore data.");
+    }
+  
+    querySnapshot.docs.forEach(doc => console.log('🛫 Firestore Flight Data:', doc.data()));
+  
+    return querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return new Flight(
+        data['flightNumber'],
+        data['origin'],
+        data['destination'].trim(),  // Trim destination name
+        data['date'] instanceof Timestamp ? data['date'].toDate() : new Date(data['date']), 
+        data['departureTime'],
+        data['arrivalDate'] instanceof Timestamp ? data['arrivalDate'].toDate() : new Date(data['arrivalDate']), 
+        data['arrivalTime'],
+        data['price'],
+        data['image'] || '',
+        data['availableSeats'],
+        data['isDynamicDate'],
+        data['status'].trim(),  // Trim status
+        false 
+      );
+    });
+  }
+
+  
+  async testQuery(): Promise<void> {
+    console.log("🛠 Running Firestore test query for active flights...");
+  
+    const flightsRef = collection(this.firestore, 'flights');
+  
+    const q = query(
+      flightsRef,
+      where('destination', '==', "Paris"),
+      where('status', '==', "Activated")
+    );
+  
+    const querySnapshot = await getDocs(q);
+  
+    console.log(`📊 Firestore query result: Found ${querySnapshot.size} flights`);
+  
+    querySnapshot.docs.forEach(doc => console.log('🛫 Firestore Flight Data:', doc.data()));
+  
+    if (querySnapshot.empty) {
+      console.warn("⚠️ No flights found. Check for whitespace issues or case mismatches!");
+    }
+  }
+  
   
 }

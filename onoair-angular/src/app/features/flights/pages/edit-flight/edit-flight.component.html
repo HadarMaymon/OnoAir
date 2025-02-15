@@ -1,7 +1,7 @@
 <div *ngIf="flight; else loadingTemplate" class="edit-flight-container">
   <h1>Edit Flight: {{ flight.flightNumber || 'New Flight' }}</h1>
   <form class="edit-flight-form" #flightForm="ngForm" (ngSubmit)="saveChanges(flightForm)">
-    
+
     <!-- Flight Number -->
     <mat-label>Flight Number</mat-label>
     <input matInput
@@ -15,28 +15,38 @@
       #flightNumber="ngModel"
       [disabled]="!isEditingAllowed"
     />
+    <p *ngIf="flightNumber.invalid && flightNumber.touched" class="error-text">
+      Flight number must be in the format **AA123** (Two letters & three digits).
+    </p>
 
     <!-- Origin -->
     <mat-form-field class="form-field" appearance="outline">
       <mat-label>Origin</mat-label>
-      <mat-select [(ngModel)]="flight.origin" name="origin" required #originControl="ngModel"
-                  [disabled]="!isEditingAllowed">
+      <mat-select [(ngModel)]="flight.origin" name="origin" required #originControl="ngModel" 
+                  [disabled]="!isEditingAllowed" (selectionChange)="validateFlightRoute()">
         <mat-option *ngFor="let originItem of origin" [value]="originItem">
           {{ originItem }}
         </mat-option>
       </mat-select>
     </mat-form-field>
+    <p *ngIf="originControl.invalid && originControl.touched" class="error-text">
+      Please select an **origin**.
+    </p>
 
     <!-- Destination -->
     <mat-form-field class="form-field" appearance="outline">
       <mat-label>Destination</mat-label>
-      <mat-select [(ngModel)]="flight.destination" name="destination" required #destinationControl="ngModel"
-                  [disabled]="!isEditingAllowed">
-        <mat-option *ngFor="let destinationItem of destination" [value]="destinationItem">
+      <mat-select [(ngModel)]="flight.destination" name="destination" required #destinationControl="ngModel" 
+                  [disabled]="!isEditingAllowed" (selectionChange)="validateFlightRoute()">
+        <mat-option *ngFor="let destinationItem of destination" [value]="destinationItem" 
+                    [disabled]="destinationItem === flight.origin">
           {{ destinationItem }}
         </mat-option>
       </mat-select>
     </mat-form-field>
+    <p *ngIf="destinationControl.invalid && destinationControl.touched" class="error-text">
+      Please select a **destination**.
+    </p>
 
     <!-- Departure Date -->
     <mat-form-field class="form-field" appearance="outline">
@@ -53,6 +63,9 @@
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
+    <p *ngIf="date.invalid && date.touched" class="error-text">
+      Departure date must be in the future.
+    </p>
 
 
     <!-- Departure Time -->
@@ -82,6 +95,10 @@
       <mat-datepicker-toggle matSuffix [for]="arrivalPicker"></mat-datepicker-toggle>
       <mat-datepicker #arrivalPicker></mat-datepicker>
     </mat-form-field>
+    <p *ngIf="arrivalDate.invalid && arrivalDate.touched" class="error-text">
+      Arrival date must be **after** the departure date.
+    </p>
+
 
     <!-- Arrival Time -->
     <mat-label>Arrival Time</mat-label>
@@ -106,6 +123,9 @@
       #price="ngModel"
       placeholder="Enter price"
     />
+    <p *ngIf="price.invalid && price.touched" class="error-text">
+      Price must be a **positive number**.
+    </p>
 
     <!-- Available Seats -->
     <mat-label>Available Seats</mat-label>
@@ -118,6 +138,9 @@
       #availableSeats="ngModel"
       placeholder="Enter available seats"
     />
+    <p *ngIf="availableSeats.invalid && availableSeats.touched" class="error-text">
+      Number of seats must be at least **1**.
+    </p>
 
     <!-- Flight Status -->
     <mat-form-field class="form-field" appearance="outline">
@@ -133,12 +156,27 @@
       This flight is active and scheduled for the future. Editing is not allowed.
     </p>
 
-    <!-- Save Button -->
-    <button mat-raised-button color="primary" [disabled]="!isEditingAllowed || flightForm.invalid" type="submit">
-      Save Changes
-    </button>
+
+    <!-- Global Validation Message -->
+    <p *ngIf="errorMessage" class="error-text">
+      {{ errorMessage }}
+    </p>
+
+    <!-- Success Message -->
+    <p *ngIf="successMessage" class="success-text">
+      {{ successMessage }}
+    </p>
+
+
+
+      <!-- Save Button -->
+      <button mat-raised-button color="primary" 
+      type="submit">
+       Save Changes
+     </button>
   </form>
 </div>
+
 
 <ng-template #loadingTemplate>
   <p>Loading flight details...</p>

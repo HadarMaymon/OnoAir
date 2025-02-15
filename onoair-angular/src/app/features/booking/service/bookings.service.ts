@@ -26,7 +26,7 @@ export class BookingsService {
     const bookingCollection = collection(this.firestore, 'bookings').withConverter(bookingConverter);
   
     try {
-      console.log('📡 Fetching destinations...');
+      console.log('Fetching destinations...');
       const destinations = await this.destinationsService.getAllDestinations();
       console.log('Destinations loaded:', destinations);
   
@@ -93,7 +93,7 @@ export class BookingsService {
             const flightSnapshot = await transaction.get(flightDoc);
 
             if (!flightSnapshot.exists()) {
-                throw new Error(`❌ Flight ${booking.flightNumber} not found.`);
+                throw new Error(`Flight ${booking.flightNumber} not found.`);
             }
 
             const boardingTimestamp = booking.boarding instanceof Timestamp 
@@ -130,7 +130,7 @@ export class BookingsService {
 
 
   /**
-   * ✅ Update an existing booking efficiently.
+   * Update an existing booking efficiently.
    */
   updateBooking(booking: Booking): Promise<void> {
     const bookingDoc = doc(this.firestore, 'bookings', booking.bookingId);
@@ -150,17 +150,17 @@ export class BookingsService {
   
   
   /**
-   * ✅ Cancel a booking by setting its status to "Canceled".
+   * Cancel a booking by setting its status to "Canceled".
    */
   updateBookingStatus(bookingId: string, newStatus: BookingStatus): Promise<void> {
     const bookingDoc = doc(this.firestore, `bookings/${bookingId}`);
 
     return updateDoc(bookingDoc, { status: newStatus })
       .then(() => {
-        console.log(`✅ Booking ${bookingId} updated to ${newStatus}`);
+        console.log(`Booking ${bookingId} updated to ${newStatus}`);
       })
       .catch((error) => {
-        console.error(`❌ Error updating booking ${bookingId} to ${newStatus}:`, error);
+        console.error(`Error updating booking ${bookingId} to ${newStatus}:`, error);
         throw error;
       });
   }

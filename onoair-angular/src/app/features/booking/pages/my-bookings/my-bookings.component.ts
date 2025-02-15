@@ -59,6 +59,23 @@ export class MyBookingsComponent implements OnInit {
     });
   }
 
+  handleImageError(booking: Booking): void {
+    console.error(`Error loading image: ${booking.image} for Flight ${booking.flightNumber}`);
+  
+    // Wait 500ms before replacing in case it's a temporary issue
+    setTimeout(() => {
+      if (booking.image?.startsWith('http')) {
+        console.warn(`Skipping fallback for valid image URL: ${booking.image}`);
+      } else {
+        console.warn(`Replacing broken image with default for: ${booking.flightNumber}`);
+        booking.image = 'assets/onoairLogo.png';
+      }
+    }, 500);
+    console.log(`Fetched image for ${booking.flightNumber}:`, booking.image);
+
+  }
+  
+  
 
   viewBooking(bookingId: string): void {
     this.router.navigate(['/my-bookings-details', bookingId]);
@@ -66,34 +83,49 @@ export class MyBookingsComponent implements OnInit {
 
   toggleBookingStatus(booking: Booking): void {
     if (booking.status === BookingStatus.Canceled) {
-      console.warn(`Booking ${booking.bookingId} is already canceled and cannot be reactivated.`);
+      this.dialog.open(ConfirmDialogComponent, {
+        width: '350px',
+        data: { type: 'error', name: 'This booking is already canceled and cannot be reactivated.', showCloseButton: true },
+      });
       return;
     }
-
+  
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
       data: {
-        type: 'update',
-        title: 'Confirm Cancel',
-        message: 'Are you sure you want to cancel this booking?',
-        showCancelButton: true,
+        type: 'delete', // Type set to 'delete' to match the cancel action
+        title: 'Confirm Cancellation',
+        message: `Are you sure you want to cancel this booking?`,
         showConfirmButton: true,
+        confirmButtonText: 'Cancel Booking',
+        confirmButtonColor: 'warn',
+        showCancelButton: true,
       },
     });
-
+  
     dialogRef.afterClosed().pipe(take(1)).subscribe((result) => {
       if (result?.confirmed) {
         this.bookingService.updateBookingStatus(booking.bookingId, BookingStatus.Canceled)
           .then(() => {
             booking.status = BookingStatus.Canceled;
             this.moveBookingToCorrectSection(booking);
+  
+            this.dialog.open(ConfirmDialogComponent, {
+              width: '350px',
+              data: { type: 'success', name: 'Booking has been successfully canceled.', showCloseButton: true },
+            });
           })
           .catch((error) => {
+            this.dialog.open(ConfirmDialogComponent, {
+              width: '350px',
+              data: { type: 'error', name: 'Failed to cancel the booking. Please try again.', showCloseButton: true },
+            });
             console.error('Error canceling booking:', error);
           });
       }
     });
   }
+  
 
   isTimestamp(value: any): boolean {
     return value instanceof Timestamp;

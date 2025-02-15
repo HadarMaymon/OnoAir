@@ -7,11 +7,12 @@
     <div *ngFor="let booking of section.bookings" class="booking-card">
       <!-- Destination Image -->
       <img
-        [src]="booking.image && booking.image.trim() "
-        alt="Error fetching destination image, try to reload"
-        class="destination-image"
-      />
-
+      [src]="booking.image ? booking.image.trim() : 'assets/images/default.jpg'"
+      [hidden]="!booking.image"
+      (error)="handleImageError(booking)"
+      class="destination-image"
+    />
+    
       <!-- Booking Details -->
       <div class="booking-details">
         <p><strong>Flight Number:</strong> {{ booking.flightNumber || 'N/A' }}</p>

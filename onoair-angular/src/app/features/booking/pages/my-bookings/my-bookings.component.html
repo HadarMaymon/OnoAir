@@ -7,8 +7,7 @@
     <div *ngFor="let booking of section.bookings" class="booking-card">
       <!-- Destination Image -->
       <img
-        [src]="booking.image && booking.image.trim() !== '' ? booking.image : 'assets/images/default-destination.jpg'"
-        alt="Image for {{ booking.destination }}"
+        [src]="booking.image && booking.image.trim() "
         class="destination-image"
       />
 

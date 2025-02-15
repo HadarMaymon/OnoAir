@@ -59,6 +59,7 @@ export class MyBookingsComponent implements OnInit {
     });
   }
 
+
   viewBooking(bookingId: string): void {
     this.router.navigate(['/my-bookings-details', bookingId]);
   }

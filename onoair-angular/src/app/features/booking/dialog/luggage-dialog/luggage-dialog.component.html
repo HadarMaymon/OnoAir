@@ -16,7 +16,7 @@
     <input matInput type="number" [(ngModel)]="luggage.heavy" (input)="validateLuggage()" min="0" max="9" placeholder="Enter heavy baggage weight">
   </mat-form-field>
 
-  <!-- ✅ Display Error Message -->
+  <!-- Display Error Message -->
   <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
 
   <div class="dialog-actions">

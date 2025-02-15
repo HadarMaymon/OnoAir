@@ -7,16 +7,16 @@ export const flightConverter: FirestoreDataConverter<Flight> = {
     flightNumber: flight.flightNumber,
     origin: flight.origin,
     destination: flight.destination,
-    date: Timestamp.fromDate(flight.date), // Convert Date to Firestore Timestamp
+    date: Timestamp.fromDate(flight.date), 
     departureTime: flight.departureTime,
-    arrivalDate: Timestamp.fromDate(flight.arrivalDate), // Convert Date to Firestore Timestamp
+    arrivalDate: Timestamp.fromDate(flight.arrivalDate),
     arrivalTime: flight.arrivalTime,
     price: flight.price,
     image: flight.image,
     availableSeats: flight.availableSeats,
     isDynamicDate: flight.isDynamicDate,
     status: flight.status,
-    hasBookings: flight.hasBookings ?? false, // Ensure field exists
+    hasBookings: flight.hasBookings ?? false, 
   }),
 
   fromFirestore: (snapshot) => {
@@ -40,9 +40,9 @@ export const flightConverter: FirestoreDataConverter<Flight> = {
       data.flightNumber,
       data.origin,
       data.destination,
-      data.date.toDate(), // Convert Timestamp to Date
+      data.date.toDate(), 
       data.departureTime,
-      data.arrivalDate.toDate(), // Convert Timestamp to Date
+      data.arrivalDate.toDate(), 
       data.arrivalTime,
       data.price,
       data.image,

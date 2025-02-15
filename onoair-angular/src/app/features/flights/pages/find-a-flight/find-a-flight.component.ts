@@ -10,7 +10,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core'; // ✅ Corrected
+import { MatNativeDateModule } from '@angular/material/core'; 
 import { MatOption } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
@@ -38,7 +38,7 @@ import { Timestamp } from 'firebase/firestore';
     MatPaginatorModule,
     MatSortModule,
     MatDatepickerModule,
-    MatNativeDateModule, // ✅ Only one import needed
+    MatNativeDateModule, 
     MatOption,
     MatSelectModule,
     ReactiveFormsModule,
@@ -62,7 +62,7 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
   dataSource!: MatTableDataSource<Flight>;
   destinations$: Observable<any[]>;
   destinationNames: string[] = [];
-  today: Date = new Date(); // ✅ Store today's date
+  today: Date = new Date(); // Store today's date
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -73,7 +73,7 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
     private firestore: Firestore,
     private fb: FormBuilder,
   ) {
-    this.today.setHours(0, 0, 0, 0); // ✅ Normalize to midnight
+    this.today.setHours(0, 0, 0, 0); //Normalize to midnight
 
     // Fetch destinations from Firestore
     const destinationsCollection = collection(this.firestore, 'destinations');
@@ -87,11 +87,11 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
 
   disablePastDates = (date: Date | null): boolean => {
     if (!date) return false;
-    return date >= this.today; // ✅ Disables past dates
+    return date >= this.today; // Disables past dates
   };
 
   ngOnInit(): void {
-    // ✅ Initialize filterForm
+    // Initialize filterForm
     this.filterForm = this.fb.group({
       from: [''],
       to: [''],
@@ -101,7 +101,7 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
       passengers: [null],
     });
 
-    // ✅ Prevent users from selecting past dates
+    // Prevent users from selecting past dates
     this.filterForm.get('departureStartDate')?.valueChanges.subscribe((selectedDate) => {
       if (selectedDate && new Date(selectedDate) < this.today) {
         this.filterForm.patchValue({ departureStartDate: null });
@@ -116,7 +116,7 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
       }
     });
 
-    // ✅ Fetch active flights
+    // Fetch active flights
     this.flightService.flights$.subscribe((flights) => {
       const activeFlights = flights.filter((flight) => flight.status === FlightStatus.Active);
       this.dataSource = new MatTableDataSource(activeFlights);
@@ -174,7 +174,7 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
           } else if (flight.date instanceof Date) {
             flightDate = flight.date;
           } else {
-            console.warn("⚠️ Unexpected date format:", flight.date);
+            console.warn("Unexpected date format:", flight.date);
             return false;
           }
   
@@ -192,7 +192,7 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
           return isInRange && matchesFrom && matchesTo && matchesPrice && matchesPassengers;
         });
 
-        console.log("✅ Filtered Flights:", filteredFlights);
+        console.log("Filtered Flights:", filteredFlights);
 
         if (filteredFlights.length === 0) {
           alert("No flights were found for the selected date range.");
@@ -201,7 +201,7 @@ export class FindAFlightComponent implements OnInit, AfterViewInit {
         this.dataSource.data = filteredFlights;
       },
       (error) => {
-        console.error("❌ Firebase Query Error:", error);
+        console.error("Firebase Query Error:", error);
       }
     );
   }

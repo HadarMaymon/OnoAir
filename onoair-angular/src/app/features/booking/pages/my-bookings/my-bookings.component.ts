@@ -29,7 +29,7 @@ export class MyBookingsComponent implements OnInit {
     this.bookingService.syncBookingsWithImages();
     this.bookingService.bookings$.subscribe({
       next: (allBookings: Booking[]) => {
-        console.log('🛬 Bookings received in MyBookingsComponent:', allBookings);
+        console.log('Bookings received in MyBookingsComponent:', allBookings);
 
         const upcoming: Booking[] = [];
         const previous: Booking[] = [];

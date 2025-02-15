@@ -30,7 +30,7 @@ export class BookingsService {
         console.log('📡 Firestore snapshot received:', snapshot.docs.map((doc) => doc.data()));
 
         if (snapshot.empty) {
-          console.warn('⚠️ No bookings found in Firestore!');
+          console.warn(' No bookings found in Firestore!');
           return;
         }
 
@@ -38,7 +38,7 @@ export class BookingsService {
 
         let bookings = snapshot.docs.map((doc) => {
           const data = doc.data();
-          console.log(`📅 Booking ${data.bookingId}: Raw Boarding ->`, data.boarding, " | Raw Landing ->", data.landing);
+          console.log(` Booking ${data.bookingId}: Raw Boarding ->`, data.boarding, " | Raw Landing ->", data.landing);
 
           return new Booking(
             data.bookingId,
@@ -79,7 +79,7 @@ export class BookingsService {
       const snapshot = await getDoc(bookingDoc);
 
       if (!snapshot.exists()) {
-        console.warn(`⚠️ Booking ${bookingId} not found.`);
+        console.warn(` Booking ${bookingId} not found.`);
         return undefined;
       }
 
@@ -125,10 +125,10 @@ export class BookingsService {
       await runTransaction(this.firestore, async (transaction) => {
         const flightSnapshot = await transaction.get(flightDoc);
         if (!flightSnapshot.exists()) {
-          throw new Error(`❌ Flight ${booking.flightNumber} not found.`);
+          throw new Error(` Flight ${booking.flightNumber} not found.`);
         }
   
-        console.log("✅ Flight found, proceeding with booking...");
+        console.log("Flight found, proceeding with booking...");
   
         // Ensure passengers have luggage before saving
         const passengersWithLuggage = booking.passengers.map(p => ({
@@ -150,10 +150,10 @@ export class BookingsService {
             : Timestamp.fromDate(new Date(booking.landing)),
         });
   
-        console.log(`✅ Booking ${booking.bookingId} successfully created.`);
+        console.log(` Booking ${booking.bookingId} successfully created.`);
       });
     } catch (error) {
-      console.error(`❌ Error creating booking:`, error);
+      console.error(` Error creating booking:`, error);
       throw error;
     }
   }
@@ -171,7 +171,7 @@ export class BookingsService {
         passengers: booking.passengers.map(p => ({
           name: p.name,
           id: p.id,
-          luggage: p.luggage || { cabin: 0, checked: 0, heavy: 0 } // Ensure luggage is always saved
+          luggage: p.luggage || { cabin: 0, checked: 0, heavy: 0 }
         })),
         boarding: booking.boarding instanceof Timestamp 
           ? booking.boarding 
@@ -181,9 +181,9 @@ export class BookingsService {
           : Timestamp.fromDate(new Date(booking.landing)),
       }, { merge: true });
   
-      console.log(`✅ Booking ${booking.bookingId} updated successfully.`);
+      console.log(` Booking ${booking.bookingId} updated successfully.`);
     } catch (error) {
-      console.error(`❌ Error updating booking ${booking.bookingId}:`, error);
+      console.error(` Error updating booking ${booking.bookingId}:`, error);
     }
   }
   
@@ -211,15 +211,15 @@ export class BookingsService {
         console.log('📡 Firestore snapshot received:', snapshot.docs.map((doc) => doc.data()));
 
         if (snapshot.empty) {
-          console.warn('⚠️ No bookings found in Firestore!');
+          console.warn('No bookings found in Firestore!');
           return;
         }
 
         let bookings = await Promise.all(snapshot.docs.map(async (doc) => {
           const data = doc.data();
-          console.log(`📅 Booking ${data['bookingId']}: Raw Boarding ->`, data['boarding'], " | Raw Landing ->", data['landing']);
+          console.log(`Booking ${data['bookingId']}: Raw Boarding ->`, data['boarding'], " | Raw Landing ->", data['landing']);
 
-          // ✅ Fetch Luggage Data from LuggageService
+          // Fetch Luggage Data from LuggageService
           const passengersWithLuggage = await Promise.all(
             data['passengers'].map(async (p: any) => {
               const luggage = await this.luggageService.getLuggage(p.id, data['bookingId']);

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Luggage } from '../../models/luggage';
-import { Firestore, Timestamp, collection, doc, getDoc, onSnapshot, setDoc } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
 import { Passenger
   
  } from '../../models/passenger';
@@ -40,16 +40,16 @@ export class LuggageService {
             const bookingData = snapshot.data();
             const passenger = bookingData['passengers'].find((p: Passenger) => p.id === passengerId);
             
-            console.log(`📦 Retrieved luggage for passenger ${passengerId}:`, passenger?.luggage);
+            console.log(`Retrieved luggage for passenger ${passengerId}:`, passenger?.luggage);
 
-            return passenger?.luggage ?? new Luggage(0, 0, 0); // ✅ Ensure Luggage object
+            return passenger?.luggage ?? new Luggage(0, 0, 0); 
         } else {
-            console.error(`❌ Booking ${bookingId} not found`);
+            console.error(`Booking ${bookingId} not found`);
         }
     } catch (error) {
-        console.error(`❌ Error fetching luggage for passenger ${passengerId}:`, error);
+        console.error(` Error fetching luggage for passenger ${passengerId}:`, error);
     }
-    return new Luggage(0, 0, 0); // ✅ Return default instead of undefined
+    return new Luggage(0, 0, 0); 
 }
 
 
@@ -65,17 +65,17 @@ export class LuggageService {
             const bookingData = snapshot.data();
             const updatedPassengers = bookingData['passengers'].map((p: any) =>
                 p.id === passengerId
-                    ? { ...p, luggage: { ...(p.luggage || {}), ...luggage } } // ✅ Merge luggage instead of overwriting
+                    ? { ...p, luggage: { ...(p.luggage || {}), ...luggage } } 
                     : p
             );
 
             await setDoc(bookingDoc, { passengers: updatedPassengers }, { merge: true });
-            console.log(`✅ Luggage updated for passenger ${passengerId}`);
+            console.log(` Luggage updated for passenger ${passengerId}`);
         } else {
-            console.error(`❌ Booking ${bookingId} not found`);
+            console.error(` Booking ${bookingId} not found`);
         }
     } catch (error) {
-        console.error(`❌ Error saving luggage for passenger ${passengerId}:`, error);
+        console.error(`Error saving luggage for passenger ${passengerId}:`, error);
     }
 }
 

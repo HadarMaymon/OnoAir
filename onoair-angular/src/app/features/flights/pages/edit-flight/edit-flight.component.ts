@@ -99,13 +99,14 @@ export class EditFlightComponent implements OnInit {
   
 
   validateFlightNumber(event: KeyboardEvent): void {
-    const allowedPattern = /^[A-Za-z0-9]+$/;
-    const key = event.key;
-
+    const allowedPattern = /^[A-Z0-9]+$/;
+    const key = event.key.toUpperCase();
+  
     if (!allowedPattern.test(key) && key !== 'Backspace' && key !== 'Tab') {
       event.preventDefault();
     }
   }
+  
 
   onFlightNumberChange(event: Event): void {
     const inputElement = event.target as HTMLInputElement;

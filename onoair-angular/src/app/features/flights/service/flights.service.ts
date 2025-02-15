@@ -50,9 +50,9 @@ export class FlightService {
           data['flightNumber'] || '',
           data['origin'] || '',
           data['destination'] || '',
-          data['date'] instanceof Timestamp ? data['date'].toDate() : new Date(data['date']), // ✅ Convert Timestamp
+          data['date'] instanceof Timestamp ? data['date'].toDate() : new Date(data['date']), 
           data['departureTime'] || '',
-          data['arrivalDate'] instanceof Timestamp ? data['arrivalDate'].toDate() : new Date(data['arrivalDate']), // ✅ Convert Timestamp
+          data['arrivalDate'] instanceof Timestamp ? data['arrivalDate'].toDate() : new Date(data['arrivalDate']), 
           data['arrivalTime'] || '',
           data['price'] || 0,
           data['image'] || 'https://via.placeholder.com/300',
@@ -71,7 +71,7 @@ export class FlightService {
         flight.image = matchingDestination?.image || 'https://via.placeholder.com/300';
       });
   
-      // ✅ Update BehaviorSubject
+     
       this.flightsSubject.next(flights);
     });
   }
@@ -96,8 +96,8 @@ export class FlightService {
     const flightDoc = doc(flightCollection, flight.flightNumber);
     return setDoc(flightDoc, { 
       ...flight, 
-      date: Timestamp.fromDate(flight.date), // ✅ Ensure it's stored as a Firestore Timestamp
-      arrivalDate: Timestamp.fromDate(flight.arrivalDate), // ✅ Ensure it's stored as a Firestore Timestamp
+      date: Timestamp.fromDate(flight.date), 
+      arrivalDate: Timestamp.fromDate(flight.arrivalDate), 
       status: flight.status as FlightStatus 
     }).then(() => {
       console.log(`Flight ${flight.flightNumber} updated successfully!`);
@@ -176,8 +176,8 @@ async getFlightBookings(flightNumber: string): Promise<boolean> {
     const flightsRef = collection(this.firestore, 'flights');
     const flightsQuery = query(
       flightsRef,
-      where('date', '>=', Timestamp.fromDate(startDate)), // ✅ Convert to Timestamp
-      where('date', '<=', Timestamp.fromDate(endDate)), // ✅ Convert to Timestamp
+      where('date', '>=', Timestamp.fromDate(startDate)), 
+      where('date', '<=', Timestamp.fromDate(endDate)), 
       orderBy('date')
     );
   
@@ -224,7 +224,7 @@ async getFlightBookings(flightNumber: string): Promise<boolean> {
     );
   
     return getDocs(bookingQuery).then((snapshot) => {
-      return !snapshot.empty; // If there are active bookings, return true
+      return !snapshot.empty; 
     });
   }  
 

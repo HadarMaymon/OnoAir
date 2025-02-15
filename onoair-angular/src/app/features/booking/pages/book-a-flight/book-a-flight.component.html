@@ -33,7 +33,7 @@
   <div class="luggage-selection">
     <h2>Luggage Selection</h2>
 
-    <!-- ✅ Loop through each passenger -->
+    <!-- Loop through each passenger -->
     <div *ngFor="let passenger of passengers; let i = index">
       <h3 *ngIf="passenger.name">{{ passenger.name }}'s Luggage</h3>
       
@@ -41,7 +41,7 @@
         Add Luggage 🧳
       </button>
 
-      <!-- ✅ Show Luggage Summary After Selection -->
+      <!-- Show Luggage Summary After Selection -->
       <div class="luggage-summary" *ngIf="passenger.luggage && (passenger.luggage.cabin || passenger.luggage.checked || passenger.luggage.heavy)">
         <p><strong>Selected Luggage:</strong></p>
         <ul>

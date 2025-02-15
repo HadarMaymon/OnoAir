@@ -53,9 +53,7 @@ export const bookingConverter: FirestoreDataConverter<Booking> = {
   },
 };
 
-/**
- * ✅ Ensures Firestore Timestamps are properly converted.
- */
+
 function parseFirestoreTimestamp(dateValue: any): Date {
   if (!dateValue) return new Date(0); // Default fallback
   if (dateValue instanceof Timestamp) {

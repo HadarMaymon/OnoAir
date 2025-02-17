@@ -98,80 +98,93 @@ export class ManageFlightComponent implements OnInit, AfterViewInit {
 
   confirmDelete(flight: Flight): void {
     console.log(`Attempting to delete flight: ${flight.flightNumber}`);
-  
+
     this.flightService.getFlightBookings(flight.flightNumber).then((hasBookings) => {
-      console.log(`Flight ${flight.flightNumber} has bookings:`, hasBookings);
-  
-      if (hasBookings) {
-        console.warn(`Cannot delete flight ${flight.flightNumber}: Active bookings exist.`);
-  
-        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-          width: '350px',
-          data: {
-            type: 'delete', 
-            name: `flight ${flight.flightNumber} to ${flight.destination}`,
-            showCancelButton: true,
-            showConfirmButton: true,
-            showCloseButton: false,
-          },
-        });
-        
-  
-        dialogRef.afterClosed().subscribe((result) => {
-          if (result?.confirmed) {
-            alert(`Cannot delete flight ${flight.flightNumber}. It has active bookings.`);
-          }
-        });
-  
-        return;
-      }
-  
-      console.log(`No active bookings for flight ${flight.flightNumber}. Showing delete confirmation.`);
-  
-      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-        width: '350px',
-        data: {
-          type: 'error',
-          name: `flight ${flight.flightNumber} to ${flight.destination}`,
-          showCancelButton: true,
-          showConfirmButton: true,
-          showCloseButton: false,
-        },
-      });
-  
-      dialogRef.afterClosed().subscribe((result) => {
-        console.log(`Dialog closed. User confirmed delete: ${result?.confirmed}`);
-  
-        if (result?.confirmed) {
-          console.log(`Deleting flight ${flight.flightNumber}...`);
-  
-          this.flightService.deleteFlight(flight.flightNumber).then(() => {
-            this.showSuccessDialog(`Flight ${flight.flightNumber} deleted successfully.`);
-          }).catch((error) => {
-            console.error(`Error deleting flight ${flight.flightNumber}:`, error);
-            this.showErrorDialog('Failed to delete flight. Please try again.');
-          });
+        console.log(`🛫 Flight ${flight.flightNumber} has bookings: ${hasBookings}`);
+
+        if (hasBookings) {
+            console.warn(`Cannot delete flight ${flight.flightNumber}: Active bookings exist.`);
+
+            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+                width: '350px',
+                data: {
+                    type: 'error',
+                    name: `Flight ${flight.flightNumber} to ${flight.destination} has active bookings and cannot be deleted.`,
+                    showCancelButton: false,
+                    showConfirmButton: true,
+                    showCloseButton: true
+                },
+            });
+
+            dialogRef.afterClosed().subscribe(() => {
+                console.log(`⚠️ User acknowledged that flight ${flight.flightNumber} cannot be deleted.`);
+            });
+
+            return; // Stop execution, flight can't be deleted
         }
-      });
+
+        console.log(`No active bookings for flight ${flight.flightNumber}. Showing delete confirmation.`);
+
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '350px',
+            data: {
+                type: 'delete',
+                name: `Flight ${flight.flightNumber} to ${flight.destination}`,
+                showCancelButton: true,
+                showConfirmButton: true,
+                showCloseButton: false,
+            },
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+            console.log(`🗑️ Delete Dialog closed. User confirmed delete: ${result?.confirmed}`);
+
+            if (result?.confirmed) {
+                console.log(`Deleting flight ${flight.flightNumber}...`);
+
+                this.flightService.deleteFlight(flight.flightNumber).then(() => {
+                    console.log(`Flight ${flight.flightNumber} deleted successfully.`);
+
+                    this.dialog.open(ConfirmDialogComponent, {
+                        width: '350px',
+                        data: {
+                            type: 'success',
+                            name: `Flight ${flight.flightNumber} deleted successfully.`,
+                            showCancelButton: false,
+                            showConfirmButton: false,
+                            showCloseButton: true,
+                        },
+                    });
+
+                }).catch((error) => {
+                    console.error(`Error deleting flight ${flight.flightNumber}:`, error);
+                    this.dialog.open(ConfirmDialogComponent, {
+                        width: '350px',
+                        data: {
+                            type: 'error',
+                            name: 'Failed to delete flight. Please try again.',
+                            showCancelButton: false,
+                            showConfirmButton: true,
+                            showCloseButton: true,
+                        },
+                    });
+                });
+            }
+        });
     }).catch((error) => {
-      console.error('Error checking flight bookings:', error);
-      this.showErrorDialog('Failed to check bookings. Please try again later.');
+        console.error(`Error checking flight bookings for ${flight.flightNumber}:`, error);
+        this.dialog.open(ConfirmDialogComponent, {
+            width: '350px',
+            data: {
+                type: 'error',
+                name: 'Failed to check flight bookings. Please try again later.',
+                showCancelButton: false,
+                showConfirmButton: true,
+                showCloseButton: true,
+            },
+        });
     });
-  }
-  
-  
-  private showErrorDialog(message: string): void {
-    this.dialog.open(ConfirmDialogComponent, {
-      width: '350px',
-      data: { title: 'error', message, showCloseButton: true }
-    });
-  }
-  
-  private showSuccessDialog(message: string): void {
-    this.dialog.open(ConfirmDialogComponent, {
-      width: '350px',
-      data: { title: 'success', message, showCloseButton: true }
-    });
-  }
+}
+
   
 }

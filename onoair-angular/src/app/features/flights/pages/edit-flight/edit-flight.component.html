@@ -13,7 +13,6 @@
       (input)="onFlightNumberChange($event)"  
       (keypress)="validateFlightNumber($event)"
       #flightNumber="ngModel"
-      [disabled]="!isEditingAllowed"
     />
     <p *ngIf="flightNumber.invalid && flightNumber.touched" class="error-text">
       Flight number must be in the format **AA123** (Two letters & three digits).
@@ -23,21 +22,21 @@
     <mat-form-field class="form-field" appearance="outline">
       <mat-label>Origin</mat-label>
       <mat-select [(ngModel)]="flight.origin" name="origin" required #originControl="ngModel" 
-                  [disabled]="!isEditingAllowed" (selectionChange)="validateFlightRoute()">
+                  (selectionChange)="validateFlightRoute()" [disabled]="!isStatusEditingAllowed">
         <mat-option *ngFor="let originItem of origin" [value]="originItem">
           {{ originItem }}
         </mat-option>
       </mat-select>
     </mat-form-field>
     <p *ngIf="originControl.invalid && originControl.touched" class="error-text">
-      Please select an **origin**.
+      Please select an <strong>origin</strong>.
     </p>
 
     <!-- Destination -->
     <mat-form-field class="form-field" appearance="outline">
       <mat-label>Destination</mat-label>
       <mat-select [(ngModel)]="flight.destination" name="destination" required #destinationControl="ngModel" 
-                  [disabled]="!isEditingAllowed" (selectionChange)="validateFlightRoute()">
+                  (selectionChange)="validateFlightRoute()" [disabled]="!isStatusEditingAllowed">
         <mat-option *ngFor="let destinationItem of destination" [value]="destinationItem" 
                     [disabled]="destinationItem === flight.origin">
           {{ destinationItem }}
@@ -45,8 +44,9 @@
       </mat-select>
     </mat-form-field>
     <p *ngIf="destinationControl.invalid && destinationControl.touched" class="error-text">
-      Please select a **destination**.
+      Please select a <strong>destination</strong>.
     </p>
+
 
     <!-- Departure Date -->
     <mat-form-field class="form-field" appearance="outline">
@@ -59,7 +59,7 @@
       [min]="minDate" 
       #date="ngModel"
       placeholder="Enter departure date"
-      [disabled]="!isEditingAllowed" />
+      />
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
@@ -77,7 +77,6 @@
       required
       #departureTime="ngModel"
       placeholder="Enter departure time"
-      [disabled]="!isEditingAllowed"
     />
 
     <!-- Arrival Date -->
@@ -91,8 +90,7 @@
         [min]="flight.date"
         #arrivalDate="ngModel"
         placeholder="Enter arrival date"
-        [disabled]="!isEditingAllowed"/>
-      <mat-datepicker-toggle matSuffix [for]="arrivalPicker"></mat-datepicker-toggle>
+      />      <mat-datepicker-toggle matSuffix [for]="arrivalPicker"></mat-datepicker-toggle>
       <mat-datepicker #arrivalPicker></mat-datepicker>
     </mat-form-field>
     <p *ngIf="arrivalDate.invalid && arrivalDate.touched" class="error-text">
@@ -109,7 +107,6 @@
       required
       #arrivalTime="ngModel"
       placeholder="Enter arrival time"
-      [disabled]="!isEditingAllowed"
     />
 
     <!-- Price -->
@@ -145,15 +142,15 @@
     <!-- Flight Status -->
     <mat-form-field class="form-field" appearance="outline">
       <mat-label>Flight Status</mat-label>
-      <mat-select [(ngModel)]="flight.status" name="status" required [disabled]="!isEditingAllowed">
+      <mat-select [(ngModel)]="flight.status" name="status" required [disabled]="!isStatusEditingAllowed">
         <mat-option [value]="FlightStatus.Active">Active</mat-option>
         <mat-option [value]="FlightStatus.Canceled">Canceled</mat-option>
       </mat-select>
     </mat-form-field>
 
     <!-- Warning message -->
-    <p *ngIf="!isEditingAllowed" class="warning-text">
-      This flight is active and scheduled for the future. Editing is not allowed.
+    <p *ngIf="!isStatusEditingAllowed" class="warning-text">
+      This flight is active and scheduled for the future. Changing is not allowed.
     </p>
 
 

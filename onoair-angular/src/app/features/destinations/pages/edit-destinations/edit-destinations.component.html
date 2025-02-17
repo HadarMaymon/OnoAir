@@ -85,7 +85,7 @@
       <!-- Destination Status -->
       <mat-form-field appearance="outline">
         <mat-label>Destination Status</mat-label>
-        <mat-select formControlName="status" [disabled]="!isEditingAllowed">
+        <mat-select formControlName="status" [disabled]="!isStatusEditingAllowed">
           <mat-option [value]="destinationStatus.Active">Active</mat-option>
           <mat-option [value]="destinationStatus.Canceled">Canceled</mat-option>
         </mat-select>
@@ -93,19 +93,16 @@
           Status is required
         </mat-error>
       </mat-form-field>
+
        
 
-      <button mat-raised-button color="primary" type="submit" [disabled]="!isEditingAllowed || destinationForm.invalid">
+      <button mat-raised-button color="primary" type="submit" [disabled]="!isStatusEditingAllowed || destinationForm.invalid">
         Save Changes
       </button>
     </form>           
 
-    <p *ngIf="!isEditingAllowed" class="warning-text">
-      ⚠️ This destination has active flights and cannot be edited.
-    </p>
-
     <!-- Show warning if deletion/cancellation is blocked -->
-<p *ngIf="!isEditingAllowed" class="warning-text">
+<p *ngIf="!isStatusEditingAllowed" class="warning-text">
   ⚠️ This destination has active flights and cannot be deleted or canceled.
 </p>
 

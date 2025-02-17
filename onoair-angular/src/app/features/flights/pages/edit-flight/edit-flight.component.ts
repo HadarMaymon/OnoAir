@@ -129,21 +129,20 @@ export class EditFlightComponent implements OnInit {
     });
   }
 
-  get isEditingAllowed(): boolean {
+  get isStatusEditingAllowed(): boolean {
     if (!this.flight) return false; // Prevent editing if flight is not loaded
-  
+    
     const today = new Date();
     today.setHours(0, 0, 0, 0);
   
-    // Use latest active booking date (which was fetched in ngOnInit)
     const latestBookingDate = new Date(this.flight.date);
     latestBookingDate.setHours(0, 0, 0, 0);
   
-    // Editing is only blocked if:
-    // 1. There are active bookings AND
-    // 2. The earliest active booking is in the future
+    // Prevent changing status, origin, and destination if there are active bookings
     return !(this.flight.hasBookings && latestBookingDate >= today);
   }
+  
+  
   
   validateFlightRoute(): void {
     if (this.flight?.origin === this.flight?.destination) {
@@ -195,6 +194,20 @@ export class EditFlightComponent implements OnInit {
       return;
     }
   
+    // Prevent changing status, origin, and destination if active bookings exist
+    if (!this.isStatusEditingAllowed) {
+      this.flightService.getFlightByNumber(this.flight.flightNumber).then((originalFlight) => {
+        if (originalFlight) {
+          this.flight!.status = originalFlight.status;
+          this.flight!.origin = originalFlight.origin;
+          this.flight!.destination = originalFlight.destination;
+          this.cdr.detectChanges();
+  
+          return;
+        }
+      });
+    }
+  
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
       data: { type: this.flightNumber === 'new' ? 'save' : 'update', name: this.flight.flightNumber },
@@ -207,8 +220,6 @@ export class EditFlightComponent implements OnInit {
     });
   }
   
-
-
   
   private updateFlight(): void {
     if (!this.flight) {
@@ -221,15 +232,18 @@ export class EditFlightComponent implements OnInit {
   
     if (this.flight.hasBookings) {
       this.flightService.getFlightByNumber(this.flight.flightNumber).then((originalFlight) => {
-        if (originalFlight && originalFlight.status !== this.flight!.status) {
-          this.dialog.open(ConfirmDialogComponent, {
-            width: '350px',
-            data: { type: 'error', name: 'This flight has active bookings. Status cannot be changed.' },
-          });
-  
-          this.flight!.status = originalFlight.status;
-          this.cdr.detectChanges();
-          return;
+        if (originalFlight) {
+          if (
+            originalFlight.status !== this.flight!.status ||
+            originalFlight.origin !== this.flight!.origin ||
+            originalFlight.destination !== this.flight!.destination
+          ) {
+            this.flight!.status = originalFlight.status;
+            this.flight!.origin = originalFlight.origin;
+            this.flight!.destination = originalFlight.destination;
+            this.cdr.detectChanges();
+            return;
+          }
         }
       });
     }
@@ -244,13 +258,7 @@ export class EditFlightComponent implements OnInit {
         this.router.navigate(['/manage-flight']);
       });
   
-    }).catch((error) => {
-      this.dialog.open(ConfirmDialogComponent, {
-        width: '350px',
-        data: { type: 'error', name: 'Failed to save changes. Please try again.' },
-      });
-      console.error('Error saving changes:', error);
-    });
+    })
   }
   
   

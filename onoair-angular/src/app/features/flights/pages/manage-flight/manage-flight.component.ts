@@ -91,7 +91,6 @@ export class ManageFlightComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  /** ✅ Updated: Open the EditFlightComponent instead of a confirmation dialog */
   editFlight(flightNumber: string): void {
     this.selectedFlightNumber = flightNumber; // Set the flight number for editing
     this.router.navigate(['../edit-flight', flightNumber]); // Navigate to the edit page
@@ -109,13 +108,14 @@ export class ManageFlightComponent implements OnInit, AfterViewInit {
         const dialogRef = this.dialog.open(ConfirmDialogComponent, {
           width: '350px',
           data: {
-            title: 'Cannot Delete Flight',
-            message: `This flight has active bookings and cannot be deleted.`,
-            showCancelButton: false,
+            type: 'delete', 
+            name: `flight ${flight.flightNumber} to ${flight.destination}`,
+            showCancelButton: true,
             showConfirmButton: true,
-            showCloseButton: true,
+            showCloseButton: false,
           },
         });
+        
   
         dialogRef.afterClosed().subscribe((result) => {
           if (result?.confirmed) {
@@ -131,7 +131,7 @@ export class ManageFlightComponent implements OnInit, AfterViewInit {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         width: '350px',
         data: {
-          type: 'delete',
+          type: 'error',
           name: `flight ${flight.flightNumber} to ${flight.destination}`,
           showCancelButton: true,
           showConfirmButton: true,
@@ -163,14 +163,14 @@ export class ManageFlightComponent implements OnInit, AfterViewInit {
   private showErrorDialog(message: string): void {
     this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
-      data: { title: 'Error', message, showCloseButton: true }
+      data: { title: 'error', message, showCloseButton: true }
     });
   }
   
   private showSuccessDialog(message: string): void {
     this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
-      data: { title: 'Success', message, showCloseButton: true }
+      data: { title: 'success', message, showCloseButton: true }
     });
   }
   

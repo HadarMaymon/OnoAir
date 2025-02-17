@@ -59,7 +59,6 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
     private destinationService: DestinationsService,
     private router: Router,
     private dialog: MatDialog,
-    private cdr: ChangeDetectorRef 
   ) {}
 
   ngOnInit(): void {
@@ -73,6 +72,8 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
       },
     });
   }
+
+  
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;

@@ -117,10 +117,6 @@ export class EditDestinationsComponent implements OnInit {
       status: [{ value: destination.status, disabled: destination.hasFutureFlights }, [Validators.required]],
     });
   
-  
-    if (!this.isEditingAllowed) {
-      this.destinationForm.disable();
-    }
   }
   
   
@@ -141,20 +137,22 @@ export class EditDestinationsComponent implements OnInit {
   }
 
   saveChanges(): void {  
-    // Re-check Firestore for active flights before allowing edit
     this.flightService.getActiveFlightsForDestination(this.destination!.destinationName).then((activeFlights) => {
       this.destination!.hasFutureFlights = activeFlights.length > 0;
   
       if (this.destination?.hasFutureFlights) {  
-        this.dialog.open(ConfirmDialogComponent, {
-          width: '350px',
-          data: {
-            type: 'error',
-            name: 'This destination has active flights and cannot be modified.',
-            showCloseButton: true
-          },
-        });
-        return;
+        const currentStatus = this.destinationForm.get('status')?.value;
+        const originalStatus = this.destination?.status;
+  
+        if (currentStatus !== originalStatus) {
+          // 🚫 User tried to change the status! Show error dialog
+          this.destinationForm.get('status')?.setValue(originalStatus); // ✅ Revert status
+          this.dialog.open(ConfirmDialogComponent, {
+            width: '350px',
+            data: { type: 'error', name: 'This destination has active flights. Status cannot be changed.' },
+          });
+          return;
+        }
       }
   
       if (this.destinationForm.invalid) {
@@ -169,8 +167,9 @@ export class EditDestinationsComponent implements OnInit {
       const destinationData: Destination = {
         ...this.destinationForm.getRawValue(),
         IATA: this.originalIATA || this.destinationForm.get('IATA')?.value,
+        status: this.destination?.hasFutureFlights ? this.destination?.status : this.destinationForm.get('status')?.value, // ✅ Lock status if needed
       };
-    
+  
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         width: '350px',
         data: {
@@ -191,11 +190,13 @@ export class EditDestinationsComponent implements OnInit {
     });
   }
   
-  
 
   private updateDestination(destination: Destination): void {
+    if (this.destination?.hasFutureFlights) {
+      this.destinationForm.get('status')?.setValue(this.destination?.status); 
+    }
+  
     this.destinationService.updateDestination(destination).then(() => {
-
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         width: '350px',
         data: {
@@ -203,15 +204,16 @@ export class EditDestinationsComponent implements OnInit {
           name: `${destination.destinationName} has been updated successfully!`,
         },
       });
-
+  
       dialogRef.afterClosed().subscribe(() => {
         this.router.navigate(['/manage-destinations']);
       });
-
+  
     }).catch((error) => {
       console.error('Error updating destination:', error);
     });
   }
+  
 
   private addDestination(destination: Destination): void {
     this.destinationService.addDestination(destination).then(() => {
@@ -234,7 +236,8 @@ export class EditDestinationsComponent implements OnInit {
   }
 
 
-  get isEditingAllowed(): boolean {
-    return !this.destination?.hasFutureFlights; 
+  get isStatusEditingAllowed(): boolean {
+    return !(this.destination?.hasFutureFlights);
   }
+  
 }

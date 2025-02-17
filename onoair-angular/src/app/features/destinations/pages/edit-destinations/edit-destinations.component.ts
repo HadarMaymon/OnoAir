@@ -105,7 +105,6 @@ export class EditDestinationsComponent implements OnInit {
   
 
   private initForm(destination: Destination): void {
-  
     this.destinationForm = this.fb.group({
       destinationName: [destination.destinationName, [Validators.required, Validators.minLength(2)]],
       airportName: [destination.airportName, [Validators.required, Validators.minLength(2)]],
@@ -117,6 +116,10 @@ export class EditDestinationsComponent implements OnInit {
       status: [{ value: destination.status, disabled: destination.hasFutureFlights }, [Validators.required]],
     });
   
+    // ✅ Explicitly disable IATA if editing an existing destination
+    if (this.isEditMode) {
+      this.destinationForm.get('IATA')?.disable();
+    }
   }
   
   

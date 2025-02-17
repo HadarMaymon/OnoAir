@@ -17,7 +17,7 @@ import { Flight } from '../model/flight';
 import { Destination } from '../../destinations/models/destination';
 import { FlightStatus } from '../model/flight-status.enum';
 import { MatDialog } from '@angular/material/dialog';
-import { Timestamp } from 'firebase/firestore';
+import { DocumentData, QueryDocumentSnapshot, QuerySnapshot, Timestamp } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -263,40 +263,69 @@ async getFlightBookings(flightNumber: string): Promise<boolean> {
   
     const flightsRef = collection(this.firestore, 'flights');
   
-    const q = query(
+    // Query 1: Get flights where destination matches
+    const destinationQuery = query(
       flightsRef,
-      where('destination', '==', destinationName.trim()),  // Ensure no spaces
+      where('destination', '==', destinationName.trim()),
       where('status', '==', "Activated")
     );
   
-    const querySnapshot = await getDocs(q);
-    console.log(`📊 Found ${querySnapshot.size} active flights`);
+    // Query 2: Get flights where origin matches
+    const originQuery = query(
+      flightsRef,
+      where('origin', '==', destinationName.trim()),
+      where('status', '==', "Activated")
+    );
   
-    if (querySnapshot.empty) {
+    // 🔹 Run both queries in parallel
+    const [destinationSnapshot, originSnapshot] = await Promise.all([
+      getDocs(destinationQuery),
+      getDocs(originQuery)
+    ]);
+  
+    console.log(`Found ${destinationSnapshot.size} flights as destination`);
+    console.log(`Found ${originSnapshot.size} flights as origin`);
+  
+    if (destinationSnapshot.empty && originSnapshot.empty) {
       console.warn("⚠️ No active flights found! Check Firestore data.");
     }
   
-    querySnapshot.docs.forEach(doc => console.log('🛫 Firestore Flight Data:', doc.data()));
+    // Combine results (Avoid duplicates by using a Map)
+    const flightsMap = new Map();
   
-    return querySnapshot.docs.map(doc => {
-      const data = doc.data();
-      return new Flight(
-        data['flightNumber'],
-        data['origin'],
-        data['destination'].trim(),  // Trim destination name
-        data['date'] instanceof Timestamp ? data['date'].toDate() : new Date(data['date']), 
-        data['departureTime'],
-        data['arrivalDate'] instanceof Timestamp ? data['arrivalDate'].toDate() : new Date(data['arrivalDate']), 
-        data['arrivalTime'],
-        data['price'],
-        data['image'] || '',
-        data['availableSeats'],
-        data['isDynamicDate'],
-        data['status'].trim(),  // Trim status
-        false 
-      );
-    });
+    const addFlights = (snapshot: QuerySnapshot<DocumentData>) => {
+      snapshot.docs.forEach((doc: QueryDocumentSnapshot<DocumentData>) => {
+        const data = doc.data();
+        if (!flightsMap.has(data['flightNumber'])) {
+          flightsMap.set(data['flightNumber'], new Flight(
+            data['flightNumber'],
+            data['origin'].trim(),
+            data['destination'].trim(),
+            data['date'] instanceof Timestamp ? data['date'].toDate() : new Date(data['date']),
+            data['departureTime'],
+            data['arrivalDate'] instanceof Timestamp ? data['arrivalDate'].toDate() : new Date(data['arrivalDate']),
+            data['arrivalTime'],
+            data['price'],
+            data['image'] || '',
+            data['availableSeats'],
+            data['isDynamicDate'],
+            data['status'].trim(),
+            false 
+          ));
+        }
+      });
+    };
+    
+  
+    addFlights(destinationSnapshot);
+    addFlights(originSnapshot);
+  
+    const flights = Array.from(flightsMap.values());
+  
+    console.log(`Total active flights found: ${flights.length}`);
+    return flights;
   }
+  
 
   
   async testQuery(): Promise<void> {
@@ -312,12 +341,12 @@ async getFlightBookings(flightNumber: string): Promise<boolean> {
   
     const querySnapshot = await getDocs(q);
   
-    console.log(`📊 Firestore query result: Found ${querySnapshot.size} flights`);
+    console.log(`Firestore query result: Found ${querySnapshot.size} flights`);
   
     querySnapshot.docs.forEach(doc => console.log('🛫 Firestore Flight Data:', doc.data()));
   
     if (querySnapshot.empty) {
-      console.warn("⚠️ No flights found. Check for whitespace issues or case mismatches!");
+      console.warn(" No flights found. Check for whitespace issues or case mismatches!");
     }
   }
   

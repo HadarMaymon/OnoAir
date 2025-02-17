@@ -34,10 +34,14 @@ export class ConfirmDialogComponent {
         return 'Confirm Save';
       case 'update':
         return 'Confirm Update';
-        case 'error':
+      case 'error':
         return 'Error';
-        case 'success':
+      case 'success':
         return 'Success';
+      case 'cancel':
+        return 'Cancel';
+      case 'booking':
+        return 'Confirm Booking';
       default:
         return 'Default Confirm';
     }
@@ -50,12 +54,16 @@ export class ConfirmDialogComponent {
         return `Are you sure you want to delete ${targetName}?`;
       case 'save':
         return `Are you sure you want to save changes to ${targetName}?`;
+      case 'booking':
+        return `Are you sure you want to book this order?`;
       case 'update':
         return `Are you sure you want to update ${targetName}?`;
       case 'error':
         return 'An error occurred while processing your request. Please check your form.';
       case 'success':
         return 'Your request was processed successfully.';
+      case 'cancel':
+        return 'Are you sure you want to cancel?';
       default:
         return 'Default message!';
     }
@@ -73,6 +81,10 @@ export class ConfirmDialogComponent {
         return 'Close';
       case 'success':
         return 'Close';
+      case 'cancel':
+        return 'Cancel';
+      case 'booking':
+        return 'Book';
       default:
         return 'Confirm';
     }
@@ -90,6 +102,8 @@ export class ConfirmDialogComponent {
         return 'warn';
       case 'success':
         return 'primary';
+      case 'cancel':
+        return 'warn';
       default:
         return 'default';
     }

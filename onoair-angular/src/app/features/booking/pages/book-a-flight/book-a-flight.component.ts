@@ -145,23 +145,22 @@ export class BookAFlightComponent implements OnInit {
     const passenger = this.passengers[index];
     this.errors[index] = {};
   
+    // Ensure name has first & last name (letters only)
     const nameRegex = /^[A-Za-z]+ [A-Za-z]+$/;
     if (!nameRegex.test(passenger.name)) {
       this.errors[index].name = 'Enter first and last name (letters only)';
     }
   
+    // Ensure Passport ID is exactly 9 digits
     const idRegex = /^[0-9]{9}$/;
     if (!idRegex.test(passenger.id)) {
       this.errors[index].id = 'ID must be exactly 9 digits';
     }
   
+    // Prevent duplicate IDs
     const idCounts = this.passengers.map((p) => p.id).filter((id) => id);
     if (idCounts.filter((id) => id === passenger.id).length > 1) {
       this.errors[index].duplicateId = 'Duplicate Passport ID found';
-    }
-  
-    if (this.flight && this.passengers.length > this.flight.availableSeats) {
-      this.errors[index].duplicateId = `Only ${this.flight.availableSeats} seats are available!`;
     }
   }
   
@@ -226,14 +225,22 @@ export class BookAFlightComponent implements OnInit {
   
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: "350px",
-      data: { type: "save", name: "this booking" },
+      data: { type: "booking", name: "this booking" },
     });
   
     const result = await dialogRef.afterClosed().toPromise();
     if (!result?.confirmed) {
       this.isSaving = false;
       return;
+    
     }
+
+    this.dialog.open(ConfirmDialogComponent, {
+      width: "350px",
+      data: { type: "success", name: "this booking" },
+    });
+  
+  
   
     try {
       let bookingId: string;
@@ -272,6 +279,8 @@ export class BookAFlightComponent implements OnInit {
         isDynamicDate: this.flight?.assignDynamicDate || false,
         status: "Active",
       };
+
+      
   
       console.log("Booking Data Before Firestore Save:", JSON.stringify(bookingData, null, 2));
   
@@ -311,11 +320,18 @@ export class BookAFlightComponent implements OnInit {
   }
   
   canProceedToStep2(): boolean {
-    return !this.hasErrors() && this.passengers.every((p) => p.name && p.id);
+    return this.passengers.every(passenger => 
+      /^[0-9]{9}$/.test(passenger.id) && 
+      /^[A-Za-z]+ [A-Za-z]+$/.test(passenger.name) // Ensures name is valid
+    );
   }
-
+  
   canProceedToStep3(): boolean {
     return this.hasAtLeastOneValidPassenger(); 
+  }
+  restrictPassportIdLength(index: number): void {
+    this.passengers[index].id = this.passengers[index].id.replace(/\D/g, '').slice(0, 9);
+    this.validatePassenger(index); 
   }
   
 }

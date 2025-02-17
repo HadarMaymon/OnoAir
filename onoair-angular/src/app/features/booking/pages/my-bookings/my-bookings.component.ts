@@ -93,12 +93,8 @@ export class MyBookingsComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
       data: {
-        type: 'delete', // Type set to 'delete' to match the cancel action
-        title: 'Confirm Cancellation',
-        message: `Are you sure you want to cancel this booking?`,
+        type: 'cancel', 
         showConfirmButton: true,
-        confirmButtonText: 'Cancel Booking',
-        confirmButtonColor: 'warn',
         showCancelButton: true,
       },
     });

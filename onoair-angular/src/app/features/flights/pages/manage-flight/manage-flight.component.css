@@ -1,3 +1,4 @@
+/* 🚀 Container Styling */
 .manage-flight-container {
     max-width: 1200px;
     margin: 20px auto;
@@ -6,33 +7,41 @@
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     position: relative;
-    overflow-x: auto;
+    overflow-x: auto; /* Enable horizontal scrolling if needed */
     padding-bottom: 80px; 
 }
 
+/* 🚀 Table Scrollable Wrapper */
+.table-container {
+    width: 100%;
+    overflow-x: auto; /* Ensures table remains visible and scrollable */
+    margin-top: 10px; 
+}
+
+/* 🚀 Notes */
 .note {
     margin-bottom: 10px;
     font-size: 20px;
     color: #d32f2f; 
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
-    
-  }
+}
 
-  .save-button {
+/* 🚀 Floating Save Button */
+.save-button {
     position: fixed;
     bottom: 20px;
     right: 20px;
-  }
+}
 
-  
-  .add-flight-button-container {
+/* 🚀 Add Flight Button Styling */
+.add-flight-button-container {
     display: flex;
     justify-content: center; 
     margin-top: 20px; 
-  }
-  
-  .add-flight-button {
+}
+
+.add-flight-button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -52,17 +61,18 @@
     transform: scale(1.05);
 }
 
+/* 🚀 Dialog Actions */
 mat-dialog-actions {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
-  }
-  button {
+}
+
+button {
     min-width: 64px;
-  }
-  
+}
 
-
+/* 🚀 Heading */
 h1 {
     text-align: center;
     font-size: 28px;
@@ -71,6 +81,7 @@ h1 {
     font-family: 'Arial', sans-serif;
 }
 
+/* 🚀 Search Bar */
 .search-bar {
     width: 100%;
     margin-bottom: 20px;
@@ -85,22 +96,25 @@ mat-label {
     color: #555;
 }
 
+/* 🚀 Table Styling */
 table {
     width: 100%;
-    table-layout: auto;  
+    table-layout: fixed; /* Prevents column width issues */
     border-collapse: collapse;
 }
 
+/* 🚀 Table Header Styling */
 .mat-header-row {
     background-color: #4caf50;
     color: white;
 }
 
+/* 🚀 Table Cells */
 .mat-header-cell,
 .mat-cell {
     font-size: 15px;
     padding: 12px;
-    text-align: center;  /* Center-align all cells for consistency */
+    text-align: center;  
     vertical-align: middle;
     border-bottom: 1px solid #e0e0e0;
     white-space: nowrap; 
@@ -109,9 +123,9 @@ table {
     height: 60px;
 }
 
+/* 🚀 Column Widths */
 .mat-column-flightNumber {
     width: 10%;
-    text-align: center;
 }
 
 .mat-column-availableSeats {
@@ -119,22 +133,34 @@ table {
     text-align: center;
 }
 
+/* 🚀 Ensure specific columns have enough space */
+.mat-column-arrivalDate,
+.mat-column-date,
+.mat-column-origin,
+.mat-column-destination {
+    min-width: 140px;  
+    max-width: 160px;
+    white-space: nowrap;  
+}
+
+/* 🚀 Responsive Design */
 @media (max-width: 768px) {
+    .table-container {
+        overflow-x: auto; /* Ensures table scrolls on small screens */
+    }
+
     .mat-header-cell,
     .mat-cell {
         font-size: 14px;
         padding: 8px;
     }
-    
+
     .mat-column-flightNumber,
     .mat-column-availableSeats {
-        width: 15%;  /* Give more space on smaller screens */
+        width: 15%;  /* Adjust widths for smaller screens */
     }
-    
+
     table {
-        table-layout: fixed;
+        table-layout: auto; /* Adjust dynamically on small screens */
     }
-
-
-    
 }

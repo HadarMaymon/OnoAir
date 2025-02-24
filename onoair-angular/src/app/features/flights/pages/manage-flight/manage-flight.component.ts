@@ -99,31 +99,28 @@ export class ManageFlightComponent implements OnInit, AfterViewInit {
   confirmDelete(flight: Flight): void {
     console.log(`Attempting to delete flight: ${flight.flightNumber}`);
 
-    this.flightService.getFlightBookings(flight.flightNumber).then((hasBookings) => {
-        console.log(`🛫 Flight ${flight.flightNumber} has bookings: ${hasBookings}`);
+    this.flightService.getFlightBookings(flight.flightNumber).then((hasActiveFutureBooking) => {
+        console.log(`🛫 Flight ${flight.flightNumber} has active future bookings: ${hasActiveFutureBooking}`);
 
-        if (hasBookings) {
-            console.warn(`Cannot delete flight ${flight.flightNumber}: Active bookings exist.`);
+        // 🚨 Prevent deletion if at least ONE active future booking exists
+        if (hasActiveFutureBooking) {
+            console.warn(`❌ Cannot delete flight ${flight.flightNumber}: Active & future bookings exist.`);
 
-            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            this.dialog.open(ConfirmDialogComponent, {
                 width: '350px',
                 data: {
                     type: 'error',
-                    name: `Flight ${flight.flightNumber} to ${flight.destination} has active bookings and cannot be deleted.`,
+                    name: `Flight ${flight.flightNumber} has active future bookings and cannot be deleted.`,
                     showCancelButton: false,
                     showConfirmButton: true,
                     showCloseButton: true
                 },
             });
 
-            dialogRef.afterClosed().subscribe(() => {
-                console.log(`⚠️ User acknowledged that flight ${flight.flightNumber} cannot be deleted.`);
-            });
-
             return; // Stop execution, flight can't be deleted
         }
 
-        console.log(`No active bookings for flight ${flight.flightNumber}. Showing delete confirmation.`);
+        console.log(`✅ No active future bookings for flight ${flight.flightNumber}. Proceeding with deletion.`);
 
         const dialogRef = this.dialog.open(ConfirmDialogComponent, {
             width: '350px',
@@ -139,40 +136,43 @@ export class ManageFlightComponent implements OnInit, AfterViewInit {
         dialogRef.afterClosed().subscribe((result) => {
             console.log(`🗑️ Delete Dialog closed. User confirmed delete: ${result?.confirmed}`);
 
-            if (result?.confirmed) {
-                console.log(`Deleting flight ${flight.flightNumber}...`);
-
-                this.flightService.deleteFlight(flight.flightNumber).then(() => {
-                    console.log(`Flight ${flight.flightNumber} deleted successfully.`);
-
-                    this.dialog.open(ConfirmDialogComponent, {
-                        width: '350px',
-                        data: {
-                            type: 'success',
-                            name: `Flight ${flight.flightNumber} deleted successfully.`,
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                            showCloseButton: true,
-                        },
-                    });
-
-                }).catch((error) => {
-                    console.error(`Error deleting flight ${flight.flightNumber}:`, error);
-                    this.dialog.open(ConfirmDialogComponent, {
-                        width: '350px',
-                        data: {
-                            type: 'error',
-                            name: 'Failed to delete flight. Please try again.',
-                            showCancelButton: false,
-                            showConfirmButton: true,
-                            showCloseButton: true,
-                        },
-                    });
-                });
+            if (!result?.confirmed) {
+                console.log(`❌ User canceled deletion of flight ${flight.flightNumber}.`);
+                return;
             }
+
+            console.log(`Deleting flight ${flight.flightNumber}...`);
+
+            this.flightService.deleteFlight(flight.flightNumber).then(() => {
+                console.log(`✅ Flight ${flight.flightNumber} deleted successfully.`);
+
+                this.dialog.open(ConfirmDialogComponent, {
+                    width: '350px',
+                    data: {
+                        type: 'success',
+                        name: `Flight ${flight.flightNumber} deleted successfully.`,
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                    },
+                });
+
+            }).catch((error) => {
+                console.error(`❌ Error deleting flight ${flight.flightNumber}:`, error);
+                this.dialog.open(ConfirmDialogComponent, {
+                    width: '350px',
+                    data: {
+                        type: 'error',
+                        name: 'Failed to delete flight. Please try again.',
+                        showCancelButton: false,
+                        showConfirmButton: true,
+                        showCloseButton: true,
+                    },
+                });
+            });
         });
     }).catch((error) => {
-        console.error(`Error checking flight bookings for ${flight.flightNumber}:`, error);
+        console.error(`❌ Error checking flight bookings for ${flight.flightNumber}:`, error);
         this.dialog.open(ConfirmDialogComponent, {
             width: '350px',
             data: {
@@ -186,5 +186,4 @@ export class ManageFlightComponent implements OnInit, AfterViewInit {
     });
 }
 
-  
 }

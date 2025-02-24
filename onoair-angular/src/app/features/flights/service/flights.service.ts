@@ -126,9 +126,28 @@ async getFlightBookings(flightNumber: string): Promise<boolean> {
   const bookingsQuery = query(bookingsCollection, where('flightNumber', '==', flightNumber));
   const bookingSnapshot = await getDocs(bookingsQuery);
 
-  console.log(`Checking bookings for flight ${flightNumber}:`, bookingSnapshot.size); 
+  console.log(`Checking bookings for flight ${flightNumber}: Found ${bookingSnapshot.size} bookings`);
 
-  return !bookingSnapshot.empty; 
+  // Get the current date
+  const currentDate = new Date();
+
+  // Convert Firestore documents into an array of booking objects
+  const bookings = bookingSnapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      status: data['status'], // "Active" or "Canceled"
+      date: data['boarding'] instanceof Timestamp ? data['boarding'].toDate() : null, // Convert Firestore timestamp to Date
+    };
+  });
+
+  // Check if there is at least ONE "active" and "future" booking
+  const hasActiveFutureBooking = bookings.some(booking => 
+    booking.status === 'Active' && booking.date && booking.date > currentDate
+  );
+
+  console.log(`🚨 Active & Future Booking Exists: ${hasActiveFutureBooking}`);
+
+  return hasActiveFutureBooking; // Return true if at least one active future booking exists
 }
 
 

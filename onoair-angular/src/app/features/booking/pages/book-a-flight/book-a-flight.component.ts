@@ -14,6 +14,7 @@ import { LuggageDialogComponent } from '../../dialog/luggage-dialog/luggage-dial
 import { MatIconModule } from '@angular/material/icon';
 import { MatStepperModule } from '@angular/material/stepper';
 import { inject } from '@angular/core';
+import { MatStep } from '@angular/material/stepper';
 
 
 @Component({
@@ -29,8 +30,11 @@ import { inject } from '@angular/core';
     MatButtonModule,
     MatStepperModule,
     MatIconModule, 
+    MatStep,
   ],
 })
+
+
 export class BookAFlightComponent implements OnInit {
   private firestore = inject(Firestore);
   flight: Flight | null = null;
@@ -50,12 +54,7 @@ export class BookAFlightComponent implements OnInit {
     private router: Router,
     private dialog: MatDialog,
   ) {}
-
-
-  setStep(index: number) {
-    this.currentStep = index;
-  }
-
+  
 
   ngOnInit(): void {
     const flightNumber = this.route.snapshot.paramMap.get('flightNumber');
@@ -319,16 +318,24 @@ export class BookAFlightComponent implements OnInit {
     return this.errors.some((error) => Object.keys(error).length > 0);
   }
   
+  setStep(index: number) {
+    if (index === 1 && !this.canProceedToStep2()) return; // Prevents moving to Step 2 if validation fails
+    if (index === 2 && !this.canProceedToStep3()) return; // Prevents moving to Step 3 if validation fails
+    this.currentStep = index;
+  }
+  
   canProceedToStep2(): boolean {
     return this.passengers.every(passenger => 
-      /^[0-9]{9}$/.test(passenger.id) && 
-      /^[A-Za-z]+ [A-Za-z]+$/.test(passenger.name) // Ensures name is valid
+      passenger.id.trim().length === 9 && /^\d{9}$/.test(passenger.id) && // Ensures exactly 9 digits
+      /^[A-Za-z]+ [A-Za-z]+$/.test(passenger.name.trim()) // Ensures name is valid (at least two words)
     );
   }
   
   canProceedToStep3(): boolean {
-    return this.hasAtLeastOneValidPassenger(); 
+    return this.canProceedToStep2(); // Ensures Step 1 is complete before Step 3
   }
+  
+  
   restrictPassportIdLength(index: number): void {
     this.passengers[index].id = this.passengers[index].id.replace(/\D/g, '').slice(0, 9);
     this.validatePassenger(index); 

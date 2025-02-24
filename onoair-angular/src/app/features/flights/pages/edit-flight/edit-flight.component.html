@@ -139,20 +139,21 @@
       Number of seats must be at least **1**.
     </p>
 
+
     <!-- Flight Status -->
     <mat-form-field class="form-field" appearance="outline">
       <mat-label>Flight Status</mat-label>
-      <mat-select [(ngModel)]="flight.status" name="status" required [disabled]="!isStatusEditingAllowed">
+      <mat-select [(ngModel)]="flight.status" name="status" required [disabled]="isStatusEditingAllowed">
         <mat-option [value]="FlightStatus.Active">Active</mat-option>
         <mat-option [value]="FlightStatus.Canceled">Canceled</mat-option>
       </mat-select>
     </mat-form-field>
-
-    <!-- Warning message -->
-    <p *ngIf="!isStatusEditingAllowed" class="warning-text">
-      This flight is active and scheduled for the future. Changing is not allowed.
+    
+    <!-- Show warning message -->
+    <p *ngIf="isStatusEditingAllowed" class="warning-text">
+      This flight has active future bookings. Status change is not allowed.
     </p>
-
+    
 
     <!-- Global Validation Message -->
     <p *ngIf="errorMessage" class="error-text">

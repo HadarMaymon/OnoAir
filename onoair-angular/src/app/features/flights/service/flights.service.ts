@@ -155,13 +155,25 @@ async getFlightBookings(flightNumber: string): Promise<boolean> {
   /**
    * Fetches a flight by its number from Firestore.
    */
-  getFlightByNumber(flightNumber: string): Promise<Flight | undefined> {
-    const flightDoc = doc(this.firestore, 'flights', flightNumber);
-    return getDoc(flightDoc).then((snapshot) =>
-      snapshot.exists() ? (snapshot.data() as Flight) : undefined
-    );
-  }
 
+  async getFlightByNumber(flightNumber: string): Promise<Flight | undefined> {
+    const flightDoc = doc(this.firestore, 'flights', flightNumber);
+    const snapshot = await getDoc(flightDoc);
+  
+    if (!snapshot.exists()) {
+      return undefined;
+    }
+  
+    const flightData = snapshot.data();
+    console.log("Raw Firestore Data:", flightData); // 🔍 Debugging output
+  
+    return {
+      ...flightData,
+      date: flightData['date'] instanceof Timestamp ? flightData['date'].toDate() : null, 
+      arrivalDate: flightData['arrivalDate'] instanceof Timestamp ? flightData['arrivalDate'].toDate() : null,
+    } as Flight;
+  }
+  
   /**
    * Retrieves a list of unique flight origins.
    */

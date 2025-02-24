@@ -85,16 +85,17 @@ export class EditFlightComponent implements OnInit {
   
         this.flight = flight;
   
-        //Get earliest active booking date
-        this.flightService.getLatestBookingDate(this.flightNumber !).then((bookingDate) => {
+        // Get earliest active booking date
+        this.flightService.getLatestBookingDate(this.flightNumber!).then((bookingDate) => {
           if (bookingDate) {
             this.flight!.date = bookingDate; // Override flight date with latest boarding date
           }
         });
   
-        //Check if there are active bookings
-        this.flightService.hasActiveBookings(this.flightNumber !).then((hasBookings) => {
+        // Fetch active bookings and store in `this.flight.hasBookings`
+        this.flightService.getFlightBookings(this.flightNumber!).then((hasBookings) => {
           this.flight!.hasBookings = hasBookings;
+          this.cdr.detectChanges(); // Force update UI after data loads
         });
       });
     });
@@ -130,16 +131,8 @@ export class EditFlightComponent implements OnInit {
   }
 
   get isStatusEditingAllowed(): boolean {
-    if (!this.flight) return false; // Prevent editing if flight is not loaded
-    
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-  
-    const latestBookingDate = new Date(this.flight.date);
-    latestBookingDate.setHours(0, 0, 0, 0);
-  
-    // Prevent changing status, origin, and destination if there are active bookings
-    return !(this.flight.hasBookings && latestBookingDate >= today);
+    if (!this.flight) return false;
+    return this.flight.hasBookings; // Just return the stored value
   }
   
   

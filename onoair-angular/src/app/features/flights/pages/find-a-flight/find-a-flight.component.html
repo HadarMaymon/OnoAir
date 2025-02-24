@@ -33,20 +33,18 @@
     <mat-date-range-picker #departureRangePicker></mat-date-range-picker>
   </mat-form-field>
 
-
-
     <!-- Price Budget -->
     <mat-form-field appearance="outline">
       <mat-label>Price Budget</mat-label>
-      <input matInput type="number" formControlName="priceBudget" placeholder="Max Price ($)">
+      <input matInput type="number" formControlName="priceBudget" placeholder="Max Price ($)" min="1">
     </mat-form-field>
-  
+
     <!-- Passengers -->
     <mat-form-field appearance="outline">
       <mat-label>Passengers</mat-label>
-      <input matInput type="number" formControlName="passengers" placeholder="Number of Passengers">
+      <input matInput type="number" formControlName="passengers" placeholder="Number of Passengers" min="1">
     </mat-form-field>
-  
+
     <!-- Search Button -->
     <button mat-raised-button color="primary" (click)="applyFilters()">Search</button>
   </div>

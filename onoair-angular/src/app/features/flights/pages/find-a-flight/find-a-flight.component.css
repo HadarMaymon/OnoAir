@@ -75,8 +75,10 @@ button{
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    height: 55px; /* Normal row height */
+    height: 55px; 
+  
   }
+
   
   /* Column Widths (Unchanged) */
   .mat-column-flightNumber,
@@ -108,6 +110,13 @@ button{
   .mat-row:hover {
     background-color: #f7f7f7;
   }
+
+  .mat-column-arrivalDate {
+    min-width: 140px;  /* Ensures enough space for date */
+    max-width: 160px;
+    white-space: nowrap;  /* Prevents text wrapping */
+  }
+  
   
   /* Paginator Styling */
   .mat-paginator {

@@ -1,0 +1,58 @@
+<div class="my-bookings-container">
+  <!-- Iterate through booking sections (Upcoming & Previous) -->
+  <div *ngFor="let section of bookingSections">
+    <h1>{{ section.title }}</h1>
+
+    <!-- Show bookings if available, otherwise show fallback message -->
+    <div *ngFor="let booking of section.bookings" class="booking-card">
+      <!-- Destination Image -->
+      <img
+      [src]="booking.image ? booking.image.trim() : 'assets/images/default.jpg'"
+      [hidden]="!booking.image"
+      (error)="handleImageError(booking)"
+      class="destination-image"
+    />
+    
+      <!-- Booking Details -->
+      <div class="booking-details">
+        <p><strong>Flight Number:</strong> {{ booking.flightNumber || 'N/A' }}</p>
+        <p><strong>Origin:</strong> {{ booking.origin || 'N/A' }}</p>
+        <p><strong>Boarding:</strong> {{ booking.boarding | date: 'dd-MM-yyyy' }}</p>
+        <p><strong>Departure Time:</strong> {{ booking.departureTime || 'N/A' }}</p>
+
+        <p><strong>Destination:</strong> {{ booking.destination || 'N/A' }}</p>
+        <p><strong>Landing:</strong> {{ booking.landing | date: 'dd-MM-yyyy' }}</p>
+        <p><strong>Arrival Time:</strong> {{ booking.arrivalTime || 'N/A' }}</p>
+
+        <p><strong>No. of Passengers:</strong> {{ booking.passengers.length || 'N/A' }}</p>
+        
+        <p><strong>Status:</strong> 
+          <span [ngClass]="{'active-status': booking.status === bookingStatus.Active, 'canceled-status': booking.status === bookingStatus.Canceled}">
+            {{ booking.status || 'N/A' }}
+          </span>
+        </p>
+
+        <!-- Buttons -->
+        <div class="buttons">
+          <button mat-raised-button color="primary" (click)="viewBooking(booking.bookingId)">
+            View Details
+          </button>
+
+          <button 
+            mat-raised-button 
+            color="warn" 
+            class="cancel-button"
+            *ngIf="booking.status === bookingStatus.Active && isFutureDate(booking.boarding)" 
+            (click)="toggleBookingStatus(booking)">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fallback template for no bookings -->
+    <ng-template #noBookings>
+      <p>No {{ section.title.toLowerCase() }} bookings available.</p>
+    </ng-template>
+  </div>
+</div>

@@ -1,0 +1,56 @@
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 20px;
+    background-color: #FFEBEB;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    height: 80px;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    margin-left: 20px; 
+    order: 2; 
+}
+
+.header-logo {
+    max-height: 160px; 
+    width: auto;
+    cursor: pointer;
+}
+
+.menu-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; 
+    gap: 10px; 
+}
+
+.menu-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px; 
+    background: none; 
+    border: none; 
+    cursor: pointer;
+}
+
+.menu-icon {
+    font-size: 24px; 
+    color: #333; 
+}
+
+.mat-menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    font-size: 16px; 
+}
+
+.mat-menu-item mat-icon {
+    margin-left: auto; 
+    color: #555; 
+}

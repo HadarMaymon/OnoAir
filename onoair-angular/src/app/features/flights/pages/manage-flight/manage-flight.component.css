@@ -1,0 +1,140 @@
+.manage-flight-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow-x: auto;
+    padding-bottom: 80px; 
+}
+
+.note {
+    margin-bottom: 10px;
+    font-size: 20px;
+    color: #d32f2f; 
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    
+  }
+
+  .save-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+  }
+
+  
+  .add-flight-button-container {
+    display: flex;
+    justify-content: center; 
+    margin-top: 20px; 
+  }
+  
+  .add-flight-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px; 
+    font-size: 16px; 
+    font-weight: bold;
+    background-color: #E195AB; 
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    width: 250px; 
+    text-transform: uppercase;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.add-flight-button:hover {
+    transform: scale(1.05);
+}
+
+mat-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  button {
+    min-width: 64px;
+  }
+  
+
+
+h1 {
+    text-align: center;
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+.search-bar {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+mat-label {
+    font-size: 16px;
+    color: #555;
+}
+
+table {
+    width: 100%;
+    table-layout: auto;  
+    border-collapse: collapse;
+}
+
+.mat-header-row {
+    background-color: #4caf50;
+    color: white;
+}
+
+.mat-header-cell,
+.mat-cell {
+    font-size: 15px;
+    padding: 12px;
+    text-align: center;  /* Center-align all cells for consistency */
+    vertical-align: middle;
+    border-bottom: 1px solid #e0e0e0;
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 60px;
+}
+
+.mat-column-flightNumber {
+    width: 10%;
+    text-align: center;
+}
+
+.mat-column-availableSeats {
+    width: 8%;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .mat-header-cell,
+    .mat-cell {
+        font-size: 14px;
+        padding: 8px;
+    }
+    
+    .mat-column-flightNumber,
+    .mat-column-availableSeats {
+        width: 15%;  /* Give more space on smaller screens */
+    }
+    
+    table {
+        table-layout: fixed;
+    }
+
+
+    
+}

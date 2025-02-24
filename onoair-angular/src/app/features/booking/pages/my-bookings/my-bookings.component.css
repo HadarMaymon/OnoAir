@@ -1,0 +1,63 @@
+.my-bookings-container {
+    max-width: 1000px;
+    margin: 0px auto;
+    padding: 20px;
+    font-family: 'Roboto', sans-serif;
+    padding-bottom: 80px;
+  }
+  
+  .booking-card {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .cancel-button {
+    margin-left: auto;
+  }
+  
+  .booking-card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .destination-image {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    margin-right: 20px;
+    border-radius: 8px;
+  }
+  
+  .booking-details {
+    flex-grow: 1;
+  }
+  
+  .booking-details p {
+    margin: 6px 0;
+    font-size: 1rem;
+    color: #424242;
+  }
+
+  
+  button {
+    margin-top: 10px;
+  }
+  
+  .mat-raised-button {
+    font-size: 1rem;
+    padding: 10px 24px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    background-color: #3f51b5;
+    color: white;
+  }
+  
+  .mat-raised-button:hover {
+    background-color: #303f9f;
+  }
+  

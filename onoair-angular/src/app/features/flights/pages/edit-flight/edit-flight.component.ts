@@ -223,6 +223,7 @@ export class EditFlightComponent implements OnInit {
       return;
     }
   
+    // Prevent changing status, origin, and destination if active bookings exist
     if (this.flight.hasBookings) {
       this.flightService.getFlightByNumber(this.flight.flightNumber).then((originalFlight) => {
         if (originalFlight) {
@@ -235,23 +236,34 @@ export class EditFlightComponent implements OnInit {
             this.flight!.origin = originalFlight.origin;
             this.flight!.destination = originalFlight.destination;
             this.cdr.detectChanges();
+  
+            this.dialog.open(ConfirmDialogComponent, {
+              width: '350px',
+              data: { type: 'error', name: 'Cannot change status, origin, or destination for a flight with active bookings.' },
+            });
             return;
           }
         }
       });
     }
   
+    // Proceed with updating the flight and its associated bookings
     this.flightService.updateFlight(this.flight).then(() => {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         width: '350px',
-        data: { type: 'success', name: `${this.flight!.flightNumber} has been updated successfully!` },
+        data: { type: 'success', name: `${this.flight!.flightNumber} and its bookings have been updated successfully!` },
       });
   
       dialogRef.afterClosed().subscribe(() => {
         this.router.navigate(['/manage-flight']);
       });
-  
-    })
+    }).catch((error) => {
+      console.error('Error updating flight:', error);
+      this.dialog.open(ConfirmDialogComponent, {
+        width: '350px',
+        data: { type: 'error', name: `Failed to update flight: ${error.message}` },
+      });
+    });
   }
   
   

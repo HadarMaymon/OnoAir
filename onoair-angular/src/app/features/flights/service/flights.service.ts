@@ -12,6 +12,7 @@ import {
   query,
   where,
   orderBy,
+  runTransaction,
 } from '@angular/fire/firestore';
 import { Flight } from '../model/flight';
 import { Destination } from '../../destinations/models/destination';
@@ -91,20 +92,70 @@ export class FlightService {
   /**
    * Updates a flight in Firestore.
    */
-  updateFlight(flight: Flight): Promise<void> {
-    const flightCollection = collection(this.firestore, 'flights');
-    const flightDoc = doc(flightCollection, flight.flightNumber);
-    return setDoc(flightDoc, { 
-      ...flight, 
-      date: Timestamp.fromDate(flight.date), 
-      arrivalDate: Timestamp.fromDate(flight.arrivalDate), 
-      status: flight.status as FlightStatus 
-    }).then(() => {
-      console.log(`Flight ${flight.flightNumber} updated successfully!`);
-    });
+  async updateFlight(flight: Flight): Promise<void> {
+    const flightDoc = doc(this.firestore, 'flights', flight.flightNumber);
+    const bookingsCollection = collection(this.firestore, 'bookings');
+  
+    // Firestore Query: Only fetch ACTIVE BOOKINGS with FUTURE boarding date
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize today's date for comparison
+  
+    const bookingsQuery = query(
+      bookingsCollection,
+      where('flightNumber', '==', flight.flightNumber),
+      where('status', '==', 'Active') // Only active bookings
+    );
+  
+    try {
+      await runTransaction(this.firestore, async (transaction) => {
+        const flightSnapshot = await transaction.get(flightDoc);
+        if (!flightSnapshot.exists()) {
+          throw new Error(`Flight ${flight.flightNumber} not found.`);
+        }
+  
+        console.log(`✈️ Updating Flight ${flight.flightNumber}`);
+  
+        // ✅ Update Flight Document
+        transaction.update(flightDoc, {
+          date: Timestamp.fromDate(new Date(flight.date)), // Sync new departure date
+          departureTime: flight.departureTime,
+          arrivalDate: Timestamp.fromDate(new Date(flight.arrivalDate)), // Sync new arrival date
+          arrivalTime: flight.arrivalTime,
+        });
+  
+        console.log(`✅ Flight ${flight.flightNumber} updated successfully.`);
+  
+        // 🔹 Fetch all active bookings for this flight
+        const bookingsSnapshot = await getDocs(bookingsQuery);
+        console.log(`🔍 Found ${bookingsSnapshot.size} active bookings for this flight`);
+  
+        bookingsSnapshot.forEach((bookingDoc) => {
+          const bookingData = bookingDoc.data();
+          const bookingDate = bookingData['boarding'] instanceof Timestamp ? bookingData['boarding'].toDate() : new Date(bookingData['boarding']);
+  
+          // ONLY update bookings with a FUTURE boarding date
+          if (bookingDate > today) {
+            const bookingRef = doc(this.firestore, 'bookings', bookingDoc.id);
+            transaction.update(bookingRef, {
+              boarding: Timestamp.fromDate(new Date(flight.date)), // Sync departure date
+              departureTime: flight.departureTime, // Sync departure time
+              landing: Timestamp.fromDate(new Date(flight.arrivalDate)), // Sync arrival date
+              arrivalTime: flight.arrivalTime, // Sync arrival time
+            });
+            console.log(`🔄 Updated booking ${bookingDoc.id} with new flight details.`);
+          } else {
+            console.log(`⏳ Skipping past booking ${bookingDoc.id} (boarding date: ${bookingDate})`);
+          }
+        });
+      });
+  
+      console.log(`✅ Flight ${flight.flightNumber} and its future active bookings have been updated.`);
+    } catch (error) {
+      console.error(`❌ Error updating flight ${flight.flightNumber}:`, error);
+      throw error;
+    }
   }
   
-
 
   /**
    * Deletes a flight from Firestore.

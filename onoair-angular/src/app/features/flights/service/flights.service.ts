@@ -102,7 +102,7 @@ export class FlightService {
     }
   
     const bookingsCollection = collection(this.firestore, 'bookings');
-    
+  
     // Firestore Query: Only fetch ACTIVE BOOKINGS with FUTURE boarding date
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Normalize today's date for comparison
@@ -117,12 +117,13 @@ export class FlightService {
       await runTransaction(this.firestore, async (transaction) => {
         console.log(`✈️ Updating Flight ${flight.flightNumber}`);
   
-        // ✅ Update Flight Document
+        // ✅ Update Flight Document (including status)
         transaction.update(flightDoc, {
           date: Timestamp.fromDate(new Date(flight.date)), // Sync new departure date
           departureTime: flight.departureTime,
           arrivalDate: Timestamp.fromDate(new Date(flight.arrivalDate)), // Sync new arrival date
           arrivalTime: flight.arrivalTime,
+          status: flight.status,  // ✅ Ensure status update is included
         });
   
         console.log(`✅ Flight ${flight.flightNumber} updated successfully.`);
@@ -133,10 +134,10 @@ export class FlightService {
   
         bookingsSnapshot.forEach((bookingDoc) => {
           const bookingData = bookingDoc.data();
-          const bookingDate = bookingData['boarding'] instanceof Timestamp ? bookingData['boarding'].toDate() : new Date(bookingData['boarding']);
+          const bookingDate = bookingData['boarding'] instanceof Timestamp ? bookingData['boarding'].toDate() : null;
   
           // ONLY update bookings with a FUTURE boarding date
-          if (bookingDate > today) {
+          if (bookingDate && bookingDate > today) {
             const bookingRef = doc(this.firestore, 'bookings', bookingDoc.id);
             transaction.update(bookingRef, {
               boarding: Timestamp.fromDate(new Date(flight.date)), // Sync departure date

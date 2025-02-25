@@ -63,40 +63,61 @@ export class EditFlightComponent implements OnInit {
     const today = new Date();
     today.setDate(today.getDate() + 1);
     this.minDate = today.toISOString().split('T')[0];
-
+  
     this.destinationsService.getAllDestinations().then((destinations) => {
       const destinationNames = destinations.map((dest) => dest.destinationName);
       this.origin = destinationNames;
       this.destination = destinationNames;
-
+  
       if (!this.flightNumber) {
         this.redirectToFlightList();
         return;
       }
-
+  
       if (this.flightNumber === 'new') {
         this.resetForm('');
+        this.disableOriginDestination = false; // Allow editing when adding a new flight
         return;
       }
-
-      // Fetch flight details from Firestore
+  
       this.flightService.getFlightByNumber(this.flightNumber).then((flight) => {
         if (!flight) {
           this.redirectToFlightList();
           return;
         }
-
+  
         this.flight = flight;
-        this.flightExists = true; // ✅ Store if flight exists in Firestore
-
-        // Check if the flight has active bookings
+        this.flightExists = true;
+        this.disableOriginDestination = true; // Prevent editing for existing flights ✅
+  
         this.flightService.getFlightBookings(this.flightNumber!).then((hasBookings) => {
           this.flight!.hasBookings = hasBookings;
-          this.cdr.detectChanges(); // Force UI update
+          this.cdr.detectChanges();
         });
       });
     });
   }
+  
+  onFlightNumberChange(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    const newFlightNumber = inputElement.value.trim();
+  
+    if (!newFlightNumber) return;
+  
+    this.flightService.getFlightByNumber(newFlightNumber).then((flight) => {
+      if (flight) {
+        this.flight = flight;
+        this.disableOriginDestination = true; // ✅ Prevent editing for existing flights
+      } else {
+        this.resetForm(newFlightNumber);
+        this.disableOriginDestination = false; // ✅ Allow editing for new flights
+      }
+    }).catch((error) => {
+      console.error('Error fetching flight:', error);
+      this.disableOriginDestination = false; // Allow editing in case of error
+    });
+  }
+  
   
   
 
@@ -110,27 +131,6 @@ export class EditFlightComponent implements OnInit {
   }
   
 
-  onFlightNumberChange(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-    const newFlightNumber = inputElement.value.trim();
-  
-    if (!newFlightNumber) return;
-  
-    this.flightService.getFlightByNumber(newFlightNumber).then((flight) => {
-      if (flight) {
-        // ✅ Flight exists → Load it and disable editing origin/destination
-        this.flight = flight;
-        this.disableOriginDestination = true;
-      } else {
-        // ✅ Flight does not exist → Allow editing
-        this.resetForm(newFlightNumber);
-        this.disableOriginDestination = false;
-      }
-    }).catch((error) => {
-      console.error('Error fetching flight:', error);
-      this.disableOriginDestination = false; // Allow editing in case of error
-    });
-  }
   
 
   get isStatusEditingAllowed(): boolean {

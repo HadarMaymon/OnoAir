@@ -84,16 +84,15 @@ export class EditDestinationsComponent implements OnInit {
   
 
   ngOnInit(): void {
-    this.flightService.testQuery();
     this.originalIATA = this.route.snapshot.paramMap.get('IATA');
-
+  
     if (!this.destination) {
-      this.destination = history.state.destination;
+      this.destination = history.state.destination ?? this.getEmptyDestination();
     }
-
+  
     if (this.originalIATA) {
       this.isEditMode = true;
-      if (this.destination) {
+      if (this.destination?.destinationName) {
         this.initForm(this.destination);
       } else {
         this.fetchDestination(this.originalIATA);
@@ -102,6 +101,7 @@ export class EditDestinationsComponent implements OnInit {
       this.initForm(this.getEmptyDestination());
     }
   }
+  
   
 
   private initForm(destination: Destination): void {
@@ -140,7 +140,16 @@ export class EditDestinationsComponent implements OnInit {
   }
 
   saveChanges(): void {  
-    this.flightService.getActiveFlightsForDestination(this.destination!.destinationName).then((activeFlights) => {
+    if (!this.destination) {
+      console.error("❌ No destination data available.");
+      this.dialog.open(ConfirmDialogComponent, {
+        width: '350px',
+        data: { type: 'error', name: 'No destination data found. Please refresh and try again.' },
+      });
+      return;
+    }
+  
+    this.flightService.getActiveFlightsForDestination(this.destination.destinationName).then((activeFlights) => {
       this.destination!.hasFutureFlights = activeFlights.length > 0;
   
       if (this.destination?.hasFutureFlights) {  

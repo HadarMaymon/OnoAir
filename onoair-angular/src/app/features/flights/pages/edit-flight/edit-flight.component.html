@@ -22,7 +22,7 @@
     <mat-form-field class="form-field" appearance="outline">
       <mat-label>Origin</mat-label>
       <mat-select [(ngModel)]="flight.origin" name="origin" required #originControl="ngModel" 
-                  (selectionChange)="validateFlightRoute()" [disabled]="!isStatusEditingAllowed">
+                  [disabled]="disableOriginDestination">
         <mat-option *ngFor="let originItem of origin" [value]="originItem">
           {{ originItem }}
         </mat-option>
@@ -36,7 +36,7 @@
     <mat-form-field class="form-field" appearance="outline">
       <mat-label>Destination</mat-label>
       <mat-select [(ngModel)]="flight.destination" name="destination" required #destinationControl="ngModel" 
-                  (selectionChange)="validateFlightRoute()" [disabled]="!isStatusEditingAllowed">
+                  [disabled]="disableOriginDestination">
         <mat-option *ngFor="let destinationItem of destination" [value]="destinationItem" 
                     [disabled]="destinationItem === flight.origin">
           {{ destinationItem }}
@@ -46,6 +46,8 @@
     <p *ngIf="destinationControl.invalid && destinationControl.touched" class="error-text">
       Please select a <strong>destination</strong>.
     </p>
+
+
 
 
     <!-- Departure Date -->

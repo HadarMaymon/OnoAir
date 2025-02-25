@@ -94,8 +94,15 @@ export class FlightService {
    */
   async updateFlight(flight: Flight): Promise<void> {
     const flightDoc = doc(this.firestore, 'flights', flight.flightNumber);
-    const bookingsCollection = collection(this.firestore, 'bookings');
+    const flightSnapshot = await getDoc(flightDoc);
   
+    if (!flightSnapshot.exists()) {
+      console.error(`❌ Flight ${flight.flightNumber} not found. Cannot update.`);
+      throw new Error(`Flight ${flight.flightNumber} not found.`);
+    }
+  
+    const bookingsCollection = collection(this.firestore, 'bookings');
+    
     // Firestore Query: Only fetch ACTIVE BOOKINGS with FUTURE boarding date
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Normalize today's date for comparison
@@ -108,11 +115,6 @@ export class FlightService {
   
     try {
       await runTransaction(this.firestore, async (transaction) => {
-        const flightSnapshot = await transaction.get(flightDoc);
-        if (!flightSnapshot.exists()) {
-          throw new Error(`Flight ${flight.flightNumber} not found.`);
-        }
-  
         console.log(`✈️ Updating Flight ${flight.flightNumber}`);
   
         // ✅ Update Flight Document
@@ -179,26 +181,17 @@ async getFlightBookings(flightNumber: string): Promise<boolean> {
 
   console.log(`Checking bookings for flight ${flightNumber}: Found ${bookingSnapshot.size} bookings`);
 
-  // Get the current date
   const currentDate = new Date();
 
-  // Convert Firestore documents into an array of booking objects
-  const bookings = bookingSnapshot.docs.map((doc) => {
+  const hasActiveFutureBooking = bookingSnapshot.docs.some((doc) => {
     const data = doc.data();
-    return {
-      status: data['status'], // "Active" or "Canceled"
-      date: data['boarding'] instanceof Timestamp ? data['boarding'].toDate() : null, // Convert Firestore timestamp to Date
-    };
+    const bookingDate = data['boarding'] instanceof Timestamp ? data['boarding'].toDate() : null;
+    return data['status'] === 'Active' && bookingDate && bookingDate > currentDate;
   });
-
-  // Check if there is at least ONE "active" and "future" booking
-  const hasActiveFutureBooking = bookings.some(booking => 
-    booking.status === 'Active' && booking.date && booking.date > currentDate
-  );
 
   console.log(`🚨 Active & Future Booking Exists: ${hasActiveFutureBooking}`);
 
-  return hasActiveFutureBooking; // Return true if at least one active future booking exists
+  return hasActiveFutureBooking; 
 }
 
 
@@ -308,7 +301,34 @@ async getFlightBookings(flightNumber: string): Promise<boolean> {
     return getDocs(bookingQuery).then((snapshot) => {
       return !snapshot.empty; 
     });
-  }  
+  } 
+
+  async addFlight(flight: Flight): Promise<void> {
+    const flightDoc = doc(this.firestore, 'flights', flight.flightNumber);
+  
+    try {
+      await setDoc(flightDoc, {
+        flightNumber: flight.flightNumber,
+        origin: flight.origin,
+        destination: flight.destination,
+        date: Timestamp.fromDate(new Date(flight.date)),
+        departureTime: flight.departureTime,
+        arrivalDate: Timestamp.fromDate(new Date(flight.arrivalDate)),
+        arrivalTime: flight.arrivalTime,
+        price: flight.price,
+        image: flight.image,
+        availableSeats: flight.availableSeats,
+        isDynamicDate: flight.isDynamicDate,
+        status: flight.status,
+      });
+  
+      console.log(`✅ Flight ${flight.flightNumber} added successfully.`);
+    } catch (error) {
+      console.error(`❌ Error adding flight ${flight.flightNumber}:`, error);
+      throw error;
+    }
+  }
+  
 
   getLatestBookingDate(flightNumber: string): Promise<Date | null> {
     const bookingsCollection = collection(this.firestore, 'bookings');

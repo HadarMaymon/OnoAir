@@ -32,7 +32,6 @@ export class LuggageDialogComponent {
     this.maxLuggageItems = data.maxLuggageItems; 
   }
 
-
   /**
    * Calculate total baggage count.
    */
@@ -40,25 +39,43 @@ export class LuggageDialogComponent {
     return this.luggage.cabin + this.luggage.checked + this.luggage.heavy;
   }
 
+  /**
+   * Validate luggage input (no negatives, within limit).
+   */
   validateLuggage(): boolean {
-    const totalItems = this.luggage.cabin + this.luggage.checked + this.luggage.heavy;
+    // Ensure baggage values are not negative
+    if (this.luggage.cabin < 0) this.luggage.cabin = 0;
+    if (this.luggage.checked < 0) this.luggage.checked = 0;
+    if (this.luggage.heavy < 0) this.luggage.heavy = 0;
+
+    // Check if baggage count exceeds max limit
+    const totalItems = this.totalBaggageCount();
     if (totalItems > this.maxLuggageItems) {
       this.errorMessage = `Luggage limit exceeded! Max allowed: ${this.maxLuggageItems}`;
       return false;
     }
-    this.errorMessage = '';
+    
+    this.errorMessage = ''; // Clear error if validation passes
     return true;
   }
 
+  /**
+   * Prevent users from entering negative numbers or scientific notation.
+   */
+  preventNegativeInput(event: KeyboardEvent): void {
+    if (event.key === '-' || event.key === 'e') {
+      event.preventDefault();
+    }
+  }
 
   /**
    * Save the luggage selection.
    */
   saveLuggage(): void {
-    if (this.totalBaggageCount() > 9) {
-      alert('Total luggage cannot exceed 9 items per passenger.');
+    if (!this.validateLuggage()) {
       return;
     }
+
     this.dialogRef.close(this.luggage);
   }
 }

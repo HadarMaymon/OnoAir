@@ -1,0 +1,185 @@
+/* Overall Container */
+.find-a-flight-container {
+    max-width: 1200px; 
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+  
+  /* Header Styling */
+  h1 {
+    text-align: center;
+    font-size: 28px; /* Slightly larger for visibility */
+    color: #333;
+    margin-bottom: 20px;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  /* Compact Filter Form Layout */
+  .filter-container {
+    display: flex;
+    flex-wrap: wrap; /* Allows fields to wrap to the next line */
+    gap: 10px; /* Small spacing between fields */
+    justify-content: space-between; /* Aligns items across the row */
+    margin-bottom: 20px; /* Add spacing below the filters */
+  }
+  
+  /* Form Field Styling (Compact Filters) */
+  mat-form-field {
+    width: 48%; /* Half width for side-by-side alignment */
+    margin-bottom: 10px;
+  }
+  
+  mat-label {
+    font-size: 14px; /* Compact font size for labels */
+    color: #555;
+  }
+  
+  .mat-input-element {
+    font-size: 13px; /* Smaller font size */
+    padding: 6px 10px; /* Compact padding */
+    border-radius: 4px; /* Rounded corners for inputs */
+  }
+  
+  /* Button Styling */
+
+button{
+  font: bold 16px;
+}
+
+  
+  /* Table Styling (Unchanged from Original) */
+  table {
+    width: 100%;
+    min-width: 900px;
+    table-layout: auto;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .mat-header-row {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  .mat-header-cell,
+  .mat-cell {
+    font-size: 15px; /* Keeps table font size normal */
+    padding: 12px;
+    text-align: center;
+    vertical-align: middle;
+    border-bottom: 1px solid #e0e0e0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 55px; 
+  
+  }
+
+  
+  /* Column Widths (Unchanged) */
+  .mat-column-flightNumber,
+  .mat-column-availableSeats {
+    width: 10%;
+  }
+  
+  .mat-column-origin,
+  .mat-column-destination {
+    width: 20%;
+  }
+  
+  .mat-column-date,
+  .mat-column-departureTime,
+  .mat-column-price {
+    width: 12%;
+  }
+  
+  .mat-column-actions {
+    width: 12%;
+  }
+  
+  /* Table Rows Hover Effect */
+  .mat-row {
+    background-color: #fdfdfd;
+    transition: background-color 0.3s ease;
+  }
+  
+  .mat-row:hover {
+    background-color: #f7f7f7;
+  }
+
+  .mat-column-arrivalDate {
+    min-width: 140px;  /* Ensures enough space for date */
+    max-width: 160px;
+    white-space: nowrap;  /* Prevents text wrapping */
+  }
+  
+  
+  /* Paginator Styling */
+  .mat-paginator {
+    margin-top: 20px;
+    background-color: #f8f8f8;
+    border-top: 1px solid #e0e0e0;
+    padding: 10px 0;
+  }
+  
+  .mat-paginator-range-label,
+  .mat-paginator-page-size-label {
+    font-size: 14px; /* Normal font size */
+    color: #555;
+  }
+  
+  .mat-paginator-icon {
+    color: #4caf50;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .filter-container {
+      flex-direction: column; /* Stack filters vertically on smaller screens */
+    }
+  
+    mat-form-field {
+      width: 100%; /* Full width for smaller screens */
+    }
+  
+    .mat-header-cell,
+    .mat-cell {
+      font-size: 14px; /* Slightly reduced table text for small screens */
+      padding: 10px;
+    }
+  
+    h1 {
+      font-size: 24px;
+    }
+  
+    button {
+      font-size: 12px; /* Adjust button size for smaller screens */
+      padding: 6px 10px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .find-a-flight-container {
+      padding: 10px;
+    }
+  
+    h1 {
+      font-size: 20px;
+    }
+  
+    .mat-header-cell,
+    .mat-cell {
+      font-size: 12px;
+      padding: 8px;
+    }
+  
+    button {
+      font-size: 10px;
+      padding: 5px 8px;
+    }
+  }
+  

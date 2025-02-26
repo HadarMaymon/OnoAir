@@ -1,0 +1,97 @@
+.last-minute-flights-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: auto;
+  font-family: 'Poppins', sans-serif;
+  font-size: large;
+  padding-bottom: 80px;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.destination {
+  font-size: 1rem; 
+  margin: 10px 0 5px;
+  color: black;
+}
+
+.destination-city {
+  font-size: 1.4rem;  
+  text-transform: uppercase;  
+  font-weight: 800;  
+  color: black; 
+  margin-top: 5px;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.cards-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: stretch; 
+}
+
+.flight-card {
+  width: 220px;  
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 450px;  
+}
+
+
+.card-content {
+  flex-grow: 1;
+}
+
+.mat-card-actions {
+  margin-top: auto;  
+  display: flex;
+  justify-content: center;
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 120px;
+  background-color: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.destination {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 10px 0 5px;
+}
+
+.date {
+  font-size: 1rem;
+  color: #555;
+}
+
+button[mat-raised-button] {
+  display: block;
+  margin: 10px auto;
+  padding: 10px 20px;
+  text-align: center;
+}

@@ -1,0 +1,92 @@
+<mat-horizontal-stepper [selectedIndex]="currentStep" linear="true">
+  <!-- Step 1: Flight & Passenger Details -->
+  <mat-step [completed]="canProceedToStep2()">
+    <h2>Flight & Passenger Details</h2>
+
+    <div *ngFor="let passenger of passengers; let i = index" class="passenger-container">
+      <label>Name:</label>
+      <input [(ngModel)]="passenger.name" (blur)="validatePassenger(i)" required title="Passenger Name" placeholder="Enter passenger name" />
+
+      <label>Passport ID:</label>
+      <input 
+        [(ngModel)]="passenger.id"
+        (blur)="validatePassenger(i)"
+        (input)="restrictPassportIdLength(i)" 
+        required 
+        title="Passport ID"
+        placeholder="Enter passport ID"
+        type="text" 
+        maxlength="9"
+        pattern="^\d{9}$"
+      />
+
+      <p *ngIf="errors[i]?.name" class="error">{{ errors[i].name }}</p>
+      <p *ngIf="errors[i]?.id" class="error">{{ errors[i].id }}</p>
+      <p *ngIf="errors[i]?.duplicateId" class="error">{{ errors[i].duplicateId }}</p>
+
+      <button mat-icon-button color="warn" (click)="removePassenger(i)" *ngIf="passengers.length > 1">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+
+    <button mat-raised-button color="accent" (click)="addPassenger()" 
+    [disabled]="flight && passengers.length >= flight.availableSeats">
+      + Add Passenger
+    </button>
+
+    <!-- Step Navigation Button -->
+    <div class="step-buttons">
+      <button mat-raised-button color="primary" 
+        [disabled]="!canProceedToStep2()" 
+        (click)="setStep(1)">
+        Next: Select Luggage
+      </button>
+    </div>
+  </mat-step>
+
+  <!-- Step 2: Luggage Selection -->
+  <mat-step [completed]="canProceedToStep3()">
+    <h2>Luggage Selection</h2>
+
+    <div *ngFor="let passenger of passengers; let i = index">
+      <h3 *ngIf="passenger.name">{{ passenger.name }}'s Luggage</h3>
+      <h4 *ngIf="passenger.luggage"><strong>Luggage:</strong> Cabin: {{ passenger.luggage.cabin }}, Checked: {{ passenger.luggage.checked }}, Heavy: {{ passenger.luggage.heavy }}</h4>      <button mat-raised-button class="add-luggage-button" (click)="openLuggageDialog(i)">
+        Add Luggage 🧳
+      </button>
+    </div>
+
+    <div class="step-buttons">
+      <button mat-raised-button color="warn" (click)="setStep(0)">
+        Back to Passenger Details
+      </button>
+      <button mat-raised-button color="primary" [disabled]="!canProceedToStep3()" (click)="setStep(2)">
+        Proceed to Confirmation
+      </button>
+    </div>
+  </mat-step>
+
+  <!-- Step 3: Booking Confirmation -->
+  <mat-step>
+    <h2>Booking Details</h2>
+    <p><strong>Flight Number:</strong> {{ flight?.flightNumber }}</p>
+    <p><strong>Origin:</strong> {{ flight?.origin }}</p>
+    <p><strong>Destination:</strong> {{ flight?.destination }}</p>
+    <p><strong>Date:</strong> {{ flight?.date | date: 'dd-MM-yyyy' }}</p>
+    <p><strong>Passengers:</strong></p>
+    <ul>
+      <li *ngFor="let passenger of passengers">
+        {{ passenger.name }} (Passport ID: {{ passenger.id }}) - 
+        Luggage: {{ passenger.luggage.cabin }} Cabin, 
+        {{ passenger.luggage.checked }} Checked, 
+        {{ passenger.luggage.heavy }} Heavy
+      </li>
+    </ul>
+
+    <div class="step-buttons">
+      <button mat-raised-button color="warn" (click)="setStep(1)">Back to Luggage Selection</button>
+      <button mat-raised-button color="primary" (click)="saveBooking()" [disabled]="isSaving">
+        {{ isSaving ? "Saving..." : "Book" }}
+      </button>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>

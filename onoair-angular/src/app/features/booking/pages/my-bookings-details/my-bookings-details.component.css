@@ -1,0 +1,57 @@
+.booking-details-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 50px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: 'Roboto', sans-serif;
+    padding-bottom: 80px;
+  }
+  
+  h1, h2 {
+    text-align: center;
+    color: #333;
+    font-weight: 500;
+  }
+  
+  .flight-info, .passenger-card {
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    min-height: 120px;
+  }
+  
+  mat-card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    
+  }
+  
+  mat-card-content p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+    
+  }
+  
+  .actions {
+    text-align: center;
+    margin-top: 30px;
+  }
+  
+  button {
+    padding: 10px 30px;
+    font-size: 1rem;
+  }
+  
+  .not-found-message {
+    text-align: center;
+    color: #d32f2f;
+    font-size: 1.2rem;
+    margin-top: 40px;
+  }
+  
+  mat-divider {
+    display: none;
+  }

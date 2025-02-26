@@ -50,7 +50,7 @@
 
     <div *ngFor="let passenger of passengers; let i = index">
       <h3 *ngIf="passenger.name">{{ passenger.name }}'s Luggage</h3>
-      <button mat-raised-button class="add-luggage-button" (click)="openLuggageDialog(i)">
+      <h4 *ngIf="passenger.luggage"><strong>Luggage:</strong> Cabin: {{ passenger.luggage.cabin }}, Checked: {{ passenger.luggage.checked }}, Heavy: {{ passenger.luggage.heavy }}</h4>      <button mat-raised-button class="add-luggage-button" (click)="openLuggageDialog(i)">
         Add Luggage 🧳
       </button>
     </div>

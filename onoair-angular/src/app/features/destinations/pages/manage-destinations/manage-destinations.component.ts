@@ -19,6 +19,7 @@ import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confir
 import { DestinationStatus } from '../../models/destination-status.enum';
 import { ChangeDetectorRef } from '@angular/core';
 import { EditDestinationsComponent } from '../edit-destinations/edit-destinations.component';
+import { FlightService} from '../../../flights/service/flights.service';
 
 @Component({
   selector: 'app-manage-destinations',
@@ -57,6 +58,7 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
 
   constructor(
     private destinationService: DestinationsService,
+    private flightService: FlightService,
     private router: Router,
     private dialog: MatDialog,
   ) {}
@@ -104,20 +106,33 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
    * Confirm and delete a destination.
    */
   confirmDelete(destination: Destination): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '350px',
-      data: { type: 'delete', name: `destination ${destination.IATA}` },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result?.confirmed && result.action === 'delete') {
-        this.destinationService.deleteDestination(destination.IATA).then(() => {
-          alert(`Destination ${destination.IATA} deleted successfully.`);
-        }).catch((error) => {
-          console.error(`Error deleting destination ${destination.IATA}:`, error);
-          alert('Failed to delete destination. Active flight exist.');
+    // Check for active flights using FlightService
+    this.flightService.getActiveFlightsForDestination(destination.destinationName)
+      .then((activeFlights) => {
+        if (activeFlights.length > 0) {
+          alert(`Cannot delete destination ${destination.IATA}. There are ${activeFlights.length} active flights associated with it.`);
+          return;
+        }
+  
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+          width: '350px',
+          data: { type: 'delete', name: `destination ${destination.IATA}` },
         });
-      }
-    });
-  }
+  
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result?.confirmed && result.action === 'delete') {
+            this.destinationService.deleteDestination(destination.IATA).then(() => {
+              alert(`Destination ${destination.IATA} deleted successfully.`);
+            }).catch((error) => {
+              console.error(`Error deleting destination ${destination.IATA}:`, error);
+              alert('Failed to delete destination.');
+            });
+          }
+        });
+      })
+      .catch((error) => {
+        console.error(`Error checking active flights for ${destination.IATA}:`, error);
+        alert('Failed to check for active flights.');
+      });
+  }  
 }

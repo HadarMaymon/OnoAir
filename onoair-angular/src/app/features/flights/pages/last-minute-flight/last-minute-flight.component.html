@@ -11,10 +11,12 @@
       </mat-card-header>
 
       <mat-card-content>
+        <p><b>Flight Number:</b> {{ flight.flightNumber }}</p>
         <p><b>Destination:</b> {{ flight.destination }}</p>
         <p><b>Origin:</b> {{ flight.origin }}</p>
         <p><b>Date:</b> {{ flight.date |date: 'dd-MM-yyyy' }}</p>
         <p><b>Price:</b> ${{ flight.price }}</p>
+        <p><b>Available Seats:</b> {{ flight.availableSeats }}</p>
       </mat-card-content>
 
       <mat-card-actions class="center-actions">

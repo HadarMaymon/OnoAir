@@ -106,33 +106,57 @@ export class ManageDestinationComponent implements OnInit, AfterViewInit {
    * Confirm and delete a destination.
    */
   confirmDelete(destination: Destination): void {
-    // Check for active flights using FlightService
-    this.flightService.getActiveFlightsForDestination(destination.destinationName)
-      .then((activeFlights) => {
-        if (activeFlights.length > 0) {
-          alert(`Cannot delete destination ${destination.IATA}. There are ${activeFlights.length} active flights associated with it.`);
-          return;
-        }
+    // Step 1: Open delete confirmation dialog first
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '350px',
+      data: { type: 'delete', name: `destination ${destination.IATA}` },
+    });
   
-        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-          width: '350px',
-          data: { type: 'delete', name: `destination ${destination.IATA}` },
-        });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.confirmed && result.action === 'delete') {
+        
+        // Step 2: Check for active flights only if user confirmed deletion
+        this.flightService.getActiveFlightsForDestination(destination.destinationName)
+          .then((activeFlights) => {
+            if (activeFlights.length > 0) {
+              // Step 3: Open error dialog if there are active flights
+              const errorDialogRef = this.dialog.open(ConfirmDialogComponent, {
+                width: '350px',
+                data: {
+                  type: 'error',
+                  name: `Cannot delete destination ${destination.IATA}`,
+                  alertMessage: `There are ${activeFlights.length} active flights associated with this destination. Please remove them first.`,
+                },
+              });
   
-        dialogRef.afterClosed().subscribe((result) => {
-          if (result?.confirmed && result.action === 'delete') {
-            this.destinationService.deleteDestination(destination.IATA).then(() => {
-              alert(`Destination ${destination.IATA} deleted successfully.`);
-            }).catch((error) => {
-              console.error(`Error deleting destination ${destination.IATA}:`, error);
-              alert('Failed to delete destination.');
-            });
-          }
-        });
-      })
-      .catch((error) => {
-        console.error(`Error checking active flights for ${destination.IATA}:`, error);
-        alert('Failed to check for active flights.');
-      });
+              return; // Stop execution if active flights exist
+            }
+  
+            // Step 4: If no active flights exist, delete the destination
+            this.destinationService.deleteDestination(destination.IATA)
+              .then(() => {
+                // Step 5: Open success dialog instead of alert
+                this.dialog.open(ConfirmDialogComponent, {
+                  width: '350px',
+                  data: {
+                    type: 'success',
+                    name: `Destination Deleted`,
+                    alertMessage: `Destination ${destination.IATA} has been successfully deleted.`,
+                  },
+                });
+              })
+              .catch((error) => {
+                console.error(`Error deleting destination ${destination.IATA}:`, error);
+                alert('Failed to delete destination.');
+              });
+  
+          })
+          .catch((error) => {
+            console.error(`Error checking active flights for ${destination.IATA}:`, error);
+            alert('Failed to check for active flights.');
+          });
+      }
+    });
   }  
+  
 }

@@ -67,11 +67,7 @@
 
   <!-- Step 3: Booking Confirmation -->
   <mat-step>
-    <h2>Booking Confirmation</h2>
-    
-    <p>Your flight has been successfully booked!</p>
-
-    <h3>Booking Details</h3>
+    <h2>Booking Details</h2>
     <p><strong>Flight Number:</strong> {{ flight?.flightNumber }}</p>
     <p><strong>Origin:</strong> {{ flight?.origin }}</p>
     <p><strong>Destination:</strong> {{ flight?.destination }}</p>
@@ -89,7 +85,7 @@
     <div class="step-buttons">
       <button mat-raised-button color="warn" (click)="setStep(1)">Back to Luggage Selection</button>
       <button mat-raised-button color="primary" (click)="saveBooking()" [disabled]="isSaving">
-        {{ isSaving ? "Saving..." : "Finish" }}
+        {{ isSaving ? "Saving..." : "Book" }}
       </button>
     </div>
   </mat-step>
